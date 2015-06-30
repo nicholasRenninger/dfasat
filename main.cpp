@@ -21,6 +21,7 @@ public:
     const char* dot_file;
     const char* sat_program;
     int tries;
+    int sinkson;
     int seed;
     int apta_bound;
     int dfa_bound;
@@ -44,6 +45,7 @@ public:
 parameters::parameters(){
     dot_file = "dfa";
     tries = 100;
+    sinkson = 1;
     seed = 12345678;
     apta_bound = 2000;
     dfa_bound = 50;
@@ -74,6 +76,7 @@ int main(int argc, const char *argv[]){
         { "seed", 's', POPT_ARG_INT, &(param->seed), 's', "Seed for random merge heuristic; default=12345678", "integer" },
         { "output file name", 'o', POPT_ARG_STRING, &(param->dot_file), 'o', "The filename in which to store the learned DFAs in .dot and .aut format, default: \"dfa\".", "string" },
         { "tries", 'k', POPT_ARG_INT, &(param->tries), 'k', "Number of DFASAT iterations; default=100", "integer" },
+        {"sink states", 'n', POPT_ARG_INT, &(param->sinkson), 's', "Set to 1 to use sink states, 0 to consider all states", "integer"},
         { "apta bound", 'b', POPT_ARG_INT, &(param->apta_bound), 'b', "Maximum number of remaining states in the partially learned DFA before starting the SAT search process. The higher this value, the larger the problem sent to the SAT solver; default=2000", "integer" },
         { "dfa bound", 'd', POPT_ARG_INT, &(param->dfa_bound), 'd', "Maximum size of the partially learned DFA before starting the SAT search process; default=50", "integer" },
         { "lower bound", 'l', POPT_ARG_FLOAT, &(param->lower_bound), 'l', "Minimum value of the heuristic function, smaller values are treated as inconsistent, also used as the paramter value in any statistical tests; default=-1", "float" },
@@ -82,7 +85,7 @@ int main(int argc, const char *argv[]){
         { "merge sinks during greedy", 'u', POPT_ARG_INT, &(param->merge_sinks_d), 'u', "Sink nodes are candidates for merging during the greedy runs (setting 0 or 1); default=0", "integer" },
         { "merge sinks presolve", 'r', POPT_ARG_INT, &(param->merge_sinks_p), 'r', "Merge all sink nodes (setting 0 or 1) before sending the problem to the SAT solver; default=1", "integer" },
         { "target rejecting sink", 'j', POPT_ARG_INT, &(param->target_rejecting), 'j', "Make all transitions from red states without any occurrences target the rejecting sink (setting 0 or 1) before sending the problem to the SAT solver; default=0", "integer" },
-        { "extend any red", 'r', POPT_ARG_INT, &(param->extend), 'r', "During greedy runs any merge candidate (blue) that cannot be merged with any (red) target is immediately changed into a (red) target; default=1. If set to 0, a merge candidate is only changed into a target when no more merges are possible.", "integer" },
+        { "extend any red", 'x', POPT_ARG_INT, &(param->extend), 'r', "During greedy runs any merge candidate (blue) that cannot be merged with any (red) target is immediately changed into a (red) target; default=1. If set to 0, a merge candidate is only changed into a target when no more merges are possible.", "integer" },
         { "method", 'm', POPT_ARG_INT, &(param->method), 'n', "Method to use during the greedy preprocessing, default value 1 is random greedy (used in Stamina winner), 2 is one non-randomized greedy", "integer" },
         { "heuristic", 'h', POPT_ARG_INT, &(param->heuristic), 'h', "Heuristic to use during the greedy preprocessing, default value 1 counts the number of merges, 2 is EDSM (evidence driven state merging), 3 is shallow first (like RPNI), 4 counts overlap in merged positive transitions (used in Stamina winner), 6 is ALERGIA consistency check with shallow first, 7 computes a likelihoodratio test for score and consistency (like RTI algorithm), 8 computes the Akaike Information Criterion, 9 computes the Kullback-Leibler divergence (based on MDI algorithm). Statistical tests are computed only on positive traces.", "integer" },
         { "state count", 't', POPT_ARG_INT, &(param->symbol_count), 't', "The minimum number of positive occurrences of a state for it to be included in overlap/statistical checks, default=25", "integer" },
@@ -184,7 +187,15 @@ int main(int argc, const char *argv[]){
         kldistance *eval = new kldistance();
         merger = state_merger(eval,the_apta);
     }
-    
+   
+    /* metric driven merging - addition by chrham */
+     if (param->heuristic==10){
+        metric_driven *eval = new metric_driven();
+        merger = state_merger(eval,the_apta);
+    }
+	
+	/* end addition */ 
+	
     if(param->method == 1) GREEDY_METHOD = RANDOMG;
     if(param->method == 2) GREEDY_METHOD = NORMALG;
     
