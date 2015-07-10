@@ -81,16 +81,16 @@ bool overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node
   if(evaluation_function::consistent(merger,left,right) == false) return false;
 
   if(left->accepting_paths >= STATE_COUNT){
-    for(int i = 0; i < alphabet_size; ++i){
-      if(right->num_pos[i] >= SYMBOL_COUNT & left->num_pos[i] == 0){
+    for(num_map::iterator it = right->num_pos.begin();it != right->num_pos.end(); ++it){
+      if((*it).second >= SYMBOL_COUNT & left->pos((*it).first) == 0){
         inconsistency_found = true;
         return false;        
       }
     }
   }
   if(right->accepting_paths >= STATE_COUNT){
-    for(int i = 0; i < alphabet_size; ++i){
-      if(left->num_pos[i] >= SYMBOL_COUNT & right->num_pos[i] == 0){
+    for(num_map::iterator it = left->num_pos.begin();it != left->num_pos.end(); ++it){
+      if((*it).second >= SYMBOL_COUNT & right->pos((*it).first) == 0){
         inconsistency_found = true;
         return false;
       }
@@ -104,7 +104,7 @@ void overlap_driven::update_score(state_merger *merger, apta_node* left, apta_no
   if (consistent(merger, left, right) == false) return;
   
   for(int i = 0; i < alphabet_size; ++i){
-    if(left->num_pos[i] != 0 && right->num_pos[i] != 0){
+    if(left->pos(i) != 0 && right->pos(i) != 0){
       overlap += 1;
     }
   }
@@ -129,16 +129,16 @@ bool metric_driven::consistent(state_merger *merger, apta_node* left, apta_node*
   if(evaluation_function::consistent(merger,left,right) == false) return false;
 
   if(left->accepting_paths >= STATE_COUNT){
-    for(int i = 0; i < alphabet_size; ++i){
-      if(right->num_pos[i] >= SYMBOL_COUNT & left->num_pos[i] == 0){
+    for(num_map::iterator it = right->num_pos.begin();it != right->num_pos.end(); ++it){
+      if((*it).second >= SYMBOL_COUNT & left->pos((*it).first) == 0){
         inconsistency_found = true;
         return false;        
       }
     }
   }
   if(right->accepting_paths >= STATE_COUNT){
-    for(int i = 0; i < alphabet_size; ++i){
-      if(left->num_pos[i] >= SYMBOL_COUNT & right->num_pos[i] == 0){
+    for(num_map::iterator it = left->num_pos.begin();it != left->num_pos.end(); ++it){
+      if((*it).second >= SYMBOL_COUNT & right->pos((*it).first) == 0){
         inconsistency_found = true;
         return false;
       }
@@ -153,7 +153,7 @@ void metric_driven::update_score(state_merger *merger, apta_node* left, apta_nod
   if (consistent(merger, left, right) == false) return;
   
   for(int i = 0; i < alphabet_size; ++i){
-    if(left->num_pos[i] != 0 && right->num_pos[i] != 0){
+    if(left->pos(i) != 0 && right->pos(i) != 0){
       overlap += 1;
     }
   }
@@ -185,15 +185,15 @@ bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right
     bound = bound * sqrt(0.5 * log(2.0 / CHECK_PARAMETER));
     
     for(int i = 0; i < alphabet_size; ++i){
-      if(left->num_pos[i] >= SYMBOL_COUNT || right->num_pos[i] >= SYMBOL_COUNT){
+      if(left->pos(i) >= SYMBOL_COUNT || right->pos(i) >= SYMBOL_COUNT){
         double gamma = 0.0;
-        if( ((double)left->num_pos[i] / (double)left->accepting_paths) > 
-            ((double)right->num_pos[i] / (double)right->accepting_paths) )
-          gamma = ((double)left->num_pos[i] / (double)left->accepting_paths)
-                - ((double)right->num_pos[i] / (double)right->accepting_paths);
+        if( ((double)left->pos(i) / (double)left->accepting_paths) >
+            ((double)right->pos(i) / (double)right->accepting_paths) )
+          gamma = ((double)left->pos(i) / (double)left->accepting_paths)
+                - ((double)right->pos(i) / (double)right->accepting_paths);
         else
-          gamma = ((double)right->num_pos[i] / (double)right->accepting_paths)
-                - ((double)left->num_pos[i] / (double)left->accepting_paths);
+          gamma = ((double)right->pos(i) / (double)right->accepting_paths)
+                - ((double)left->pos(i) / (double)left->accepting_paths);
         if(gamma > bound){ inconsistency_found = true; return false; }
       }
     }
@@ -219,8 +219,8 @@ void likelihoodratio::update_score(state_merger *merger, apta_node* left, apta_n
   left_pool = 0.0;
   right_pool = 0.0;
   for(int a = 0; a < alphabet_size; ++a){
-    count_left  = (double)left->num_pos[a];
-    count_right = (double)right->num_pos[a];
+    count_left  = (double)left->pos(a);
+    count_right = (double)right->pos(a);
   
     if(count_left >= SYMBOL_COUNT || count_right >= SYMBOL_COUNT){
       count_left = count_left + CORRECTION; 
@@ -309,8 +309,8 @@ void kldistance::update_score(state_merger *merger, apta_node* left, apta_node* 
   left_pool = 0.0;
   right_pool = 0.0;
   for(int a = 0; a < alphabet_size; ++a){
-    count_left = (double)left->num_pos[a];
-    count_right = (double)right->num_pos[a];
+    count_left = (double)left->pos(a);
+    count_right = (double)right->pos(a);
   
     if(count_left >= SYMBOL_COUNT || count_right >= SYMBOL_COUNT){
       count_left = count_left + CORRECTION; 

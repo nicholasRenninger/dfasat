@@ -8,6 +8,8 @@
 #include <set>
 #include <list>
 #include <map>
+#include <unordered_map>
+#include <string>
 
 class evaluation_data;
 class evaluation_function;
@@ -30,6 +32,8 @@ typedef list< pair<apta_node*, apta_node*> > merge_list;
 typedef multimap<int, pair<apta_node*, apta_node*> > merge_map;
 typedef pair<apta_node*, apta_node*> merge_pair;
 typedef list<apta_node*> node_list;
+typedef map<int, apta_node*> child_map;
+typedef map<int, int> num_map;
 
 bool is_accepting_sink(apta_node* node);
 bool is_rejecting_sink(apta_node* node);
@@ -37,6 +41,7 @@ bool is_rejecting_sink(apta_node* node);
 class apta{
 public:
     apta_node* root;
+    map<int, vector<int> > alphabet;
     int merge_count;
     
     apta(ifstream &input_stream);
@@ -52,9 +57,9 @@ public:
     /* UNION/FIND datastructure */
     apta_node* source;
     apta_node* representative;
-    vector<apta_node*> children;
+    child_map children;
     /* UNDO information */
-    vector<apta_node*> det_undo;
+    child_map det_undo;
     
     /* get transition target */
     apta_node* get_child(int);
@@ -71,8 +76,8 @@ public:
     int size;
     
     /* counts of positive and negative transition uses */
-    vector<int> num_pos;
-    vector<int> num_neg;
+    num_map num_pos;
+    num_map num_neg;
     
     /* depth of the node in the apta */
     int depth;
@@ -92,6 +97,30 @@ public:
     /* UNION/FIND */
     apta_node* find();
     apta_node* find_until(apta_node*, int);
+    
+    inline apta_node* child(int i){
+        child_map::iterator it = children.find(i);
+        if(it == children.end()) return 0;
+        return (*it).second;
+    }
+
+    inline apta_node* undo(int i){
+        child_map::iterator it = det_undo.find(i);
+        if(it == det_undo.end()) return 0;
+        return (*it).second;
+    }
+
+    inline int pos(int i){
+        num_map::iterator it = num_pos.find(i);
+        if(it == num_pos.end()) return 0;
+        return (*it).second;
+    }
+
+    inline int neg(int i){
+        num_map::iterator it = num_neg.find(i);
+        if(it == num_neg.end()) return 0;
+        return (*it).second;
+    }
 };
 
 struct size_compare

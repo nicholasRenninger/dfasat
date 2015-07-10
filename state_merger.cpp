@@ -5,6 +5,10 @@
 #include <math.h>
 #include <vector>
 #include <map>
+#include <map>
+#include <set>
+#include <string>
+#include <sstream>
 #include <stdio.h>
 #include <gsl/gsl_cdf.h>
 
@@ -18,8 +22,8 @@ bool MERGE_SINKS_DSOLVE = 0;
  * rejecting sink = only reject, reject now, reject afterwards */
 bool is_accepting_sink(apta_node* node){
     node = node->find();
-    for(int i = 0; i < alphabet_size; ++i){
-        if(node->num_neg[i] != 0) return false;
+    for(num_map::iterator it = node->num_neg.begin();it != node->num_neg.end(); ++it){
+        if((*it).second != 0) return false;
     }
     return false;
     //return node->num_rejecting == 0;
@@ -27,8 +31,8 @@ bool is_accepting_sink(apta_node* node){
 
 bool is_rejecting_sink(apta_node* node){
     node = node->find();
-    for(int i = 0; i < alphabet_size; ++i){
-        if(node->num_pos[i] != 0) return false;
+    for(num_map::iterator it = node->num_pos.begin();it != node->num_pos.end(); ++it){
+        if((*it).second != 0) return false;
     }
     return false;
     //return node->num_accepting == 0;
@@ -37,6 +41,8 @@ bool is_rejecting_sink(apta_node* node){
 /* constructors and destructors */
 apta::apta(ifstream &input_stream){
     int num_words;
+    int num_alph = 0;
+    map<string, int> seen;
     int node_number = 1;
     input_stream >> num_words >> alphabet_size;
     root = new apta_node();
@@ -51,25 +57,46 @@ apta::apta(ifstream &input_stream){
         int depth = 1;
         for(int index = 0; index < length; index++){
             depth = depth + 1;
-            int c;
-            input_stream >> c;
-            apta_node* next_node = node->children[c];
-            if(next_node == 0){
-                next_node = new apta_node();
+            vector<int> event;
+            string tuple;
+            input_stream >> tuple;
+            if(seen.find(tuple) == seen.end()){
+                std::stringstream lineStream;
+                lineStream.str(tuple);
+                string cell;
+                while(std::getline(lineStream,cell,','))
+                {
+                    event.push_back(stoi(cell));
+                }
+                alphabet[num_alph] = event;
+                seen[tuple] = num_alph;
+                num_alph++;
+            }
+            int c = seen[tuple];
+            if(node->child(c) == 0){
+                apta_node* next_node = new apta_node();
                 node->children[c] = next_node;
                 next_node->source = node;
                 next_node->label  = c;
                 next_node->number = node_number++;
                 next_node->depth = depth;
-            }
-            if(positive){
-                node->num_pos[c]++;
-                node->accepting_paths++;
+                if(positive){
+                    node->num_pos[c] = 1;
+                    node->accepting_paths++;
+                } else {
+                    node->num_neg[c] = 1;
+                    node->rejecting_paths++;
+                }
             } else {
-                node->num_neg[c]++;
-                node->rejecting_paths++;
+                if(positive){
+                    node->num_pos[c] = node->pos(c) + 1;
+                    node->accepting_paths++;
+                } else {
+                    node->num_neg[c] = node->neg(c) + 1;
+                    node->rejecting_paths++;
+                }
             }
-            node = next_node;
+            node = node->child(c);
         }
         if(positive) node->num_accepting++;
         else node->num_rejecting++;
@@ -83,14 +110,12 @@ apta::~apta(){
 apta_node::apta_node(){
     source = 0;
     representative = 0;
-    children = vector<apta_node*>(alphabet_size);
-    det_undo = vector<apta_node*>(alphabet_size);
-    num_pos = vector<int>();
-    num_neg = vector<int>();
-    for (int i = 0; i < alphabet_size; ++i){
-        num_pos.push_back(0);
-        num_neg.push_back(0);
-    }
+
+    children = child_map();
+    det_undo = child_map();
+    num_pos = num_map();
+    num_neg = num_map();
+
     num_accepting = 0;
     num_rejecting = 0;
     accepting_paths = 0;
@@ -105,8 +130,9 @@ apta_node::apta_node(){
 }
 
 apta_node::~apta_node(){
-    for(int i = 0; i < alphabet_size; ++i)
-        if(children[i] != 0) delete children[i];
+    for(child_map::iterator it = children.begin();it != children.end(); ++it){
+        delete (*it).second;
+    }
 }
 
 state_merger::state_merger(){
@@ -186,8 +212,10 @@ int state_merger::get_final_apta_size(){
 
 /* FIND/UNION functions */
 apta_node* apta_node::get_child(int c){
-    apta_node* child = find()->children[c];
-    if(child != 0) return child->find();
+    apta_node* rep = find();
+    if(rep->child(c) != 0){
+      return rep->child(c)->find();
+    }
     return 0;
 }
 
@@ -199,7 +227,7 @@ apta_node* apta_node::find(){
 }
 
 apta_node* apta_node::find_until(apta_node* node, int i){
-    if(det_undo[i] == node)
+    if(undo(i) == node)
         return this;
     
     if(representative == 0)
@@ -226,21 +254,22 @@ void state_merger::merge(apta_node* left, apta_node* right){
     left->old_depth = left->depth;
     left->depth = min(left->depth, right->depth);
 
-    for(int i = 0; i < alphabet_size; ++i){
-        left->num_pos[i] += right->num_pos[i];
-        left->num_neg[i] += right->num_neg[i];
+    for(num_map::iterator it = right->num_pos.begin();it != right->num_pos.end(); ++it){
+        left->num_pos[(*it).first] = left->pos((*it).first) + (*it).second;
     }
-    
-    for(int i = 0; i < alphabet_size; ++i){
-        if(left->children[i] == 0){
-            left->children[i] = right->children[i];
-            if (right->children[i] != 0){
-                right->children[i]->old_depth = right->children[i]->depth;
-                right->children[i]->depth = left->depth + 1;
-            }
-        } else if(right->children[i] != 0){
+    for(num_map::iterator it = right->num_neg.begin();it != right->num_neg.end(); ++it){
+        left->num_neg[(*it).first] = left->neg((*it).first) + (*it).second;
+    }
+    for(child_map::iterator it = right->children.begin();it != right->children.end(); ++it){
+        int i = (*it).first;
+        apta_node* right_child = (*it).second;
+        if(left->child(i) == 0){
+            left->children[i] = right_child;
+            right_child->old_depth = right_child->depth;
+            right_child->depth = left->depth + 1;
+        } else {
             apta_node* child = left->children[i]->find();
-            apta_node* other_child = right->children[i]->find();
+            apta_node* other_child = right_child->find();
             
             if(child != other_child){
                 other_child->det_undo[i] = right;
@@ -251,19 +280,19 @@ void state_merger::merge(apta_node* left, apta_node* right){
 }
 
 void state_merger::undo_merge(apta_node* left, apta_node* right){
-    for(int i = alphabet_size - 1; i >= 0; --i){
-        if(left->children[i] == right->children[i]){
-            left->children[i] = 0;
-            if(right->children[i] != 0){
-                right->children[i]->depth = right->children[i]->old_depth;
-            }
+    for(child_map::reverse_iterator it = right->children.rbegin();it != right->children.rend(); ++it){
+        int i = (*it).first;
+        apta_node* right_child = (*it).second;
+        if(left->child(i) == right_child){
+            left->children.erase(i);
+            right_child->depth = right_child->old_depth;
         }
-        else if(left->children[i] != 0 && right->children[i] != 0){
-            apta_node* other_child = right->children[i]->find_until(right, i);
+        else if(left->child(i) != 0){
+            apta_node* other_child = right_child->find_until(right, i);
             apta_node* child = other_child->representative;
             if(child != other_child)
                 undo_merge(child, other_child);
-            other_child->det_undo[i] = 0;
+            other_child->det_undo.erase(i);
         }
     }
     
@@ -275,9 +304,11 @@ void state_merger::undo_merge(apta_node* left, apta_node* right){
     
     left->depth = left->old_depth;
 
-    for(int i = 0; i < alphabet_size; ++i){
-        left->num_pos[i] -= right->num_pos[i];
-        left->num_neg[i] -= right->num_neg[i];
+    for(num_map::iterator it = right->num_pos.begin();it != right->num_pos.end(); ++it){
+        left->num_pos[(*it).first] = left->pos((*it).first) - (*it).second;
+    }
+    for(num_map::iterator it = right->num_neg.begin();it != right->num_neg.end(); ++it){
+        left->num_neg[(*it).first] = left->neg((*it).first) - (*it).second;
     }
     
     right->representative = 0;
@@ -311,7 +342,7 @@ bool state_merger::extend_red(){
         
         for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;
-            
+
             int score = testmerge(red, blue);
             if(score != -1) found = true;
         }
