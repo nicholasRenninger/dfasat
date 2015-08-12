@@ -13,6 +13,8 @@ extern bool MERGE_SINKS_PRESOLVE;
 extern int OFFSET;
 extern int EXTRA_STATES;
 extern bool TARGET_REJECTING;
+extern bool SYMMETRY_BREAKING;
+extern bool FORCING;
 
 using namespace std;
 

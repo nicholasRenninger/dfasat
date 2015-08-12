@@ -38,6 +38,8 @@ public:
     float parameter;
     int extra_states;
     int target_rejecting;
+    int symmetry;
+    int forcing;
     
     parameters();
 };
@@ -62,6 +64,8 @@ parameters::parameters(){
     parameter = 0.5;
     extra_states = 0;
     target_rejecting = 0;
+    symmetry = 1;
+    forcing = 0;
 };
 
 int main(int argc, const char *argv[]){
@@ -75,8 +79,8 @@ int main(int argc, const char *argv[]){
         { "version", 0, POPT_ARG_NONE, NULL, 1, "Display version information", NULL },
         { "seed", 's', POPT_ARG_INT, &(param->seed), 's', "Seed for random merge heuristic; default=12345678", "integer" },
         { "output file name", 'o', POPT_ARG_STRING, &(param->dot_file), 'o', "The filename in which to store the learned DFAs in .dot and .aut format, default: \"dfa\".", "string" },
-        { "tries", 'k', POPT_ARG_INT, &(param->tries), 'k', "Number of DFASAT iterations; default=100", "integer" },
-        {"sink states", 'n', POPT_ARG_INT, &(param->sinkson), 's', "Set to 1 to use sink states, 0 to consider all states", "integer"},
+        { "runs", 'n', POPT_ARG_INT, &(param->tries), 'n', "Number of DFASAT runs/iterations; default=100", "integer" },
+        {"sink states", 'i', POPT_ARG_INT, &(param->sinkson), 'i', "Set to 1 to use sink states, 0 to consider all states", "integer"},
         { "apta bound", 'b', POPT_ARG_INT, &(param->apta_bound), 'b', "Maximum number of remaining states in the partially learned DFA before starting the SAT search process. The higher this value, the larger the problem sent to the SAT solver; default=2000", "integer" },
         { "dfa bound", 'd', POPT_ARG_INT, &(param->dfa_bound), 'd', "Maximum size of the partially learned DFA before starting the SAT search process; default=50", "integer" },
         { "lower bound", 'l', POPT_ARG_FLOAT, &(param->lower_bound), 'l', "Minimum value of the heuristic function, smaller values are treated as inconsistent, also used as the paramter value in any statistical tests; default=-1", "float" },
@@ -85,8 +89,10 @@ int main(int argc, const char *argv[]){
         { "merge sinks during greedy", 'u', POPT_ARG_INT, &(param->merge_sinks_d), 'u', "Sink nodes are candidates for merging during the greedy runs (setting 0 or 1); default=0", "integer" },
         { "merge sinks presolve", 'r', POPT_ARG_INT, &(param->merge_sinks_p), 'r', "Merge all sink nodes (setting 0 or 1) before sending the problem to the SAT solver; default=1", "integer" },
         { "target rejecting sink", 'j', POPT_ARG_INT, &(param->target_rejecting), 'j', "Make all transitions from red states without any occurrences target the rejecting sink (setting 0 or 1) before sending the problem to the SAT solver; default=0", "integer" },
+        { "symmetry breaking", 'k', POPT_ARG_INT, &(param->symmetry), 'k', "Add symmetry breaking predicates to the SAT encoding (setting 0 or 1), based on Ulyantsev et al. BFS symmetry breaking; default=1", "integer" },
+        { "transition forcing", 'f', POPT_ARG_INT, &(param->forcing), 'f', "Add predicates to the SAT encoding that force transitions in the learned DFA to be used by input examples (setting 0 or 1); default=0", "integer" },
         { "extend any red", 'x', POPT_ARG_INT, &(param->extend), 'r', "During greedy runs any merge candidate (blue) that cannot be merged with any (red) target is immediately changed into a (red) target; default=1. If set to 0, a merge candidate is only changed into a target when no more merges are possible.", "integer" },
-        { "method", 'm', POPT_ARG_INT, &(param->method), 'n', "Method to use during the greedy preprocessing, default value 1 is random greedy (used in Stamina winner), 2 is one non-randomized greedy", "integer" },
+        { "method", 'm', POPT_ARG_INT, &(param->method), 'm', "Method to use during the greedy preprocessing, default value 1 is random greedy (used in Stamina winner), 2 is one non-randomized greedy", "integer" },
         { "heuristic", 'h', POPT_ARG_INT, &(param->heuristic), 'h', "Heuristic to use during the greedy preprocessing, default value 1 counts the number of merges, 2 is EDSM (evidence driven state merging), 3 is shallow first (like RPNI), 4 counts overlap in merged positive transitions (used in Stamina winner), 6 is ALERGIA consistency check with shallow first, 7 computes a likelihoodratio test for score and consistency (like RTI algorithm), 8 computes the Akaike Information Criterion, 9 computes the Kullback-Leibler divergence (based on MDI algorithm). Statistical tests are computed only on positive traces.", "integer" },
         { "state count", 't', POPT_ARG_INT, &(param->symbol_count), 't', "The minimum number of positive occurrences of a state for it to be included in overlap/statistical checks, default=25", "integer" },
         { "symbol count", 'y', POPT_ARG_INT, &(param->state_count), 'y', "The minimum number of positive occurrences of a symbol/transition for it to be included in overlap/statistical checks, symbols with less occurrences are binned together, default=10", "integer" },
@@ -148,10 +154,14 @@ int main(int argc, const char *argv[]){
 
     LOWER_BOUND = param->lower_bound;
     OFFSET = param->offset;
+    USE_SINKS = param->sinkson;
     MERGE_SINKS_PRESOLVE = param->merge_sinks_p;
     MERGE_SINKS_DSOLVE = param->merge_sinks_d;
     EXTEND_ANY_RED = param->extend;
     
+    SYMMETRY_BREAKING = param->symmetry;
+    FORCING = param->forcing;
+        
     EXTRA_STATES = param->extra_states;
     TARGET_REJECTING = param->target_rejecting;
     
@@ -200,6 +210,12 @@ int main(int argc, const char *argv[]){
     if(param->method == 2) GREEDY_METHOD = NORMALG;
     
     int solution = -1;
+    
+    std::ostringstream oss3;
+    oss3 << "init_" << param->dot_file << ".dot";
+    FILE* output = fopen(oss3.str().c_str(), "w");
+    merger.todot(output);
+    fclose(output);
     
     for(int i = 0; i < param->tries; ++i){
         std::ostringstream oss;

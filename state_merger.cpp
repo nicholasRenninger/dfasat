@@ -15,29 +15,6 @@
 int alphabet_size = 0;
 bool MERGE_SINKS_DSOLVE = 0;
 
-/* When is an APTA node a sink state?
- * sink states are not considered merge candidates
- *
- * accepting sink = only accept, accept now, accept afterwards
- * rejecting sink = only reject, reject now, reject afterwards */
-bool is_accepting_sink(apta_node* node){
-    node = node->find();
-    for(num_map::iterator it = node->num_neg.begin();it != node->num_neg.end(); ++it){
-        if((*it).second != 0) return false;
-    }
-    return false;
-    //return node->num_rejecting == 0;
-}
-
-bool is_rejecting_sink(apta_node* node){
-    node = node->find();
-    for(num_map::iterator it = node->num_pos.begin();it != node->num_pos.end(); ++it){
-        if((*it).second != 0) return false;
-    }
-    return false;
-    //return node->num_accepting == 0;
-}
-
 /* constructors and destructors */
 apta::apta(ifstream &input_stream){
     int num_words;
@@ -156,8 +133,8 @@ void state_merger::reset(){
 void add_states(apta_node* state, state_set& states){
     if(states.find(state) != states.end()) return;
     states.insert(state);
-    for(int i = 0; i < alphabet_size; ++i){
-        apta_node* child = state->get_child(i);
+    for(child_map::iterator it = state->children.begin();it != state->children.end(); ++it){
+        apta_node* child = (*it).second;
         if(child != 0) add_states(child, states);
     }
 }
@@ -190,7 +167,7 @@ state_set &state_merger::get_candidate_states(){
     state_set states = blue_states;
     state_set* candidate_states = new state_set();
     for(state_set::iterator it = states.begin();it != states.end();++it){
-        if(!is_accepting_sink(*it) && !is_rejecting_sink(*it))
+        if(sink_type(*it) == -1)
             add_states(*it,*candidate_states);
     }
     return *candidate_states;
@@ -200,7 +177,7 @@ state_set &state_merger::get_sink_states(){
     state_set states = blue_states;
     state_set* sink_states = new state_set();
     for(state_set::iterator it = states.begin();it != states.end();++it){
-        if(is_accepting_sink(*it) || is_rejecting_sink(*it))
+        if(sink_type(*it) != -1)
             add_states(*it,*sink_states);
     }
     return *sink_states;
@@ -338,7 +315,7 @@ bool state_merger::extend_red(){
     for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
         apta_node* blue = *it;
         bool found = false;
-        if(!MERGE_SINKS_DSOLVE && (is_accepting_sink(blue) || is_rejecting_sink(blue))) continue;
+        if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
         
         for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;
@@ -386,7 +363,7 @@ merge_map &state_merger::get_possible_merges(){
     
     for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
         apta_node* blue = *(it);
-        if(!MERGE_SINKS_DSOLVE && (is_accepting_sink(blue) || is_rejecting_sink(blue))) continue;
+        if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
         
         for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;
@@ -402,6 +379,7 @@ merge_map &state_merger::get_possible_merges(){
 
 void state_merger::todot(FILE* output){
     state_set candidates = get_candidate_states();
+    //state_set sinks = get_sink_states();
 
     fprintf(output,"digraph DFA {\n");
     fprintf(output,"\t%i [label=\"root\" shape=box];\n", aut->root->find()->number);
@@ -415,37 +393,25 @@ void state_merger::todot(FILE* output){
         else
             fprintf(output,"\t%i [shape=circle label=\"[%i:%i]\"];\n", n->number, n->num_accepting, n->num_rejecting);
         state_set childnodes;
-        bool acc = false;
-        bool rej = false;
+        set<int> sinks;
         for(int i = 0; i < alphabet_size; ++i){
             apta_node* child = n->get_child(i);
             if(child == 0){
                 // no output
             } else {
-                 if(is_rejecting_sink(child)){
-                     rej = true;
-                 } else if(is_accepting_sink(child)){
-                     acc = true;
+                 if(sink_type(child) != -1){
+                     sinks.insert(sink_type(child));
                  } else {
                      childnodes.insert(child);
                  }
             }
         }
-        if(rej){
-            fprintf(output,"\tR%i [label=\"fail\" shape=box];\n", n->number);
-            fprintf(output, "\t\t%i -> R%i [label=\"" ,n->number, n->number);
+        for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
+            int stype = *it2;
+            fprintf(output,"\tS%it%i [label=\"sink %i\" shape=box];\n", n->number, stype, stype);
+            fprintf(output, "\t\t%i -> S%it%i [label=\"" ,n->number, n->number, stype);
             for(int i = 0; i < alphabet_size; ++i){
-                if(n->get_child(i) != 0 && is_rejecting_sink(n->get_child(i))){
-                    fprintf(output, " %i [%i:%i]", i, n->num_pos[i], n->num_neg[i]);
-                }
-            }
-            fprintf(output, "\"];\n");
-        }
-        if(acc){
-            fprintf(output,"\tA%i [label=\"pass\" shape=box];\n", n->number);
-            fprintf(output, "\t\t%i -> A%i [label=\"" ,n->number, n->number);
-            for(int i = 0; i < alphabet_size; ++i){
-                if(n->get_child(i) != 0 && is_accepting_sink(n->get_child(i))){
+                if(n->get_child(i) != 0 && sink_type(n->get_child(i)) == stype){
                     fprintf(output, " %i [%i:%i]", i, n->num_pos[i], n->num_neg[i]);
                 }
             }
@@ -464,9 +430,30 @@ void state_merger::todot(FILE* output){
     }
     for(state_set::iterator it = candidates.begin(); it != candidates.end(); ++it){
         apta_node* n = *it;
-        if(is_accepting_sink(n))
-            fprintf(output,"\t%i [shape=box style=dotted label=\"[%i:%i]\"];\n", n->number, n->num_accepting, n->num_rejecting);
-        else if (is_rejecting_sink(n))
+        if(sink_type(n) != -1);
+            //fprintf(output,"\t%i [shape=box style=dotted label=\"[%i:%i]\"];\n", n->number, n->num_accepting, n->num_rejecting);
+        else if(n->num_accepting != 0)
+            fprintf(output,"\t%i [shape=doublecircle style=dotted label=\"[%i:%i]\"];\n", n->number, n->num_accepting, n->num_rejecting);
+        else if(n->num_rejecting != 0)
+            fprintf(output,"\t%i [shape=Mcircle style=dotted label=\"[%i:%i]\"];\n", n->number, n->num_accepting, n->num_rejecting);
+        else
+            fprintf(output,"\t%i [shape=circle style=dotted label=\"[%i:%i]\"];\n", n->number, n->num_accepting, n->num_rejecting);
+        for(int i = 0; i < alphabet_size; ++i){
+            apta_node* child = n->get_child(i);
+            if(child == 0){
+                // no output
+            } else if(sink_type(child) != -1) {
+                /*int stype = sink_type(child);
+                fprintf(output,"\tS%it%i [label=\"sink %i\" shape=box style=dotted];\n", n->number, stype, stype);
+                fprintf(output, "\t\t%i -> S%it%i [label=\"%i [%i:%i]\" style=dotted];\n" ,n->number, n->number, stype, i, n->num_pos[i], n->num_neg[i]);*/
+            } else {
+                fprintf(output, "\t\t%i -> %i [label=\"%i [%i:%i]\" style=dotted];\n" ,n->number, n->get_child(i)->number, i, n->num_pos[i], n->num_neg[i]);
+            }
+        }
+    }
+    /*for(state_set::iterator it = sinks.begin(); it != sinks.end(); ++it){
+        apta_node* n = *it;
+        if(sink_type(n) != -1)
             fprintf(output,"\t%i [shape=box style=dotted label=\"[%i:%i]\"];\n", n->number, n->num_accepting, n->num_rejecting);
         else if(n->num_accepting != 0)
             fprintf(output,"\t%i [shape=doublecircle style=dotted label=\"[%i:%i]\"];\n", n->number, n->num_accepting, n->num_rejecting);
@@ -478,14 +465,10 @@ void state_merger::todot(FILE* output){
             apta_node* child = n->get_child(i);
             if(child == 0){
                 // no output
-            } else if(is_rejecting_sink(child)){
-                fprintf(output, "\t\t%i -> R%i [label=\"fail\" style=dotted];\n" ,n->number, n->number);
-            } else if(is_rejecting_sink(child)){
-                fprintf(output, "\t\t%i -> A%i [label=\"pass\" style=dotted];\n" ,n->number, n->number);
-            } else  {
+            } else {
                 fprintf(output, "\t\t%i -> %i [label=\"%i [%i:%i]\" style=dotted];\n" ,n->number, n->get_child(i)->number, i, n->num_pos[i], n->num_neg[i]);
             }
         }
-    }
+    }*/
     fprintf(output,"}\n");
 }

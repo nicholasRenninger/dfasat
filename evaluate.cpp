@@ -11,7 +11,47 @@ int STATE_COUNT = 0;
 int SYMBOL_COUNT = 0;
 float CORRECTION = 0.0;
 float CHECK_PARAMETER = 0.0;
+bool USE_SINKS = 0;
 
+/* When is an APTA node a sink state?
+ * sink states are not considered merge candidates
+ *
+ * accepting sink = only accept, accept now, accept afterwards
+ * rejecting sink = only reject, reject now, reject afterwards */
+bool is_accepting_sink(apta_node* node){
+    node = node->find();
+    for(num_map::iterator it = node->num_neg.begin();it != node->num_neg.end(); ++it){
+        if((*it).second != 0) return false;
+    }
+    return node->num_rejecting == 0;
+}
+
+bool is_rejecting_sink(apta_node* node){
+    node = node->find();
+    for(num_map::iterator it = node->num_pos.begin();it != node->num_pos.end(); ++it){
+        if((*it).second != 0) return false;
+    }
+    return node->num_accepting == 0;
+}
+
+int sink_type(apta_node* node){
+    if(!USE_SINKS) return -1;
+    if (is_accepting_sink(node)) return 0;
+    if (is_rejecting_sink(node)) return 1;
+    return -1;
+}
+
+bool sink_consistent(apta_node* node, int type){
+    if(!USE_SINKS) return false;
+    if(type == 0) return node->rejecting_paths == 0 && node->num_rejecting == 0;
+    if(type == 1) return node->accepting_paths == 0 && node->num_accepting == 0;
+    return true;
+}
+
+int num_sink_types(){
+    if(!USE_SINKS) return 0;
+    return 2;
+}
 
 /* default evaluation, count number of performed merges */
 bool evaluation_function::consistent(state_merger *merger, apta_node* left, apta_node* right){

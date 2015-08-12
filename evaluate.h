@@ -24,6 +24,14 @@ extern int STATE_COUNT;
 extern int SYMBOL_COUNT;
 extern float CORRECTION;
 extern float CHECK_PARAMETER;
+extern bool USE_SINKS;
+
+/* Return a sink type, or -1 if no sink 
+ * Sinks are special states that optionally are not considered as merge candidates, 
+ * and are optionally merged into one (for every type) before starting exact solving */
+int sink_type(apta_node* node);
+bool sink_consistent(apta_node* node, int type);
+int num_sink_types();
 
 class evaluation_function{
 public:
