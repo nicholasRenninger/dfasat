@@ -9,7 +9,6 @@
 int GREEDY_METHOD = 0;
 int APTA_BOUND = 0;
 int CLIQUE_BOUND = 0;
-float LOWER_BOUND = 0;
 bool EXTEND_ANY_RED = 0;
 
 merge_list random_greedy_bounded_run(state_merger* merger){
@@ -38,17 +37,17 @@ merge_list random_greedy_bounded_run(state_merger* merger){
                cerr << "APTA too small" << endl;
                break;
             }
-            if((*possible_merges.rbegin()).first < LOWER_BOUND){
+            /*if((*possible_merges.rbegin()).first < LOWER_BOUND){
                 cerr << "merge score below lower bound" << endl;
                 break;
-            }
+            }*/
 
             merge_pair top_pair = (*possible_merges.rbegin()).second;
             float top_score = (*possible_merges.rbegin()).first;
             if(GREEDY_METHOD == RANDOMG){
                 merge_map randomized_merges;
                 for(merge_map::reverse_iterator it = possible_merges.rbegin(); it != possible_merges.rend(); it++){
-                    if((*it).first < LOWER_BOUND) break;
+                    //if((*it).first < LOWER_BOUND) break;
                     randomized_merges.insert(pair<int, merge_pair>((*it).first * (rand() / (double)RAND_MAX), (*it).second));
                 }
                 top_score = (*randomized_merges.rbegin()).first;

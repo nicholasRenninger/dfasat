@@ -960,7 +960,7 @@ int dfasat(state_merger &m, const char* sat_program, const char* dot_output, con
         close(pipefromsat[1]);
         
         sat_stream = (FILE*) fdopen(pipetosat[1], "w");
-        //sat_stream = (FILE*) fopen("test.out", "w");
+        sat_stream = (FILE*) fopen("test.out", "w");
         if (sat_stream == 0){
             cerr << "Cannot open pipe to SAT solver: " << strerror(errno) << endl;
             exit(1);

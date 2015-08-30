@@ -15,7 +15,6 @@ extern int alphabet_size;
 extern int GREEDY_METHOD;
 extern int APTA_BOUND;
 extern int CLIQUE_BOUND;
-extern float LOWER_BOUND;
 extern bool EXTEND_ANY_RED;
 
 const int RANDOMG = 1;

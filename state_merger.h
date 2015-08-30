@@ -43,6 +43,7 @@ public:
     apta_node* root;
     map<int, vector<int> > alphabet;
     int merge_count;
+    int max_depth;
     
     apta(ifstream &input_stream);
     ~apta();
@@ -50,6 +51,8 @@ public:
     state_set &get_states();
     state_set &get_accepting_states();
     state_set &get_rejecting_states();
+
+    string alph_str(int i);
 };
 
 class apta_node{

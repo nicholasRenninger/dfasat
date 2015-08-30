@@ -25,6 +25,7 @@ extern int SYMBOL_COUNT;
 extern float CORRECTION;
 extern float CHECK_PARAMETER;
 extern bool USE_SINKS;
+extern float LOWER_BOUND;
 
 /* Return a sink type, or -1 if no sink 
  * Sinks are special states that optionally are not considered as merge candidates, 
@@ -37,6 +38,15 @@ class evaluation_function{
 public:
   int num_merges;
   bool inconsistency_found;
+  
+/* Boolean indicating the evaluation function type;
+   there are two kinds: computed before or after/during a merge.
+   When computed before a merge, a merge is only tried for consistency. 
+   Functions computed before merging (typically) do not take loops that
+   the merge creates into account.
+   Functions computed after/during a merge rely heavily on the determinization
+   process for computation, this is a strong assumption. */
+  bool compute_before_merge;
 
 /* An evaluation function needs to implement all of these functions */
   
@@ -98,6 +108,21 @@ public:
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
   virtual void reset(state_merger *merger);
   virtual bool compute_consistency(state_merger *merger, apta_node* left, apta_node* right);
+};
+
+class series_driven: public overlap_driven{
+  virtual void score_right(apta_node* right, int depth);
+  virtual void score_left(apta_node* left, int depth);
+
+public:
+  vector< state_set > left_dist;
+  vector< state_set > right_dist;
+
+  virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
+  virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
+  virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
+  virtual void initialize(state_merger *);
+  virtual void reset(state_merger *merger);
 };
 
 /* metric driven merging added for netflow by chrham */

@@ -23,6 +23,7 @@ apta::apta(ifstream &input_stream){
     int node_number = 1;
     input_stream >> num_words >> alphabet_size;
     root = new apta_node();
+    max_depth = -1;
     
     for(int line = 0; line < num_words; line++){
         apta_node* node = root;
@@ -31,7 +32,7 @@ apta::apta(ifstream &input_stream){
         int length;
         input_stream >> positive >> length;
         
-        int depth = 1;
+        int depth = 0;
         for(int index = 0; index < length; index++){
             depth = depth + 1;
             vector<int> event;
@@ -75,6 +76,8 @@ apta::apta(ifstream &input_stream){
             }
             node = node->child(c);
         }
+        if(depth > max_depth)
+            max_depth = depth;
         if(positive) node->num_accepting++;
         else node->num_rejecting++;
     }
@@ -82,6 +85,18 @@ apta::apta(ifstream &input_stream){
 
 apta::~apta(){
     delete root;
+}
+
+string apta::alph_str(int i){
+    std::ostringstream oss;
+    oss << "<";
+    for(int j = 0; j < alphabet[i].size(); ++j){
+        oss << alphabet[i][j];
+        if(j < alphabet[i].size()-1)
+            oss << ",";
+    }
+    oss << ">";
+    return oss.str();
 }
 
 apta_node::apta_node(){
@@ -166,7 +181,7 @@ state_set &apta::get_rejecting_states(){
 state_set &state_merger::get_candidate_states(){
     state_set states = blue_states;
     state_set* candidate_states = new state_set();
-    for(state_set::iterator it = states.begin();it != states.end();++it){
+    for(state_set::iterator it = blue_states.begin();it != blue_states.end();++it){
         if(sink_type(*it) == -1)
             add_states(*it,*candidate_states);
     }
@@ -176,7 +191,7 @@ state_set &state_merger::get_candidate_states(){
 state_set &state_merger::get_sink_states(){
     state_set states = blue_states;
     state_set* sink_states = new state_set();
-    for(state_set::iterator it = states.begin();it != states.end();++it){
+    for(state_set::iterator it = blue_states.begin();it != blue_states.end();++it){
         if(sink_type(*it) != -1)
             add_states(*it,*sink_states);
     }
@@ -228,8 +243,8 @@ void state_merger::merge(apta_node* left, apta_node* right){
     left->accepting_paths += right->accepting_paths;
     left->rejecting_paths += right->rejecting_paths;
     
-    left->old_depth = left->depth;
-    left->depth = min(left->depth, right->depth);
+    //left->old_depth = left->depth;
+    //left->depth = min(left->depth, right->depth);
 
     for(num_map::iterator it = right->num_pos.begin();it != right->num_pos.end(); ++it){
         left->num_pos[(*it).first] = left->pos((*it).first) + (*it).second;
@@ -237,13 +252,30 @@ void state_merger::merge(apta_node* left, apta_node* right){
     for(num_map::iterator it = right->num_neg.begin();it != right->num_neg.end(); ++it){
         left->num_neg[(*it).first] = left->neg((*it).first) + (*it).second;
     }
+    /*for(int i = 0; i < alphabet_size; ++i){
+        if(left->child(i) == 0){
+            left->child(i) = right->child(i);
+            if (right->child(i) != 0){
+                right->child(i)->old_depth = right->child(i)->depth;
+                right->child(i)->depth = left->depth + 1;
+            }
+        } else if(right->child(i) != 0){
+            apta_node* child = left->child(i)->find();
+            apta_node* other_child = right->child(i)->find();
+            
+            if(child != other_child){
+                other_child->det_undo[i] = right;
+                merge(child, other_child);
+            }
+        }
+    }*/
     for(child_map::iterator it = right->children.begin();it != right->children.end(); ++it){
         int i = (*it).first;
         apta_node* right_child = (*it).second;
         if(left->child(i) == 0){
             left->children[i] = right_child;
-            right_child->old_depth = right_child->depth;
-            right_child->depth = left->depth + 1;
+            //right_child->old_depth = right_child->depth;
+            //right_child->depth = left->depth + 1;
         } else {
             apta_node* child = left->children[i]->find();
             apta_node* other_child = right_child->find();
@@ -257,12 +289,27 @@ void state_merger::merge(apta_node* left, apta_node* right){
 }
 
 void state_merger::undo_merge(apta_node* left, apta_node* right){
+    /*for(int i = alphabet_size - 1; i >= 0; --i){
+        if(left->child(i) == right->child(i)){
+            left->children[i] = 0;
+            if(right->child(i) != 0){
+                right->child(i)->depth = right->child(i)->old_depth;
+            }
+        }
+        else if(left->child(i) != 0 && right->child(i) != 0){
+            apta_node* other_child = right->child(i)->find_until(right, i);
+            apta_node* child = other_child->representative;
+            if(child != other_child)
+                undo_merge(child, other_child);
+            other_child->det_undo[i] = 0;
+        }
+    }*/
     for(child_map::reverse_iterator it = right->children.rbegin();it != right->children.rend(); ++it){
         int i = (*it).first;
         apta_node* right_child = (*it).second;
         if(left->child(i) == right_child){
             left->children.erase(i);
-            right_child->depth = right_child->old_depth;
+            //right_child->depth = right_child->old_depth;
         }
         else if(left->child(i) != 0){
             apta_node* other_child = right_child->find_until(right, i);
@@ -279,7 +326,7 @@ void state_merger::undo_merge(apta_node* left, apta_node* right){
     left->accepting_paths -= right->accepting_paths;
     left->rejecting_paths -= right->rejecting_paths;
     
-    left->depth = left->old_depth;
+    //left->depth = left->old_depth;
 
     for(num_map::iterator it = right->num_pos.begin();it != right->num_pos.end(); ++it){
         left->num_pos[(*it).first] = left->pos((*it).first) - (*it).second;
@@ -351,8 +398,10 @@ bool state_merger::perform_merge(apta_node* left, apta_node* right){
 
 int state_merger::testmerge(apta_node* left, apta_node* right){
     eval->reset(this);
+    int result = -1;
+    if(eval->compute_before_merge) result = eval->compute_score(this, left, right);
     merge(left,right);
-    int result = eval->compute_score(this, left, right);
+    if(!eval->compute_before_merge) result = eval->compute_score(this, left, right);
     if(eval->compute_consistency(this, left, right) == false) result = -1;
     undo_merge(left,right);
     return result;
@@ -412,7 +461,7 @@ void state_merger::todot(FILE* output){
             fprintf(output, "\t\t%i -> S%it%i [label=\"" ,n->number, n->number, stype);
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && sink_type(n->get_child(i)) == stype){
-                    fprintf(output, " %i [%i:%i]", i, n->num_pos[i], n->num_neg[i]);
+                    fprintf(output, " %s [%i:%i]", aut->alph_str(i).c_str(), n->num_pos[i], n->num_neg[i]);
                 }
             }
             fprintf(output, "\"];\n");
@@ -422,7 +471,7 @@ void state_merger::todot(FILE* output){
             fprintf(output, "\t\t%i -> %i [label=\"" ,n->number, child->number);
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && n->get_child(i) == child){
-                    fprintf(output, " %i [%i:%i]", i, n->num_pos[i], n->num_neg[i]);
+                    fprintf(output, " %s [%i:%i]", aut->alph_str(i).c_str(), n->num_pos[i], n->num_neg[i]);
                 }
             }
             fprintf(output, "\"];\n");
@@ -447,7 +496,7 @@ void state_merger::todot(FILE* output){
                 fprintf(output,"\tS%it%i [label=\"sink %i\" shape=box style=dotted];\n", n->number, stype, stype);
                 fprintf(output, "\t\t%i -> S%it%i [label=\"%i [%i:%i]\" style=dotted];\n" ,n->number, n->number, stype, i, n->num_pos[i], n->num_neg[i]);*/
             } else {
-                fprintf(output, "\t\t%i -> %i [label=\"%i [%i:%i]\" style=dotted];\n" ,n->number, n->get_child(i)->number, i, n->num_pos[i], n->num_neg[i]);
+                fprintf(output, "\t\t%i -> %i [label=\"%s [%i:%i]\" style=dotted];\n" ,n->number, n->get_child(i)->number, aut->alph_str(i).c_str(), n->num_pos[i], n->num_neg[i]);
             }
         }
     }
