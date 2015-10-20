@@ -1,7 +1,7 @@
 CC	=	g++
 CFLAGS	=	-O2
 SOURCES = 	*.cpp
-LFLAGS 	= 	-L/opt/local/lib -I/opt/local/include -lm -lpopt -lgsl -lgslcblas
+LFLAGS 	= 	-std=c++11 -L/opt/local/lib -I/opt/local/include -lm -lpopt -lgsl -lgslcblas
 
 all: dfasat
 
