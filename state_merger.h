@@ -94,6 +94,9 @@ public:
     int accepting_paths;
     int rejecting_paths;
     
+	node_list conflicts;
+    node_list::iterator merge_point;
+
     apta_node();
     ~apta_node();
     

@@ -246,6 +246,11 @@ void state_merger::merge(apta_node* left, apta_node* right){
     //left->old_depth = left->depth;
     //left->depth = min(left->depth, right->depth);
 
+    right->merge_point = left->conflicts.end();
+    --(right->merge_point);
+    left->conflicts.splice(left->conflicts.end(), right->conflicts);
+    ++(right->merge_point);
+  
     for(num_map::iterator it = right->num_pos.begin();it != right->num_pos.end(); ++it){
         left->num_pos[(*it).first] = left->pos((*it).first) + (*it).second;
     }
@@ -335,6 +340,8 @@ void state_merger::undo_merge(apta_node* left, apta_node* right){
         left->num_neg[(*it).first] = left->neg((*it).first) - (*it).second;
     }
     
+    right->conflicts.splice(right->conflicts.begin(), left->conflicts, right->merge_point, left->conflicts.end());
+
     right->representative = 0;
 }
 
@@ -436,11 +443,11 @@ void state_merger::todot(FILE* output){
     for(state_set::iterator it = red_states.begin(); it != red_states.end(); ++it){
         apta_node* n = *it;
         if(n->num_accepting != 0)
-            fprintf(output,"\t%i [shape=doublecircle label=\"[%i:%i]\"];\n", n->number, n->num_accepting, n->num_rejecting);
+            fprintf(output,"\t%i [shape=doublecircle label=\"[%i:%i]\"];\n", n->number, n->num_accepting + n->accepting_paths, n->num_rejecting + n->rejecting_paths);
         else if(n->num_rejecting != 0)
-            fprintf(output,"\t%i [shape=Mcircle label=\"[%i:%i]\"];\n", n->number, n->num_accepting, n->num_rejecting);
+            fprintf(output,"\t%i [shape=Mcircle label=\"[%i:%i]\"];\n", n->number, n->num_accepting + n->accepting_paths, n->num_rejecting + n->rejecting_paths);
         else
-            fprintf(output,"\t%i [shape=circle label=\"[%i:%i]\"];\n", n->number, n->num_accepting, n->num_rejecting);
+            fprintf(output,"\t%i [shape=circle label=\"[%i:%i]\"];\n", n->number, n->num_accepting + n->accepting_paths, n->num_rejecting + n->rejecting_paths);
         state_set childnodes;
         set<int> sinks;
         for(int i = 0; i < alphabet_size; ++i){

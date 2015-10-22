@@ -41,8 +41,33 @@ bool is_rejecting_sink(apta_node* node){
     return node->num_accepting == 0;
 }
 
+bool is_single_event_sink(apta_node* node, int event){
+    node = node->find();
+    if(node->children.size() == 0) return true;
+    if(node->children.size() != 1 || node->child(event) == 0) return false;
+    apta_node* child = node->child(event);
+    return is_single_event_sink(child, event);
+}
+
+bool is_single_event_sink(apta_node* node){
+    node = node->find();
+    if(node->children.size() == 0) return true;
+    if(node->children.size() != 1) return false;
+    int event = (*node->children.begin()).first;
+    apta_node* child = node->child(event);
+    return is_single_event_sink(child, event);
+}
+
+int get_event_type(apta_node* node){
+    node = node->find();
+    return (*node->children.begin()).first;
+}
+
 int sink_type(apta_node* node){
     if(!USE_SINKS) return -1;
+
+    if (is_single_event_sink(node)) return get_event_type(node);
+    return -1;
 
     if (is_low_count_sink(node)) return 0;
     return -1;
@@ -55,6 +80,8 @@ int sink_type(apta_node* node){
 bool sink_consistent(apta_node* node, int type){
     if(!USE_SINKS) return false;
     
+    return sink_type(node) == type;
+
     if(type == 0) return is_low_count_sink(node);
     return true;
     
@@ -65,6 +92,7 @@ bool sink_consistent(apta_node* node, int type){
 
 int num_sink_types(){
     if(!USE_SINKS) return 0;
+    return alphabet_size;
     return 1;
     return 2;
 }
@@ -136,10 +164,15 @@ void depth_driven::reset(state_merger *merger ){
 /* Overlap driven, count overlap in positive transitions, used in Stamina winner */
 bool overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
   if(evaluation_function::consistent(merger,left,right) == false) return false;
-
-  if(left->accepting_paths >= STATE_COUNT){
+if(left->accepting_paths >= STATE_COUNT){
     for(num_map::iterator it = right->num_pos.begin();it != right->num_pos.end(); ++it){
       if((*it).second >= SYMBOL_COUNT & left->pos((*it).first) == 0){
+        inconsistency_found = true;
+        return false;        
+      }
+    }
+    for(num_map::iterator it = right->num_neg.begin();it != right->num_neg.end(); ++it){
+      if((*it).second >= SYMBOL_COUNT & left->neg((*it).first) == 0){
         inconsistency_found = true;
         return false;        
       }
@@ -150,6 +183,12 @@ bool overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node
       if((*it).second >= SYMBOL_COUNT & right->pos((*it).first) == 0){
         inconsistency_found = true;
         return false;
+      }
+    }
+    for(num_map::iterator it = left->num_neg.begin();it != left->num_neg.end(); ++it){
+      if((*it).second >= SYMBOL_COUNT & right->neg((*it).first) == 0){
+        inconsistency_found = true;
+        return false;        
       }
     }
   }
@@ -164,15 +203,20 @@ void overlap_driven::update_score(state_merger *merger, apta_node* left, apta_no
     if(left->pos(i) != 0 && right->pos(i) != 0){
       overlap += 1;
     }
+    if(left->neg(i) != 0 && right->neg(i) != 0){
+      overlap += 1;
+    }
   }
 };
 
 bool overlap_driven::compute_consistency(state_merger *merger, apta_node* left, apta_node* right){
     if(evaluation_function::compute_consistency(merger, left, right) == false) return false;
+    if(left->depth != right->depth){ inconsistency_found = true; return false; }
     return true;
 };
 
 int overlap_driven::compute_score(state_merger *merger, apta_node* left, apta_node* right){
+  if(left->source != 0 && right->source != 0 && left->source->find() == right->source->find()) overlap = overlap * 2;
   return overlap;
 };
 
@@ -185,6 +229,29 @@ void overlap_driven::reset(state_merger *merger){
 bool series_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
   if(evaluation_function::consistent(merger,left,right) == false) return false;
   if(left->depth != right->depth){ inconsistency_found = true; return false; }
+  
+  int count_left = left->accepting_paths;
+  int count_right = right->accepting_paths;
+  
+  int total_left = left->accepting_paths  + left->rejecting_paths;
+  int total_right = right->accepting_paths + right->rejecting_paths;
+
+  double observed = (double)count_left;
+  double expected = (double)total_left * ((double)(count_left+count_right) / ((double)total_left + total_right));
+  double diff = observed - expected;
+  if(diff < 0.0) diff = - diff;
+  if (diff > 5.0){
+    inconsistency_found = true; return false;
+  }
+  
+  observed = (double)count_right;
+  expected = (double)total_right * ((double)(count_left+count_right) / ((double)total_left + total_right));
+  diff = observed - expected;
+  if(diff < 0.0) diff = - diff;
+  if (diff > 5.0){
+    inconsistency_found = true; return false;
+  }
+
   return true;
 };
 
@@ -225,76 +292,57 @@ int series_driven::compute_score(state_merger *merger, apta_node* left, apta_nod
     int tests_failed = 0;
     
     double distance = 0.0;
+    double gamma;
+    
+    int num_tests = 0;
 
     for(int i = 0; i < merger->aut->max_depth; ++i){
-        int total_left = 0;
-        int total_right = 0;
-        for(state_set::iterator it = left_dist[i].begin(); it != left_dist[i].end(); ++it){
-            apta_node* node = *it;
-            total_left += node->accepting_paths;
-        }
-        for(state_set::iterator it = right_dist[i].begin(); it != right_dist[i].end(); ++it){
-            apta_node* node = *it;
-            total_right += node->accepting_paths;
-        }
-        //cerr << "total " << total_left << " " << total_right << endl;
-
-        if(total_left >= STATE_COUNT && total_right >= STATE_COUNT){
-            double bound = sqrt(1.0 / (double)total_left) + sqrt(1.0 / (double)total_right);
-            bound = bound * sqrt(0.5 * log(2.0 / CHECK_PARAMETER));
+  
+        for(int a = 0; a < alphabet_size; ++a){
+            int count_left = 0;
+            int count_right = 0;
+            int total_left = 0;
+            int total_right = 0;
+            for(state_set::iterator it = left_dist[i].begin(); it != left_dist[i].end(); ++it){
+                apta_node* node = *it;
+                count_left += node->pos(a) + node->neg(a);
+                total_left += node->accepting_paths + node->rejecting_paths;
+            }
+            for(state_set::iterator it = right_dist[i].begin(); it != right_dist[i].end(); ++it){
+                apta_node* node = *it;
+                count_right += node->pos(a) + node->neg(a);
+                total_right += node->accepting_paths + node->rejecting_paths;
+            }
             
-            for(int a = 0; a < alphabet_size; ++a){
-                int count_left = 0;
-                int count_right = 0;
-                for(state_set::iterator it = left_dist[i].begin(); it != left_dist[i].end(); ++it){
-                    apta_node* node = *it;
-                    count_left += node->pos(a);
-                }
-                for(state_set::iterator it = right_dist[i].begin(); it != right_dist[i].end(); ++it){
-                    apta_node* node = *it;
-                    count_right += node->pos(a);
-                }
-                if(count_left > 0 || count_right > 0){
-                    double gamma = ((double)count_left / (double)total_left) - ((double)count_right / (double)total_right);
-                    if(gamma < 0.0) gamma = -gamma;
-                    distance += gamma;
-                }
-                //cerr << "dist-" << a << "  " << count_left << " " << count_right << endl;
-                if(count_left >= SYMBOL_COUNT || count_right >= SYMBOL_COUNT){
-                    double gamma = ((double)count_left / (double)total_left) - ((double)count_right / (double)total_right);
-                    if(gamma < 0.0) gamma = -gamma;
-                    if(gamma > bound){ tests_failed += 1; }
-                    else { tests_passed += 1; }
-                }
+            if(total_left == 0 || total_right == 0) continue;
+            
+            double observed = (double)count_left;
+            double expected = (double)total_left * ((double)(count_left+count_right) / ((double)total_left + total_right));
+            double diff = observed - expected;
+            if(diff < 0.0) diff = - diff;
+            if (diff > 5.0){
+                //cerr << diff << " " << observed << " " << expected << " " << count_left << "/" << total_left << " " << count_right << "/" << total_right << endl;
+                return -1;
             }
-        } else {
-            for(int a = 0; a < alphabet_size; ++a){
-                int count_left = 0;
-                int count_right = 0;
-                for(state_set::iterator it = left_dist[i].begin(); it != left_dist[i].end(); ++it){
-                    apta_node* node = *it;
-                    count_left += node->pos(a);
-                }
-                for(state_set::iterator it = right_dist[i].begin(); it != right_dist[i].end(); ++it){
-                    apta_node* node = *it;
-                    count_right += node->pos(a);
-                }
-                if(count_left > 0 || count_right > 0){
-                    double gamma = ((double)count_left / (double)total_left) - ((double)count_right / (double)total_right);
-                    if(gamma < 0.0) gamma = -gamma;
-                    distance += gamma;
-                }
+            if(left->source != 0 && right->source != 0 && left->source->find() == right->source->find()) diff = diff / 2.0;
+            distance += 5.0 - diff;
+            
+            observed = (double)count_right;
+            expected = (double)total_right * ((double)(count_left+count_right) / ((double)total_left + total_right));
+            diff = observed - expected;
+            if(diff < 0.0) diff = - diff;
+            if (diff > 5.0){
+                //cerr << diff << " " << observed << " " << expected << " " << count_left << "/" << total_left << " " << count_right << "/" << total_right << endl;
+                return -1;
             }
+            if(left->source != 0 && right->source != 0 && left->source->find() == right->source->find()) diff = diff / 2.0;
+            distance += 5.0 - diff;
         }
     }
     
-    if(left->source != 0 && right->source != 0 && left->source->find() == right->source->find()) distance = distance / 2;
+    //cerr << "dist: " << distance << endl;
     
-    //cerr << "passed: " << tests_passed << "  failed: " << tests_failed << endl;
-    
-    if(tests_failed == 0)
-        return 100 * ((double)merger->aut->max_depth - distance);
-    return -1;
+    return 100.0 * distance;
 };
 
 void series_driven::initialize(state_merger *merger){
