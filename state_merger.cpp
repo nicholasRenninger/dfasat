@@ -38,19 +38,28 @@ apta::apta(ifstream &input_stream){
             vector<int> event;
             string tuple;
             input_stream >> tuple;
+            std::stringstream lineStream;
+            lineStream.str(tuple);
+            string cell;
+            string event_string;
+            if(std::getline(lineStream,cell,','))
+            {
+                event_string = cell;
+                event.push_back(stoi(cell));
+            }
+            int occ;
+            if(std::getline(lineStream,cell,','))
+            {
+                occ = stoi(cell);
+            }
+            tuple = event_string;
             if(seen.find(tuple) == seen.end()){
-                std::stringstream lineStream;
-                lineStream.str(tuple);
-                string cell;
-                while(std::getline(lineStream,cell,','))
-                {
-                    event.push_back(stoi(cell));
-                }
                 alphabet[num_alph] = event;
                 seen[tuple] = num_alph;
                 num_alph++;
             }
             int c = seen[tuple];
+            //cerr << tuple << " " << occ << endl;
             if(node->child(c) == 0){
                 apta_node* next_node = new apta_node();
                 node->children[c] = next_node;
@@ -74,6 +83,7 @@ apta::apta(ifstream &input_stream){
                     node->rejecting_paths++;
                 }
             }
+            node->occs.push_front(occ);
             node = node->child(c);
         }
         if(depth > max_depth)
@@ -251,6 +261,11 @@ void state_merger::merge(apta_node* left, apta_node* right){
     left->conflicts.splice(left->conflicts.end(), right->conflicts);
     ++(right->merge_point);
   
+    right->occ_merge_point = left->occs.end();
+    --(right->occ_merge_point);
+    left->occs.splice(left->occs.end(), right->occs);
+    ++(right->occ_merge_point);
+
     for(num_map::iterator it = right->num_pos.begin();it != right->num_pos.end(); ++it){
         left->num_pos[(*it).first] = left->pos((*it).first) + (*it).second;
     }
@@ -341,6 +356,7 @@ void state_merger::undo_merge(apta_node* left, apta_node* right){
     }
     
     right->conflicts.splice(right->conflicts.begin(), left->conflicts, right->merge_point, left->conflicts.end());
+    right->occs.splice(right->occs.begin(), left->occs, right->occ_merge_point, left->occs.end());
 
     right->representative = 0;
 }
@@ -442,12 +458,27 @@ void state_merger::todot(FILE* output){
     fprintf(output,"\t\tI -> %i;\n", aut->root->find()->number);
     for(state_set::iterator it = red_states.begin(); it != red_states.end(); ++it){
         apta_node* n = *it;
+        
+        
+        double error = 0.0;
+        double mean = 0.0;
+        
+        for(int_list::iterator it = n->occs.begin(); it != n->occs.end(); ++it){
+             mean = mean + (double)*it;
+        }
+        mean = mean / (double)n->occs.size();
+        
+        for(int_list::iterator it = n->occs.begin(); it != n->occs.end(); ++it){
+            error = error + ((mean - (double)*it)*(mean - (double)*it));
+        }
+        error = error / (double)n->occs.size();
+        
         if(n->num_accepting != 0)
-            fprintf(output,"\t%i [shape=doublecircle label=\"[%i:%i]\"];\n", n->number, n->num_accepting + n->accepting_paths, n->num_rejecting + n->rejecting_paths);
+            fprintf(output,"\t%i [shape=doublecircle label=\"\n%.3f\n%.3f\n%i\"];\n", n->number, mean, error, (int)n->occs.size());
         else if(n->num_rejecting != 0)
-            fprintf(output,"\t%i [shape=Mcircle label=\"[%i:%i]\"];\n", n->number, n->num_accepting + n->accepting_paths, n->num_rejecting + n->rejecting_paths);
+            fprintf(output,"\t%i [shape=Mcircle label=\"\n%.3f\n%.3f\n%i\"];\n", n->number, mean, error, (int)n->occs.size());
         else
-            fprintf(output,"\t%i [shape=circle label=\"[%i:%i]\"];\n", n->number, n->num_accepting + n->accepting_paths, n->num_rejecting + n->rejecting_paths);
+            fprintf(output,"\t%i [shape=circle label=\"\n%.3f\n%.3f\n%i\"];\n", n->number, mean, error, (int)n->occs.size());
         state_set childnodes;
         set<int> sinks;
         for(int i = 0; i < alphabet_size; ++i){

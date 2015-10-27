@@ -66,8 +66,8 @@ int get_event_type(apta_node* node){
 int sink_type(apta_node* node){
     if(!USE_SINKS) return -1;
 
-    if (is_single_event_sink(node)) return get_event_type(node);
-    return -1;
+    //if (is_single_event_sink(node)) return get_event_type(node);
+    //return -1;
 
     if (is_low_count_sink(node)) return 0;
     return -1;
@@ -80,7 +80,7 @@ int sink_type(apta_node* node){
 bool sink_consistent(apta_node* node, int type){
     if(!USE_SINKS) return false;
     
-    return sink_type(node) == type;
+    //return sink_type(node) == type;
 
     if(type == 0) return is_low_count_sink(node);
     return true;
@@ -92,7 +92,7 @@ bool sink_consistent(apta_node* node, int type){
 
 int num_sink_types(){
     if(!USE_SINKS) return 0;
-    return alphabet_size;
+    //return alphabet_size;
     return 1;
     return 2;
 }
@@ -148,7 +148,7 @@ void evidence_driven::reset(state_merger *merger){
 };
 
 /* RPNI like, merges shallow states (of lowest depth) first */
-void depth_driven::update_score(state_merger *merger, apta_node* left, apta_node* right){
+/*void depth_driven::update_score(state_merger *merger, apta_node* left, apta_node* right){
   if(depth == 0) depth = max(left->depth, right->depth);
 };
 
@@ -159,12 +159,65 @@ int depth_driven::compute_score(state_merger *merger, apta_node* left, apta_node
 void depth_driven::reset(state_merger *merger ){
   inconsistency_found = false;
   depth = 0;
+};*/
+
+bool depth_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
+    if(evaluation_function::consistent(merger,left,right) == false) return false;
+    if(left->accepting_paths < STATE_COUNT || right->accepting_paths < STATE_COUNT) return true;
+    
+    double error_left = 0.0;
+    double error_right = 0.0;
+    double error_total = 0.0;
+    double mean_left = 0.0;
+    double mean_right = 0.0;
+    double mean_total = 0.0;
+
+    for(int_list::iterator it = left->occs.begin(); it != left->occs.end(); ++it){
+        mean_left = mean_left + (double)*it;
+    }
+    for(int_list::iterator it = right->occs.begin(); it != right->occs.end(); ++it){
+        mean_right = mean_right + (double)*it;
+    }
+    mean_total = (mean_left + mean_right) / ((double)left->occs.size() + (double)right->occs.size());
+    mean_right = mean_right / (double)right->occs.size();
+    mean_left = mean_left / (double)left->occs.size();
+
+    for(int_list::iterator it = left->occs.begin(); it != left->occs.end(); ++it){
+        error_left = error_left + ((mean_left - (double)*it)*(mean_left - (double)*it));
+        error_total = error_total + ((mean_total - (double)*it)*(mean_total - (double)*it));
+    }
+    for(int_list::iterator it = right->occs.begin(); it != right->occs.end(); ++it){
+        error_right = error_right + ((mean_right - (double)*it)*(mean_right - (double)*it));
+        error_total = error_total + ((mean_total - (double)*it)*(mean_total - (double)*it));
+    }
+    
+    error_right = error_right / ((double)left->occs.size() + (double)right->occs.size());
+    error_left = error_left / ((double)left->occs.size() + (double)right->occs.size());
+    error_total = (error_total) / ((double)left->occs.size() + (double)right->occs.size());
+
+//    if(error_total - (error_left + error_right) > CHECK_PARAMETER){ inconsistency_found = true; return false; }
+    if(mean_left - mean_right > CHECK_PARAMETER){ inconsistency_found = true; return false; }
+    if(mean_right - mean_left > CHECK_PARAMETER){ inconsistency_found = true; return false; }
+    
+    merge_error = merge_error + (error_total - (error_left + error_right));
+    
+    return true;
+};
+ 
+int depth_driven::compute_score(state_merger *merger, apta_node* left, apta_node* right){
+    //if(left->source != 0 && right->source != 0 && left->source->find() == right->source->find()) merge_error = merge_error / 2.0;
+    return 1000000.0 - merge_error;
+};
+ 
+void depth_driven::reset(state_merger *merger ){
+    inconsistency_found = false;
+    merge_error = 0.0;
 };
 
 /* Overlap driven, count overlap in positive transitions, used in Stamina winner */
 bool overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
-  if(evaluation_function::consistent(merger,left,right) == false) return false;
-if(left->accepting_paths >= STATE_COUNT){
+    if(evaluation_function::consistent(merger,left,right) == false) return false;
+    if(left->accepting_paths >= STATE_COUNT){
     for(num_map::iterator it = right->num_pos.begin();it != right->num_pos.end(); ++it){
       if((*it).second >= SYMBOL_COUNT & left->pos((*it).first) == 0){
         inconsistency_found = true;
