@@ -10,6 +10,7 @@
 #include "evaluate.h"
 #include "dfasat.h"
 #include <sstream>
+#include <iostream>
 
 /*
  * Input parameters, see 'man popt'
@@ -164,7 +165,8 @@ int main(int argc, const char *argv[]){
         
     EXTRA_STATES = param->extra_states;
     TARGET_REJECTING = param->target_rejecting;
-    
+ 
+   
     if (param->heuristic==1){
         evaluation_function *eval = new evaluation_function();
         merger = state_merger(eval,the_apta);

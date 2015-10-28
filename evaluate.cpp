@@ -172,21 +172,21 @@ bool depth_driven::consistent(state_merger *merger, apta_node* left, apta_node* 
     double mean_right = 0.0;
     double mean_total = 0.0;
 
-    for(int_list::iterator it = left->occs.begin(); it != left->occs.end(); ++it){
+    for(double_list::iterator it = left->occs.begin(); it != left->occs.end(); ++it){
         mean_left = mean_left + (double)*it;
     }
-    for(int_list::iterator it = right->occs.begin(); it != right->occs.end(); ++it){
+    for(double_list::iterator it = right->occs.begin(); it != right->occs.end(); ++it){
         mean_right = mean_right + (double)*it;
     }
     mean_total = (mean_left + mean_right) / ((double)left->occs.size() + (double)right->occs.size());
     mean_right = mean_right / (double)right->occs.size();
     mean_left = mean_left / (double)left->occs.size();
 
-    for(int_list::iterator it = left->occs.begin(); it != left->occs.end(); ++it){
+    for(double_list::iterator it = left->occs.begin(); it != left->occs.end(); ++it){
         error_left = error_left + ((mean_left - (double)*it)*(mean_left - (double)*it));
         error_total = error_total + ((mean_total - (double)*it)*(mean_total - (double)*it));
     }
-    for(int_list::iterator it = right->occs.begin(); it != right->occs.end(); ++it){
+    for(double_list::iterator it = right->occs.begin(); it != right->occs.end(); ++it){
         error_right = error_right + ((mean_right - (double)*it)*(mean_right - (double)*it));
         error_total = error_total + ((mean_total - (double)*it)*(mean_total - (double)*it));
     }

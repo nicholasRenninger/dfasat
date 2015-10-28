@@ -33,6 +33,8 @@ typedef multimap<int, pair<apta_node*, apta_node*> > merge_map;
 typedef pair<apta_node*, apta_node*> merge_pair;
 typedef list<apta_node*> node_list;
 typedef list<int> int_list;
+typedef list<double> double_list;
+
 typedef map<int, apta_node*> child_map;
 typedef map<int, int> num_map;
 
@@ -95,8 +97,8 @@ public:
     int accepting_paths;
     int rejecting_paths;
     
-	int_list occs;
-    int_list::iterator occ_merge_point;
+	double_list occs;
+    double_list::iterator occ_merge_point;
 
 	node_list conflicts;
     node_list::iterator merge_point;

@@ -47,10 +47,10 @@ apta::apta(ifstream &input_stream){
                 event_string = cell;
                 event.push_back(stoi(cell));
             }
-            int occ;
+            double occ;
             if(std::getline(lineStream,cell,','))
             {
-                occ = stoi(cell);
+                occ = std::stod(cell);
             }
             tuple = event_string;
             if(seen.find(tuple) == seen.end()){
@@ -463,12 +463,12 @@ void state_merger::todot(FILE* output){
         double error = 0.0;
         double mean = 0.0;
         
-        for(int_list::iterator it = n->occs.begin(); it != n->occs.end(); ++it){
+        for(double_list::iterator it = n->occs.begin(); it != n->occs.end(); ++it){
              mean = mean + (double)*it;
         }
         mean = mean / (double)n->occs.size();
         
-        for(int_list::iterator it = n->occs.begin(); it != n->occs.end(); ++it){
+        for(double_list::iterator it = n->occs.begin(); it != n->occs.end(); ++it){
             error = error + ((mean - (double)*it)*(mean - (double)*it));
         }
         error = error / (double)n->occs.size();
