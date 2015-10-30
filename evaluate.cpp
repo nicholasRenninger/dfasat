@@ -164,7 +164,34 @@ void depth_driven::reset(state_merger *merger ){
 bool depth_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
     if(evaluation_function::consistent(merger,left,right) == false) return false;
     if(left->accepting_paths < STATE_COUNT || right->accepting_paths < STATE_COUNT) return true;
+   
+
+  
+ 
+    double max_left = -1;
+    double max_right =-1;
+    int left_symbol = -1;
+    int right_symbol = -1;
     
+    for(int i = 0; i < alphabet_size; ++i){
+      
+      
+      if( (double)left->pos(i) > max_left ) {
+        max_left = (double)left->pos(i);
+        left_symbol = i;
+      }
+
+      if ((double)right->pos(i) > max_right) {
+        max_right = (double)right->pos(i);
+        right_symbol = i;
+      }
+    }
+    
+    if(left_symbol != right_symbol) {
+        inconsistency_found = true; 
+	return false;
+    }
+  
     double error_left = 0.0;
     double error_right = 0.0;
     double error_total = 0.0;
@@ -206,7 +233,7 @@ bool depth_driven::consistent(state_merger *merger, apta_node* left, apta_node* 
  
 int depth_driven::compute_score(state_merger *merger, apta_node* left, apta_node* right){
     //if(left->source != 0 && right->source != 0 && left->source->find() == right->source->find()) merge_error = merge_error / 2.0;
-    return 1000000.0 - merge_error;
+    return 1000.0 - 100000.0*merge_error;
 };
  
 void depth_driven::reset(state_merger *merger ){
@@ -282,7 +309,32 @@ void overlap_driven::reset(state_merger *merger){
 bool series_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
   if(evaluation_function::consistent(merger,left,right) == false) return false;
   if(left->depth != right->depth){ inconsistency_found = true; return false; }
-  
+ 
+    double max_left = -1;
+    double max_right =-1;
+    int left_symbol = -1;
+    int right_symbol = -1;
+
+    for(int i = 0; i < alphabet_size; ++i){
+
+
+      if( (double)left->pos(i) > max_left ) {
+        max_left = (double)left->pos(i);
+        left_symbol = i;
+      }
+
+      if ((double)right->pos(i) > max_right) {
+        max_right = (double)right->pos(i);
+        right_symbol = i;
+      }
+    }
+
+    if(left_symbol != right_symbol) {
+        inconsistency_found = true;
+        return false;
+    }
+
+/*
   int count_left = left->accepting_paths;
   int count_right = right->accepting_paths;
   
@@ -304,7 +356,7 @@ bool series_driven::consistent(state_merger *merger, apta_node* left, apta_node*
   if (diff > 5.0){
     inconsistency_found = true; return false;
   }
-
+*/
   return true;
 };
 
