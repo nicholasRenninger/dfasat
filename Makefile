@@ -6,6 +6,8 @@ LFLAGS 	= 	-std=c++11 -L/opt/local/lib -I/opt/local/include -I./lib -lm -lpopt -
 EVALFILES := $(wildcard evaluation/*.cpp)
 EVALOBJS := $(addprefix evaluation/,$(notdir $(EVALFILES:.cpp=.o)))
 
+.PHONY: all clean
+
 all: dfasat
 
 debug:
