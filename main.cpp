@@ -15,6 +15,10 @@
 #include "evaluation_factory.h"
 #include <string>
 
+// to be removed
+//#include "evaluation/overlap-driven.h"
+#include "evaluation/series-driven.h"
+
 /*
  * Input parameters, see 'man popt'
  */
@@ -26,6 +30,7 @@ public:
     const char* dfa_file;
     const char* dot_file;
     const char* sat_program;
+    const char* hName;
     int tries;
     int sinkson;
     int seed;
@@ -52,6 +57,7 @@ public:
 
 parameters::parameters(){
     dot_file = "dfa";
+    hName = "default";
     tries = 100;
     sinkson = 1;
     seed = 12345678;
@@ -85,6 +91,7 @@ int main(int argc, const char *argv[]){
         { "version", 0, POPT_ARG_NONE, NULL, 1, "Display version information", NULL },
         { "seed", 's', POPT_ARG_INT, &(param->seed), 's', "Seed for random merge heuristic; default=12345678", "integer" },
         { "output file name", 'o', POPT_ARG_STRING, &(param->dot_file), 'o', "The filename in which to store the learned DFAs in .dot and .aut format, default: \"dfa\".", "string" },
+	{ "heuristic-name", 'q', POPT_ARG_STRING, &(param->hName), 'q', "Name of the merge heurstic to use; will default back on -p flag if not specified.", "string" },
         { "runs", 'n', POPT_ARG_INT, &(param->tries), 'n', "Number of DFASAT runs/iterations; default=100", "integer" },
         {"sink states", 'i', POPT_ARG_INT, &(param->sinkson), 'i', "Set to 1 to use sink states, 0 to consider all states", "integer"},
         { "apta bound", 'b', POPT_ARG_INT, &(param->apta_bound), 'b', "Maximum number of remaining states in the partially learned DFA before starting the SAT search process. The higher this value, the larger the problem sent to the SAT solver; default=2000", "integer" },
@@ -170,8 +177,17 @@ int main(int argc, const char *argv[]){
         
     EXTRA_STATES = param->extra_states;
     TARGET_REJECTING = param->target_rejecting;
- 
-   
+
+    evaluation_function *eval;
+
+    try {
+       eval = (DerivedRegister<evaluation_function>::getMap())->at(param->hName)();
+       std::cout << "Using heuristic " << param->hName << std::endl;
+       merger = state_merger(eval,the_apta);
+
+    } catch(const std::out_of_range& oor ) {
+       std::cerr << "No named heuristic found, defaulting back on -p flag" << std::endl;
+     
     if (param->heuristic==1){
         evaluation_function *eval = new evaluation_function();
         /*evaluation_function *eval = (DerivedRegister<evaluation_function>::getMap())->at(std::string("overlap_driven", 14))();
@@ -218,7 +234,7 @@ int main(int argc, const char *argv[]){
         metric_driven *eval = new metric_driven();
         merger = state_merger(eval,the_apta);
     }
-	
+}	
 	/* end addition */ 
 	
     if(param->method == 1) GREEDY_METHOD = RANDOMG;

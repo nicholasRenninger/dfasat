@@ -7,6 +7,10 @@
 #include <stdio.h>
 #include <gsl/gsl_cdf.h>
 
+#include "series-driven.h"
+
+DerivedRegister<series_driven> series_driven::reg("series-driven");
+
 /* Series driven, like overlap, but requires merges to be of the same depth */
 bool series_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
   if(evaluation_function::consistent(merger,left,right) == false) return false;

@@ -107,31 +107,6 @@ public:
   virtual bool compute_consistency(state_merger *merger, apta_node* left, apta_node* right);
 };
 
-class overlap_driven: public evaluation_function{
-public:
-  int overlap;
-  
-  virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
-  virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
-  virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
-  virtual void reset(state_merger *merger);
-  virtual bool compute_consistency(state_merger *merger, apta_node* left, apta_node* right);
-};
-
-class series_driven: public overlap_driven{
-  virtual void score_right(apta_node* right, int depth);
-  virtual void score_left(apta_node* left, int depth);
-
-public:
-  vector< state_set > left_dist;
-  vector< state_set > right_dist;
-
-  virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
-  virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
-  virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
-  virtual void initialize(state_merger *);
-  virtual void reset(state_merger *merger);
-};
 
 /* metric driven merging added for netflow by chrham */
 class metric_driven: public evaluation_function{
