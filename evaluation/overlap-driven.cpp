@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include <gsl/gsl_cdf.h>
 
+
+DerivedRegister<evaluation_function> evaluation_function::reg("overlap_driven");
+
 /* Overlap driven, count overlap in positive transitions, used in Stamina winner */
 bool overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
     if(evaluation_function::consistent(merger,left,right) == false) return false;

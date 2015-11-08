@@ -2,6 +2,7 @@
  * The DFASAT main file, runs all the routines on an input file
  */
 
+
 #include <stdlib.h>
 //#include <malloc.h>
 #include <popt.h>
@@ -11,10 +12,14 @@
 #include "dfasat.h"
 #include <sstream>
 #include <iostream>
+#include "evaluation_factory.h"
+#include <string>
 
 /*
  * Input parameters, see 'man popt'
  */
+
+// map_type* BaseFactory::map = NULL;
 
 class parameters{
 public:
@@ -169,7 +174,11 @@ int main(int argc, const char *argv[]){
    
     if (param->heuristic==1){
         evaluation_function *eval = new evaluation_function();
-        merger = state_merger(eval,the_apta);
+        /*evaluation_function *eval = (DerivedRegister<evaluation_function>::getMap())->at(std::string("overlap_driven", 14))();
+        if(eval == NULL) {
+            return 1;
+        } this needs a try catch block for out of index */ 
+        merger = state_merger(eval ,the_apta);
     }
     if (param->heuristic==2){
         evidence_driven *eval = new evidence_driven();

@@ -1,4 +1,3 @@
-
 #ifndef _EVALUATE_H_
 #define _EVALUATE_H_
 
@@ -7,6 +6,7 @@
 #include <list>
 #include <map>
 
+#include "evaluation_factory.h"
 #include "state_merger.h"
 
 using namespace std;
@@ -27,6 +27,7 @@ extern float CHECK_PARAMETER;
 extern bool USE_SINKS;
 extern float LOWER_BOUND;
 
+
 /* Return a sink type, or -1 if no sink 
  * Sinks are special states that optionally are not considered as merge candidates, 
  * and are optionally merged into one (for every type) before starting exact solving */
@@ -34,8 +35,13 @@ int sink_type(apta_node* node);
 bool sink_consistent(apta_node* node, int type);
 int num_sink_types();
 
-class evaluation_function{
+class evaluation_function  {
+
+protected:
+  static DerivedRegister<evaluation_function> reg;
+
 public:
+
   int num_merges;
   bool inconsistency_found;
   

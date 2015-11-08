@@ -1,5 +1,6 @@
 #include "state_merger.h"
 #include "evaluate.h"
+#include "evaluation_factory.h"
 #include <stdlib.h>
 #include <math.h>
 #include <vector>
