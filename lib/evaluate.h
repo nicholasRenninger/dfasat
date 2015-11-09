@@ -28,6 +28,12 @@ extern bool USE_SINKS;
 extern float LOWER_BOUND;
 
 
+#define REGISTER_DEC_TYPE(NAME) \
+    static DerivedRegister<NAME> reg
+
+#define REGISTER_DEF_TYPE(NAME) \
+    DerivedRegister<NAME> NAME::reg(#NAME)
+
 /* Return a sink type, or -1 if no sink 
  * Sinks are special states that optionally are not considered as merge candidates, 
  * and are optionally merged into one (for every type) before starting exact solving */
