@@ -15,9 +15,10 @@
 #include "evaluation_factory.h"
 #include <string>
 
-// to be removed
-//#include "evaluation/overlap-driven.h"
-#include "evaluation/series-driven.h"
+// this file is generaterated by collector.sh
+// during make, so contributors don't have to
+// touch anything than their own files
+#include "evaluators.h"
 
 /*
  * Input parameters, see 'man popt'

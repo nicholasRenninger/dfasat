@@ -1,3 +1,6 @@
+#ifndef __SERIESDRIVEN__
+#define __SERIESDRIVEN__
+
 #include "evaluate.h"
 #include "overlap-driven.h"
 
@@ -19,4 +22,4 @@ public:
   virtual void reset(state_merger *merger);
 };
 
-
+#endif

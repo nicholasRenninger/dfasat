@@ -7,6 +7,10 @@
 #include <stdio.h>
 #include <gsl/gsl_cdf.h>
 
+#include "metric-driven.h"
+
+DerivedRegister<metric_driven> metric_driven::reg("metric_driven");
+
 /* Metric driven merging, addition by chrham */
 bool metric_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
   if(evaluation_function::consistent(merger,left,right) == false) return false;

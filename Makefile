@@ -8,13 +8,16 @@ EVALOBJS := $(addprefix evaluation/,$(notdir $(EVALFILES:.cpp=.o)))
 
 .PHONY: all clean
 
-all: dfasat
+all: regen dfasat
+
+regen:
+	sh collector.sh
 
 debug:
 	$(CC) -g $(SOURCES) -o dfasat $(LFLAGS) $(LIBS)
 
 dfasat: $(EVALOBJS)
-	$(CC) $(CFLAGS) -o $@ $(SOURCES) $^ $(LFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES) $^ -I./ $(LFLAGS) $(LIBS)
 
 evaluation/%.o: evaluation/%.cpp
 	$(CC) -c -o $@ $< -I./lib $(LFLAGS) $(LIBS)
@@ -22,4 +25,3 @@ evaluation/%.o: evaluation/%.cpp
 
 clean:
 	rm -f dfasat ./evaluation/*.o
-

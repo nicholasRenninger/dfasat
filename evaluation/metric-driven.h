@@ -1,12 +1,12 @@
-#ifndef __OVERLAPDRIVEN__
-#define __OVERLAPDRIVEN__
+#ifndef __METRICDRIVEN__
+#define __METRICDRIVEN__
 
 #include "evaluate.h"
 
-class overlap_driven: public evaluation_function{
+class metric_driven: public evaluation_function{
 
 protected:
-  static DerivedRegister<overlap_driven> reg;
+  static DerivedRegister<metric_driven> reg;
 
 public:
   int overlap;
