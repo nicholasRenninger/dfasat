@@ -114,19 +114,6 @@ public:
 };
 
 
-/* metric driven merging added for netflow by chrham */
-class metric_driven: public evaluation_function{
-public:
-  int overlap;
-  
-  virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
-  virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
-  virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
-  virtual void reset(state_merger *merger);
-  virtual bool compute_consistency(state_merger *merger, apta_node* left, apta_node* right);
-};
-/* end addition */
-
 class alergia: public depth_driven{
 public:
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
