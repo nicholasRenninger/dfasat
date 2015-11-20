@@ -187,14 +187,10 @@ int main(int argc, const char *argv[]){
        merger = state_merger(eval,the_apta);
 
     } catch(const std::out_of_range& oor ) {
-       std::cerr << "No named heuristic found, defaulting back on -p flag" << std::endl;
+       std::cerr << "No named heuristic found, defaulting back on -h flag" << std::endl;
      
     if (param->heuristic==1){
-        evaluation_function *eval = new evaluation_function();
-        /*evaluation_function *eval = (DerivedRegister<evaluation_function>::getMap())->at(std::string("overlap_driven", 14))();
-        if(eval == NULL) {
-            return 1;
-        } this needs a try catch block for out of index */ 
+        evaluation_function *eval = new evaluation_function(); 
         merger = state_merger(eval ,the_apta);
     }
     if (param->heuristic==2){
@@ -228,15 +224,14 @@ int main(int argc, const char *argv[]){
     if (param->heuristic==9){
         kldistance *eval = new kldistance();
         merger = state_merger(eval,the_apta);
-    }
-   
+    }   
     /* metric driven merging - addition by chrham */
      if (param->heuristic==10){
         metric_driven *eval = new metric_driven();
         merger = state_merger(eval,the_apta);
     }
 }	
-	/* end addition */ 
+
 	
     if(param->method == 1) GREEDY_METHOD = RANDOMG;
     if(param->method == 2) GREEDY_METHOD = NORMALG;
