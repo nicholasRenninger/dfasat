@@ -9,13 +9,13 @@
 
 #include "series-driven.h"
 
-DerivedRegister<series_driven> series_driven::reg("series-driven");
+DerivedRegister<series_driven> series_driven::reg("series_driven");
 
 /* Series driven, like overlap, but requires merges to be of the same depth */
 bool series_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
   if(evaluation_function::consistent(merger,left,right) == false) return false;
   if(left->depth != right->depth){ inconsistency_found = true; return false; }
- 
+
     double max_left = -1;
     double max_right =-1;
     int left_symbol = -1;
@@ -43,7 +43,7 @@ bool series_driven::consistent(state_merger *merger, apta_node* left, apta_node*
 /*
   int count_left = left->accepting_paths;
   int count_right = right->accepting_paths;
-  
+
   int total_left = left->accepting_paths  + left->rejecting_paths;
   int total_right = right->accepting_paths + right->rejecting_paths;
 
@@ -54,7 +54,7 @@ bool series_driven::consistent(state_merger *merger, apta_node* left, apta_node*
   if (diff > 5.0){
     inconsistency_found = true; return false;
   }
-  
+
   observed = (double)count_right;
   expected = (double)total_right * ((double)(count_left+count_right) / ((double)total_left + total_right));
   diff = observed - expected;
@@ -98,17 +98,17 @@ int series_driven::compute_score(state_merger *merger, apta_node* left, apta_nod
     if(left->depth != right->depth){ return -1; }
     score_right(right,0);
     score_left(left,0);
-    
+
     int tests_passed = 0;
     int tests_failed = 0;
-    
+
     double distance = 0.0;
     double gamma;
-    
+
     int num_tests = 0;
 
     for(int i = 0; i < merger->aut->max_depth; ++i){
-  
+
         for(int a = 0; a < alphabet_size; ++a){
             int count_left = 0;
             int count_right = 0;
@@ -124,9 +124,9 @@ int series_driven::compute_score(state_merger *merger, apta_node* left, apta_nod
                 count_right += node->pos(a) + node->neg(a);
                 total_right += node->accepting_paths + node->rejecting_paths;
             }
-            
+
             if(total_left == 0 || total_right == 0) continue;
-            
+
             double observed = (double)count_left;
             double expected = (double)total_left * ((double)(count_left+count_right) / ((double)total_left + total_right));
             double diff = observed - expected;
@@ -137,7 +137,7 @@ int series_driven::compute_score(state_merger *merger, apta_node* left, apta_nod
             }
             if(left->source != 0 && right->source != 0 && left->source->find() == right->source->find()) diff = diff / 2.0;
             distance += 5.0 - diff;
-            
+
             observed = (double)count_right;
             expected = (double)total_right * ((double)(count_left+count_right) / ((double)total_left + total_right));
             diff = observed - expected;
@@ -150,9 +150,9 @@ int series_driven::compute_score(state_merger *merger, apta_node* left, apta_nod
             distance += 5.0 - diff;
         }
     }
-    
+
     //cerr << "dist: " << distance << endl;
-    
+
     return 100.0 * distance;
 };
 
@@ -174,4 +174,3 @@ void series_driven::reset(state_merger *merger){
   inconsistency_found = false;
   overlap = 0;
 };
-

@@ -1,5 +1,3 @@
-#include "state_merger.h"
-#include "evaluate.h"
 #include <stdlib.h>
 #include <math.h>
 #include <vector>
@@ -7,15 +5,22 @@
 #include <stdio.h>
 #include <gsl/gsl_cdf.h>
 
+#include "state_merger.h"
+#include "evaluate.h"
+#include "depth-driven.h"
+#include "alergia.h"
+
+REGISTER_DEF_TYPE(alergia);
+
 /* ALERGIA, consistency based on Hoeffding bound, merges depth driven */
 bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right){
   if(depth_driven::consistent(merger,left,right) == false) return false;
-  
+
   if(left->accepting_paths >= STATE_COUNT && right->accepting_paths >= STATE_COUNT){
-    double bound = sqrt(1.0 / (double)left->accepting_paths) 
+    double bound = sqrt(1.0 / (double)left->accepting_paths)
                  + sqrt(1.0 / (double)right->accepting_paths);
     bound = bound * sqrt(0.5 * log(2.0 / CHECK_PARAMETER));
-    
+
     for(int i = 0; i < alphabet_size; ++i){
       if(left->pos(i) >= SYMBOL_COUNT || right->pos(i) >= SYMBOL_COUNT){
         double gamma = 0.0;
@@ -32,5 +37,3 @@ bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right
   }
   return true;
 };
-
-

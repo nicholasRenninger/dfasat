@@ -1,11 +1,15 @@
-#include "state_merger.h"
-#include "evaluate.h"
 #include <stdlib.h>
 #include <math.h>
 #include <vector>
 #include <map>
 #include <stdio.h>
 #include <gsl/gsl_cdf.h>
+
+#include "state_merger.h"
+#include "evaluate.h"
+#include "evidence-driven.h"
+
+REGISTER_DEF_TYPE(evidence_driven);
 
 /* Evidence driven state merging, count number of pos-pos and neg-neg merges */
 void evidence_driven::update_score(state_merger *merger, apta_node* left, apta_node* right){
