@@ -16,11 +16,16 @@ Run ./dfasat --help to get help.
 
 Example:
 
-./dfasat -h 4 inputfile "./lingeling"
+$ ./dfasat -h 4 inputfile "./lingeling"
 
 runs DFASAT using an overlap-driven merge heuristic as in the Stamina paper on the input file "inputfile" and uses lingeling as a SAT solver.
 
 The thresholds for relevance of states and symbols can be adjusted using -t and -y.
+
+You can also access the evaluation heuristics using the -q flag
+
+$ ./dfasat -q mse_error inputfile "./lingeling"
+
 
 ### Output files ###
 
@@ -38,9 +43,10 @@ after installing dot from graphviz.
 
 ### Contribution guidelines ###
 
-* fork and implement
-
+* Fork and implement, request pulls.
+* You can find sample evaluation files in ./evaluation. Make sure to REGISTER your own file to be able to access it via the -q flag.
 
 ### Who do I talk to? ###
 
 * Sicco Verwer
+* one of his PhD students
