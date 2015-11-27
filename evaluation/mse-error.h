@@ -1,5 +1,5 @@
-#ifndef __DEPTHDRIVEN__
-#define __DEPTHDRIVEN__
+#ifndef __MSEERROR__
+#define __MSEERROR__
 
 #include "evaluate.h"
 

@@ -7,6 +7,7 @@
 #include <map>
 
 #include "evaluation_factory.h"
+#include "apta.h"
 #include "state_merger.h"
 
 using namespace std;
