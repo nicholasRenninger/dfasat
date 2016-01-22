@@ -24,7 +24,7 @@ apta::apta(ifstream &input_stream){
 
     for(int line = 0; line < num_words; line++){
         apta_node* node = root;
-        root->depth = 1;
+        root->depth = 0;
         int positive;
         int length;
         input_stream >> positive >> length;
