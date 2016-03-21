@@ -15,55 +15,90 @@ DerivedRegister<series_driven> series_driven::reg("series_driven");
 bool series_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
   if(evaluation_function::consistent(merger,left,right) == false) return false;
   if(left->depth != right->depth){ inconsistency_found = true; return false; }
+    
+  int total_left = left->accepting_paths + left->rejecting_paths;
+  int total_right = right->accepting_paths + right->rejecting_paths;
+  
+  //if(total_left < STATE_COUNT || total_right < STATE_COUNT){
+    //if(left->source != 0 && right->source != 0 && left->source->find() != right->source->find())
+    //    { inconsistency_found = true; return false; }
+    //return true;
+  //}
 
-    double max_left = -1;
-    double max_right =-1;
-    int left_symbol = -1;
-    int right_symbol = -1;
+  //if(total_left >= STATE_COUNT && total_right >= STATE_COUNT){
+    double bound = sqrt(1.0 / (double)(total_left))
+                 + sqrt(1.0 / (double)(total_right));
+    bound = bound * sqrt(0.5 * log(2.0 / CHECK_PARAMETER));
 
     for(int i = 0; i < alphabet_size; ++i){
-
-
-      if( (double)left->pos(i) > max_left ) {
-        max_left = (double)left->pos(i);
-        left_symbol = i;
-      }
-
-      if ((double)right->pos(i) > max_right) {
-        max_right = (double)right->pos(i);
-        right_symbol = i;
-      }
+        int count_left = left->pos(i) + left->neg(i);
+        int count_right = right->pos(i) + right->neg(i);
+        if(count_left >= SYMBOL_COUNT && count_right == 0){ inconsistency_found = true; return false; }
+        if(count_right >= SYMBOL_COUNT && count_left == 0){ inconsistency_found = true; return false; }
+        
+        /*double gamma = 0.0;
+          gamma = (double)(count_left) / (double)(total_left)
+                - (double)(count_right) / (double)(total_right);
+        if(gamma < 0) gamma = -gamma;
+        //cerr << gamma << " " << count_left << "," << total_left << " " << count_right << "," << total_right << endl;
+        if(total_left >= STATE_COUNT && total_right >= STATE_COUNT){
+        if(count_left >= SYMBOL_COUNT || count_right >= SYMBOL_COUNT){
+        if(gamma > bound){ inconsistency_found = true; return false; }}}
+      //}*/
     }
+  //}
+  
+    //return true;
+    
+    //return true;
 
-    if(left_symbol != right_symbol) {
+    //if(left->occs.size() == 0 && right->occs.size() != 0){ inconsistency_found = true; return false; }
+    //if(left->occs.size() != 0 && right->occs.size() == 0){ inconsistency_found = true; return false; }
+    
+    double left_size = 0.0;
+    double right_size = 0.0;
+    double mean_left = 0.0;
+    double mean_right = 0.0;
+    double mean_total = 0.0;
+            
+    apta_node* node = left;
+    for(double_list::iterator it2 = node->occs.begin(); it2 != node->occs.end(); ++it2){
+        mean_left = mean_left + (double)*it2;
+    }
+    left_size = left_size + node->occs.size();
+    
+    node = right;
+    for(double_list::iterator it2 = node->occs.begin(); it2 != node->occs.end(); ++it2){
+        mean_right = mean_right + (double)*it2;
+    }
+    right_size = right_size + node->occs.size();
+    
+    if(left_size == 0 || right_size == 0) return true;
+
+    mean_total = (mean_left + mean_right) / (left_size + right_size);
+    mean_right = mean_right / right_size;
+    mean_left = mean_left / left_size;
+            
+    //if(left_size < STATE_COUNT || right_size < STATE_COUNT) return true;
+
+    if (mean_left - mean_right > 2.5 or mean_right - mean_left > 2.5){
         inconsistency_found = true;
         return false;
     }
 
-/*
-  int count_left = left->accepting_paths;
-  int count_right = right->accepting_paths;
-
-  int total_left = left->accepting_paths  + left->rejecting_paths;
-  int total_right = right->accepting_paths + right->rejecting_paths;
-
-  double observed = (double)count_left;
-  double expected = (double)total_left * ((double)(count_left+count_right) / ((double)total_left + total_right));
-  double diff = observed - expected;
-  if(diff < 0.0) diff = - diff;
-  if (diff > 5.0){
-    inconsistency_found = true; return false;
-  }
-
-  observed = (double)count_right;
-  expected = (double)total_right * ((double)(count_left+count_right) / ((double)total_left + total_right));
-  diff = observed - expected;
-  if(diff < 0.0) diff = - diff;
-  if (diff > 5.0){
-    inconsistency_found = true; return false;
-  }
-*/
+    return true;
+    return true;
+    
   return true;
+  
+        for(int i = 0; i < alphabet_size; ++i){
+        if(merger->aut->alphabet[i][0] < 4) continue;
+        if(left->pos(i) != 0 && right->pos(i) == 0){ inconsistency_found = true; return false; }
+        if(left->pos(i) == 0 && right->pos(i) != 0){ inconsistency_found = true; return false; }
+        if(left->neg(i) != 0 && right->neg(i) == 0){ inconsistency_found = true; return false; }
+        if(left->neg(i) == 0 && right->neg(i) != 0){ inconsistency_found = true; return false; }
+    }
+
 };
 
 void series_driven::update_score(state_merger *merger, apta_node* left, apta_node* right){
@@ -96,6 +131,17 @@ void series_driven::score_left(apta_node* left, int depth){
 
 int series_driven::compute_score(state_merger *merger, apta_node* left, apta_node* right){
     if(left->depth != right->depth){ return -1; }
+    //if(left->occs.size() == 0){ return -1; }
+    //if(right->occs.size() == 0){ return -1; }
+    //if(left->occs.size() == 0 && right->occs.size() != 0){ return -1; }
+    //if(right->occs.size() == 0  && left->occs.size() != 0){ return -1; }
+
+    /*    if(left->pos(i) == 0 && right->pos(i) != 0){ inconsistency_found = true; return false; }
+        if(left->neg(i) != 0 && right->neg(i) == 0){ inconsistency_found = true; return false; }
+        if(left->neg(i) == 0 && right->neg(i) != 0){ inconsistency_found = true; return false; }
+    }*/
+
+
     score_right(right,0);
     score_left(left,0);
 
@@ -124,36 +170,135 @@ int series_driven::compute_score(state_merger *merger, apta_node* left, apta_nod
                 count_right += node->pos(a) + node->neg(a);
                 total_right += node->accepting_paths + node->rejecting_paths;
             }
+            //cerr << count_left << "," << total_left << " " << count_right << "," << total_right << endl;
 
             if(total_left == 0 || total_right == 0) continue;
+            //if(total_left < STATE_COUNT || total_right < STATE_COUNT) continue;
+            
 
+/*  //if(total_left >= STATE_COUNT && total_right >= STATE_COUNT){
+    double bound = sqrt(1.0 / (double)(total_left))
+                 + sqrt(1.0 / (double)(total_right));
+    bound = bound * sqrt(0.5 * log(2.0 / CHECK_PARAMETER));
+
+    //for(int i = 0; i < alphabet_size; ++i){
+      //if(count_left >= SYMBOL_COUNT || count_right >= SYMBOL_COUNT){
+        double gamma = 0.0;
+          gamma = (double)(count_left) / (double)(total_left)
+                - (double)(count_right) / (double)(total_right);
+        if(gamma < 0) gamma = -gamma;
+        //cerr << gamma << " " << count_left << "," << total_left << " " << count_right << "," << total_right << endl;
+        //if(total_left >= STATE_COUNT && total_right >= STATE_COUNT){
+        //if(count_left >= SYMBOL_COUNT || count_right >= SYMBOL_COUNT){
+        //if(gamma > bound){ inconsistency_found = true; return -1; }}}
+        distance = distance + gamma;
+      //}
+    }
+  }
+  return distance;*/
+  
+            //if((double)count_left / (double)total_left - (double)count_right / (double)total_right)
             double observed = (double)count_left;
             double expected = (double)total_left * ((double)(count_left+count_right) / ((double)total_left + total_right));
             double diff = observed - expected;
             if(diff < 0.0) diff = - diff;
-            if (diff > 5.0){
-                //cerr << diff << " " << observed << " " << expected << " " << count_left << "/" << total_left << " " << count_right << "/" << total_right << endl;
+
+            //if(observed != 0) cerr << i << " " << a << " " << diff << " " << observed << " " << expected << " " << count_left << "/" << total_left << " " << count_right << "/" << total_right << endl;
+            if (diff > 5){
+                inconsistency_found = true;
                 return -1;
             }
-            if(left->source != 0 && right->source != 0 && left->source->find() == right->source->find()) diff = diff / 2.0;
-            distance += 5.0 - diff;
+            //if(left->source != 0 && right->source != 0 && left->source->find() == right->source->find()) diff = diff / 2.0;
+            //distance += diff;
 
             observed = (double)count_right;
             expected = (double)total_right * ((double)(count_left+count_right) / ((double)total_left + total_right));
             diff = observed - expected;
             if(diff < 0.0) diff = - diff;
-            if (diff > 5.0){
-                //cerr << diff << " " << observed << " " << expected << " " << count_left << "/" << total_left << " " << count_right << "/" << total_right << endl;
+            if (diff > 5){
+                inconsistency_found = true;
                 return -1;
             }
-            if(left->source != 0 && right->source != 0 && left->source->find() == right->source->find()) diff = diff / 2.0;
-            distance += 5.0 - diff;
+            //if(left->source != 0 && right->source != 0 && left->source->find() == right->source->find()) diff = diff / 2.0;
+            distance += diff;
         }
     }
+    //return distance;
 
-    //cerr << "dist: " << distance << endl;
+    int symb_one = -1;
+    int symb_two = -1;
+    for(int i = 0; i < alphabet_size; ++i){
+        if(merger->aut->alphabet[i][0] == 0) symb_one = i;
+        if(merger->aut->alphabet[i][0] == 3) symb_two = i;
+    }
+    
+    double mse = 0.0;
+    
+    int i;
+    
+            double left_size = 0.0;
+            double right_size = 0.0;
+            double mean_left = 0.0;
+            double mean_right = 0.0;
+            double mean_total = 0.0;
+        
+            int left_one = 0;
+            int left_two = 0;
+            int right_one = 0;
+            int right_two = 0;
+            
+    for(i = 0; i < merger->aut->max_depth; ++i){
+            for(state_set::iterator it = left_dist[i].begin(); it != left_dist[i].end(); ++it){
+                apta_node* node = *it;
+                for(double_list::iterator it2 = node->occs.begin(); it2 != node->occs.end(); ++it2){
+                    mean_left = mean_left + (double)*it2;
+                }
+                left_size = left_size + node->occs.size();
+                left_one += node->pos(symb_one) + node->neg(symb_one);
+                left_two += node->pos(symb_two) + node->neg(symb_two);
+            }
+            
+            for(state_set::iterator it = right_dist[i].begin(); it != right_dist[i].end(); ++it){
+                apta_node* node = *it;
+                for(double_list::iterator it2 = node->occs.begin(); it2 != node->occs.end(); ++it2){
+                    mean_right = mean_right + (double)*it2;
+                }
+                right_size = right_size + node->occs.size();
+                right_one += node->pos(symb_one) + node->neg(symb_one);
+                right_two += node->pos(symb_two) + node->neg(symb_two);
+            }
+            
+            //if(left_one != 0 && right_two != 0){ inconsistency_found = true; return false; }
+            //if(left_two != 0 && right_one != 0){ inconsistency_found = true; return false; }
+    }
+    
+            if(left_size == 0 || right_size == 0) return 0;
 
-    return 100.0 * distance;
+            mean_total = (mean_left + mean_right) / (left_size + right_size);
+            mean_right = mean_right / right_size;
+            mean_left = mean_left / left_size;
+            
+            //if(left_size < STATE_COUNT || right_size < STATE_COUNT) continue;
+            mse = mse + ((mean_left - mean_right) * (mean_left - mean_right));
+
+            //if(left->source != 0 && right->source != 0 && left->source->find() == right->source->find()) continue;
+            //continue;
+        
+            //if (mean_left - mean_right > 3 or mean_right - mean_left > 3){
+            //    inconsistency_found = true;
+            //    return -1;
+            //}
+    //}
+    
+    return mse;
+    
+    mse = mse / ((double)i+1);
+    
+    //cerr << "mse:" << mse << endl;
+    //if(left->accepting_paths +  left->rejecting_paths < STATE_COUNT || right->accepting_paths +  right->rejecting_paths < STATE_COUNT)
+    //    return -1;
+    //if(left->source != 0 && right->source != 0 && left->source->find() == right->source->find()) mse = mse / 2.0;
+    return mse;
 };
 
 void series_driven::initialize(state_merger *merger){

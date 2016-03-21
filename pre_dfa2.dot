@@ -1,0 +1,480 @@
+digraph DFA {
+	0 [label="root" shape=box];
+		I -> 0;
+	0 [shape=circle label="
+nan
+nan
+0"];
+		0 -> 1 [label=" <2> [65:15]"];
+		0 -> 51 [label=" <1> [26:25]"];
+		0 -> 2053 [label=" <0> [2:2]"];
+	1 [shape=circle label="
+7.506
+0.972
+80"];
+		1 -> 2 [label=" <2> [62:13]"];
+		1 -> 368 [label=" <0> [1:2]"];
+		1 -> 235 [label=" <1> [2:0]"];
+	2 [shape=circle label="
+7.720
+0.802
+75"];
+		2 -> 3 [label=" <2> [49:5]"];
+		2 -> 143 [label=" <1> [13:8]"];
+	3 [shape=circle label="
+7.917
+1.322
+54"];
+	S3t0 [label="sink 0" shape=box];
+		3 -> S3t0 [label=" <2> [1:0] <1> [1:0]"];
+		3 -> 4 [label=" <0> [47:5]"];
+	4 [shape=circle label="
+nan
+nan
+0"];
+		4 -> 5 [label=" <0> [47:5]"];
+	5 [shape=circle label="
+nan
+nan
+0"];
+		5 -> 6 [label=" <0> [47:5]"];
+	6 [shape=circle label="
+nan
+nan
+0"];
+	S6t0 [label="sink 0" shape=box];
+		6 -> S6t0 [label=" <0> [0:1]"];
+		6 -> 7 [label=" <2> [47:4]"];
+	7 [shape=circle label="
+7.427
+0.583
+51"];
+		7 -> 8 [label=" <2> [38:0]"];
+		7 -> 547 [label=" <1> [9:4]"];
+	51 [shape=circle label="
+3.863
+1.383
+51"];
+		51 -> 52 [label=" <2> [25:17]"];
+		51 -> 80 [label=" <1> [1:6]"];
+		51 -> 1430 [label=" <0> [0:2]"];
+	52 [shape=circle label="
+7.190
+0.678
+42"];
+	S52t0 [label="sink 0" shape=box];
+		52 -> S52t0 [label=" <0> [0:1]"];
+		52 -> 53 [label=" <1> [12:16]"];
+		52 -> 306 [label=" <2> [13:0]"];
+	8 [shape=circle label="
+7.658
+1.396
+38"];
+	S8t0 [label="sink 0" shape=box];
+		8 -> S8t0 [label=" <0> [1:0]"];
+		8 -> 9 [label=" <2> [35:0]"];
+		8 -> 30 [label=" <1> [2:0]"];
+	9 [shape=circle label="
+8.229
+1.119
+35"];
+		9 -> 10 [label=" <2> [33:0]"];
+		9 -> 123 [label=" <1> [2:0]"];
+	10 [shape=circle label="
+7.318
+0.891
+33"];
+		10 -> 11 [label=" <0> [33:0]"];
+	11 [shape=circle label="
+nan
+nan
+0"];
+		11 -> 12 [label=" <0> [30:0]"];
+		11 -> 263 [label=" <2> [3:0]"];
+	12 [shape=circle label="
+nan
+nan
+0"];
+	S12t0 [label="sink 0" shape=box];
+		12 -> S12t0 [label=" <2> [1:0]"];
+		12 -> 13 [label=" <0> [29:0]"];
+	13 [shape=circle label="
+nan
+nan
+0"];
+	S13t0 [label="sink 0" shape=box];
+		13 -> S13t0 [label=" <0> [1:0]"];
+		13 -> 14 [label=" <2> [23:0]"];
+		13 -> 170 [label=" <1> [5:0]"];
+	53 [shape=circle label="
+3.929
+1.352
+28"];
+		53 -> 54 [label=" <0> [12:16]"];
+	54 [shape=circle label="
+nan
+nan
+0"];
+		54 -> 55 [label=" <1> [5:8]"];
+		54 -> 210 [label=" <0> [3:7]"];
+		54 -> 606 [label=" <2> [4:1]"];
+	14 [shape=circle label="
+7.674
+1.122
+23"];
+	S14t0 [label="sink 0" shape=box];
+		14 -> S14t0 [label=" <0> [1:0]"];
+		14 -> 108 [label=" <2> [22:0]"];
+	108 [shape=circle label="
+7.977
+1.011
+22"];
+		108 -> 458 [label=" <2> [19:0]"];
+		108 -> 109 [label=" <1> [3:0]"];
+	143 [shape=circle label="
+4.571
+0.769
+21"];
+		143 -> 144 [label=" <0> [13:8]"];
+	144 [shape=circle label="
+nan
+nan
+0"];
+		144 -> 145 [label=" <1> [7:4]"];
+		144 -> 281 [label=" <2> [5:2]"];
+		144 -> 1020 [label=" <0> [1:2]"];
+	458 [shape=circle label="
+7.789
+1.061
+19"];
+		458 -> 459 [label=" <0> [19:0]"];
+	459 [shape=circle label="
+nan
+nan
+0"];
+		459 -> 460 [label=" <0> [11:0]"];
+		459 -> 1370 [label=" <2> [8:0]"];
+	55 [shape=circle label="
+4.192
+0.867
+13"];
+	S55t0 [label="sink 0" shape=box];
+		55 -> S55t0 [label=" <0> [0:1]"];
+		55 -> 186 [label=" <1> [3:6]"];
+		55 -> 56 [label=" <2> [2:1]"];
+	306 [shape=circle label="
+6.808
+0.521
+13"];
+		306 -> 307 [label=" <0> [11:0]"];
+		306 -> 927 [label=" <2> [2:0]"];
+	547 [shape=circle label="
+4.192
+1.982
+13"];
+		547 -> 548 [label=" <2> [7:1]"];
+		547 -> 1171 [label=" <1> [2:3]"];
+	145 [shape=circle label="
+4.136
+0.777
+11"];
+		145 -> 146 [label=" <0> [7:4]"];
+	146 [shape=circle label="
+nan
+nan
+0"];
+	S146t0 [label="sink 0" shape=box];
+		146 -> S146t0 [label=" <0> [0:1]"];
+		146 -> 147 [label=" <2> [7:3]"];
+	307 [shape=circle label="
+nan
+nan
+0"];
+		307 -> 308 [label=" <0> [11:0]"];
+	460 [shape=circle label="
+nan
+nan
+0"];
+		460 -> 472 [label=" <0> [9:0]"];
+		460 -> 461 [label=" <2> [2:0]"];
+	147 [shape=circle label="
+6.850
+0.352
+10"];
+	S147t0 [label="sink 0" shape=box];
+		147 -> S147t0 [label=" <2> [1:0]"];
+		147 -> 148 [label=" <1> [5:1]"];
+		147 -> 1540 [label=" <0> [1:2]"];
+	472 [shape=circle label="
+nan
+nan
+0"];
+	S472t0 [label="sink 0" shape=box];
+		472 -> S472t0 [label=" <2> [1:0]"];
+		472 -> 473 [label=" <0> [8:0]"];
+	473 [shape=circle label="
+nan
+nan
+0"];
+	S473t0 [label="sink 0" shape=box];
+		473 -> S473t0 [label=" <2> [7:0] <1> [1:0]"];
+	548 [shape=circle label="
+8.375
+0.422
+8"];
+		548 -> 549 [label=" <2> [3:1]"];
+		548 -> 742 [label=" <1> [4:0]"];
+	170 [shape=circle label="
+4.600
+0.140
+5"];
+		170 -> 171 [label=" <2> [5:0]"];
+	1171 [shape=circle label="
+4.000
+0.000
+5"];
+	S1171t0 [label="sink 0" shape=box];
+		1171 -> S1171t0 [label=" <2> [0:1] <0> [0:1]"];
+		1171 -> 1172 [label=" <1> [2:1]"];
+	308 [shape=circle style=dotted label="[0:0]"];
+		308 -> 309 [label="<2> [6:0]" style=dotted];
+		308 -> 790 [label="<1> [5:0]" style=dotted];
+	210 [shape=circle style=dotted label="[0:0]"];
+		210 -> 673 [label="<2> [1:1]" style=dotted];
+		210 -> 697 [label="<0> [0:6]" style=dotted];
+		210 -> 211 [label="<1> [2:0]" style=dotted];
+	186 [shape=circle style=dotted label="[0:0]"];
+		186 -> 187 [label="<2> [3:5]" style=dotted];
+	187 [shape=circle style=dotted label="[0:0]"];
+		187 -> 188 [label="<0> [2:2]" style=dotted];
+		187 -> 1149 [label="<1> [1:3]" style=dotted];
+	1370 [shape=circle style=dotted label="[0:0]"];
+		1370 -> 1371 [label="<0> [8:0]" style=dotted];
+	1371 [shape=circle style=dotted label="[0:0]"];
+	80 [shape=circle style=dotted label="[0:0]"];
+		80 -> 81 [label="<1> [1:5]" style=dotted];
+	281 [shape=circle style=dotted label="[0:0]"];
+		281 -> 282 [label="<0> [5:2]" style=dotted];
+	282 [shape=circle style=dotted label="[0:0]"];
+		282 -> 396 [label="<2> [4:2]" style=dotted];
+	81 [shape=circle style=dotted label="[0:0]"];
+		81 -> 82 [label="<2> [1:2]" style=dotted];
+		81 -> 2272 [label="<0> [0:2]" style=dotted];
+	148 [shape=circle style=dotted label="[0:0]"];
+		148 -> 149 [label="<1> [4:1]" style=dotted];
+	309 [shape=circle style=dotted label="[0:0]"];
+		309 -> 310 [label="<2> [6:0]" style=dotted];
+	310 [shape=circle style=dotted label="[0:0]"];
+		310 -> 631 [label="<2> [2:0]" style=dotted];
+		310 -> 311 [label="<1> [4:0]" style=dotted];
+	396 [shape=circle style=dotted label="[0:0]"];
+		396 -> 397 [label="<2> [1:2]" style=dotted];
+		396 -> 1305 [label="<1> [2:0]" style=dotted];
+	697 [shape=circle style=dotted label="[0:0]"];
+		697 -> 698 [label="<2> [0:6]" style=dotted];
+	698 [shape=circle style=dotted label="[0:0]"];
+		698 -> 699 [label="<0> [0:6]" style=dotted];
+	699 [shape=circle style=dotted label="[0:0]"];
+		699 -> 700 [label="<1> [0:4]" style=dotted];
+	149 [shape=circle style=dotted label="[0:0]"];
+		149 -> 150 [label="<2> [2:0]" style=dotted];
+		149 -> 653 [label="<1> [2:1]" style=dotted];
+	171 [shape=circle style=dotted label="[0:0]"];
+		171 -> 172 [label="<2> [5:0]" style=dotted];
+	172 [shape=circle style=dotted label="[0:0]"];
+		172 -> 173 [label="<0> [5:0]" style=dotted];
+	173 [shape=circle style=dotted label="[0:0]"];
+		173 -> 1137 [label="<2> [3:0]" style=dotted];
+	606 [shape=circle style=dotted label="[0:0]"];
+		606 -> 1045 [label="<2> [2:0]" style=dotted];
+		606 -> 607 [label="<1> [2:1]" style=dotted];
+	790 [shape=circle style=dotted label="[0:0]"];
+		790 -> 791 [label="<2> [4:0]" style=dotted];
+	188 [shape=circle style=dotted label="[0:0]"];
+		188 -> 189 [label="<2> [2:0]" style=dotted];
+	311 [shape=circle style=dotted label="[0:0]"];
+		311 -> 312 [label="<2> [3:0]" style=dotted];
+	549 [shape=circle style=dotted label="[0:0]"];
+		549 -> 1272 [label="<2> [1:1]" style=dotted];
+		549 -> 550 [label="<1> [2:0]" style=dotted];
+	700 [shape=circle style=dotted label="[0:0]"];
+	742 [shape=circle style=dotted label="[0:0]"];
+		742 -> 743 [label="<2> [2:0]" style=dotted];
+	791 [shape=circle style=dotted label="[0:0]"];
+		791 -> 792 [label="<1> [3:0]" style=dotted];
+	1149 [shape=circle style=dotted label="[0:0]"];
+		1149 -> 1192 [label="<1> [0:3]" style=dotted];
+	2053 [shape=circle style=dotted label="[0:0]"];
+		2053 -> 2054 [label="<2> [1:1]" style=dotted];
+	56 [shape=circle style=dotted label="[0:0]"];
+		56 -> 57 [label="<2> [2:1]" style=dotted];
+	57 [shape=circle style=dotted label="[0:0]"];
+	82 [shape=circle style=dotted label="[0:0]"];
+		82 -> 83 [label="<1> [1:2]" style=dotted];
+	83 [shape=circle style=dotted label="[0:0]"];
+		83 -> 84 [label="<1> [1:1]" style=dotted];
+	109 [shape=circle style=dotted label="[0:0]"];
+		109 -> 110 [label="<0> [3:0]" style=dotted];
+	110 [shape=circle style=dotted label="[0:0]"];
+		110 -> 111 [label="<0> [3:0]" style=dotted];
+	111 [shape=circle style=dotted label="[0:0]"];
+		111 -> 112 [label="<2> [2:0]" style=dotted];
+	263 [shape=circle style=dotted label="[0:0]"];
+		263 -> 858 [label="<2> [2:0]" style=dotted];
+	312 [shape=circle style=dotted label="[0:0]"];
+		312 -> 313 [label="<2> [2:0]" style=dotted];
+	368 [shape=circle style=dotted label="[0:0]"];
+		368 -> 369 [label="<2> [1:1]" style=dotted];
+	397 [shape=circle style=dotted label="[0:0]"];
+		397 -> 398 [label="<1> [1:2]" style=dotted];
+	398 [shape=circle style=dotted label="[0:0]"];
+		398 -> 399 [label="<2> [1:1]" style=dotted];
+	607 [shape=circle style=dotted label="[0:0]"];
+		607 -> 608 [label="<2> [2:1]" style=dotted];
+	608 [shape=circle style=dotted label="[0:0]"];
+		608 -> 609 [label="<1> [1:1]" style=dotted];
+	653 [shape=circle style=dotted label="[0:0]"];
+		653 -> 1001 [label="<2> [2:0]" style=dotted];
+	792 [shape=circle style=dotted label="[0:0]"];
+		792 -> 793 [label="<1> [2:0]" style=dotted];
+	1020 [shape=circle style=dotted label="[0:0]"];
+		1020 -> 1021 [label="<0> [1:2]" style=dotted];
+	1021 [shape=circle style=dotted label="[0:0]"];
+		1021 -> 1022 [label="<2> [1:1]" style=dotted];
+	1137 [shape=circle style=dotted label="[0:0]"];
+		1137 -> 1138 [label="<0> [3:0]" style=dotted];
+	1138 [shape=circle style=dotted label="[0:0]"];
+		1138 -> 1139 [label="<2> [3:0]" style=dotted];
+	1139 [shape=circle style=dotted label="[0:0]"];
+		1139 -> 1140 [label="<0> [2:0]" style=dotted];
+	1172 [shape=circle style=dotted label="[0:0]"];
+		1172 -> 1173 [label="<1> [1:1]" style=dotted];
+	1192 [shape=circle style=dotted label="[0:0]"];
+		1192 -> 1193 [label="<1> [0:2]" style=dotted];
+	1540 [shape=circle style=dotted label="[0:0]"];
+	30 [shape=circle style=dotted label="[0:0]"];
+		30 -> 31 [label="<2> [2:0]" style=dotted];
+	31 [shape=circle style=dotted label="[0:0]"];
+		31 -> 32 [label="<0> [2:0]" style=dotted];
+	32 [shape=circle style=dotted label="[0:0]"];
+		32 -> 33 [label="<2> [2:0]" style=dotted];
+	33 [shape=circle style=dotted label="[0:0]"];
+		33 -> 34 [label="<0> [2:0]" style=dotted];
+	34 [shape=circle style=dotted label="[0:0]"];
+		34 -> 35 [label="<2> [2:0]" style=dotted];
+	35 [shape=circle style=dotted label="[0:0]"];
+		35 -> 36 [label="<2> [2:0]" style=dotted];
+	36 [shape=circle style=dotted label="[0:0]"];
+	84 [shape=circle style=dotted label="[0:0]"];
+		84 -> 85 [label="<2> [1:1]" style=dotted];
+	85 [shape=circle style=dotted label="[0:0]"];
+	112 [shape=circle style=dotted label="[0:0]"];
+		112 -> 113 [label="<0> [2:0]" style=dotted];
+	113 [shape=circle style=dotted label="[0:0]"];
+	123 [shape=circle style=dotted label="[0:0]"];
+		123 -> 124 [label="<0> [2:0]" style=dotted];
+	124 [shape=circle style=dotted label="[0:0]"];
+	150 [shape=circle style=dotted label="[0:0]"];
+	189 [shape=circle style=dotted label="[0:0]"];
+	211 [shape=circle style=dotted label="[0:0]"];
+		211 -> 212 [label="<2> [2:0]" style=dotted];
+	212 [shape=circle style=dotted label="[0:0]"];
+	235 [shape=circle style=dotted label="[0:0]"];
+		235 -> 236 [label="<1> [2:0]" style=dotted];
+	236 [shape=circle style=dotted label="[0:0]"];
+		236 -> 237 [label="<2> [2:0]" style=dotted];
+	237 [shape=circle style=dotted label="[0:0]"];
+	313 [shape=circle style=dotted label="[0:0]"];
+		313 -> 314 [label="<1> [2:0]" style=dotted];
+	314 [shape=circle style=dotted label="[0:0]"];
+		314 -> 315 [label="<0> [2:0]" style=dotted];
+	315 [shape=circle style=dotted label="[0:0]"];
+		315 -> 316 [label="<0> [2:0]" style=dotted];
+	316 [shape=circle style=dotted label="[0:0]"];
+	369 [shape=circle style=dotted label="[0:0]"];
+		369 -> 370 [label="<2> [1:1]" style=dotted];
+	370 [shape=circle style=dotted label="[0:0]"];
+		370 -> 371 [label="<0> [1:1]" style=dotted];
+	371 [shape=circle style=dotted label="[0:0]"];
+		371 -> 372 [label="<0> [1:1]" style=dotted];
+	372 [shape=circle style=dotted label="[0:0]"];
+		372 -> 373 [label="<2> [1:1]" style=dotted];
+	373 [shape=circle style=dotted label="[0:0]"];
+	399 [shape=circle style=dotted label="[0:0]"];
+		399 -> 400 [label="<0> [1:1]" style=dotted];
+	400 [shape=circle style=dotted label="[0:0]"];
+	461 [shape=circle style=dotted label="[0:0]"];
+	550 [shape=circle style=dotted label="[0:0]"];
+		550 -> 551 [label="<0> [2:0]" style=dotted];
+	551 [shape=circle style=dotted label="[0:0]"];
+		551 -> 552 [label="<0> [2:0]" style=dotted];
+	552 [shape=circle style=dotted label="[0:0]"];
+	609 [shape=circle style=dotted label="[0:0]"];
+	631 [shape=circle style=dotted label="[0:0]"];
+	673 [shape=circle style=dotted label="[0:0]"];
+		673 -> 674 [label="<2> [1:1]" style=dotted];
+	674 [shape=circle style=dotted label="[0:0]"];
+	743 [shape=circle style=dotted label="[0:0]"];
+		743 -> 744 [label="<0> [2:0]" style=dotted];
+	744 [shape=circle style=dotted label="[0:0]"];
+		744 -> 745 [label="<2> [2:0]" style=dotted];
+	745 [shape=circle style=dotted label="[0:0]"];
+	793 [shape=circle style=dotted label="[0:0]"];
+	858 [shape=circle style=dotted label="[0:0]"];
+	927 [shape=circle style=dotted label="[0:0]"];
+	1001 [shape=circle style=dotted label="[0:0]"];
+		1001 -> 1002 [label="<2> [2:0]" style=dotted];
+	1002 [shape=circle style=dotted label="[0:0]"];
+	1022 [shape=circle style=dotted label="[0:0]"];
+	1045 [shape=circle style=dotted label="[0:0]"];
+		1045 -> 1046 [label="<2> [2:0]" style=dotted];
+	1046 [shape=circle style=dotted label="[0:0]"];
+	1140 [shape=circle style=dotted label="[0:0]"];
+		1140 -> 1141 [label="<2> [2:0]" style=dotted];
+	1141 [shape=circle style=dotted label="[0:0]"];
+		1141 -> 1142 [label="<0> [2:0]" style=dotted];
+	1142 [shape=circle style=dotted label="[0:0]"];
+		1142 -> 1143 [label="<0> [2:0]" style=dotted];
+	1143 [shape=circle style=dotted label="[0:0]"];
+	1173 [shape=circle style=dotted label="[0:0]"];
+		1173 -> 1174 [label="<2> [1:1]" style=dotted];
+	1174 [shape=circle style=dotted label="[0:0]"];
+		1174 -> 1175 [label="<2> [1:1]" style=dotted];
+	1175 [shape=circle style=dotted label="[0:0]"];
+		1175 -> 1176 [label="<1> [1:1]" style=dotted];
+	1176 [shape=circle style=dotted label="[0:0]"];
+		1176 -> 1177 [label="<2> [1:1]" style=dotted];
+	1177 [shape=circle style=dotted label="[0:0]"];
+		1177 -> 1178 [label="<1> [1:1]" style=dotted];
+	1178 [shape=circle style=dotted label="[0:0]"];
+		1178 -> 1179 [label="<0> [1:1]" style=dotted];
+	1179 [shape=circle style=dotted label="[0:0]"];
+	1193 [shape=circle style=dotted label="[0:0]"];
+		1193 -> 1194 [label="<1> [0:2]" style=dotted];
+	1194 [shape=circle style=dotted label="[0:0]"];
+		1194 -> 1195 [label="<2> [0:2]" style=dotted];
+	1195 [shape=circle style=dotted label="[0:0]"];
+		1195 -> 1196 [label="<2> [0:2]" style=dotted];
+	1196 [shape=circle style=dotted label="[0:0]"];
+	1272 [shape=circle style=dotted label="[0:0]"];
+		1272 -> 1273 [label="<0> [1:1]" style=dotted];
+	1273 [shape=circle style=dotted label="[0:0]"];
+		1273 -> 1274 [label="<0> [1:1]" style=dotted];
+	1274 [shape=circle style=dotted label="[0:0]"];
+		1274 -> 1275 [label="<1> [1:1]" style=dotted];
+	1275 [shape=circle style=dotted label="[0:0]"];
+		1275 -> 1276 [label="<2> [1:1]" style=dotted];
+	1276 [shape=circle style=dotted label="[0:0]"];
+		1276 -> 1277 [label="<2> [1:1]" style=dotted];
+	1277 [shape=circle style=dotted label="[0:0]"];
+		1277 -> 1278 [label="<0> [1:1]" style=dotted];
+	1278 [shape=circle style=dotted label="[0:0]"];
+	1305 [shape=circle style=dotted label="[0:0]"];
+	1430 [shape=circle style=dotted label="[0:0]"];
+	2054 [shape=circle style=dotted label="[0:0]"];
+	2272 [shape=circle style=dotted label="[0:0]"];
+		2272 -> 2273 [label="<0> [0:2]" style=dotted];
+	2273 [shape=circle style=dotted label="[0:0]"];
+		2273 -> 2274 [label="<0> [0:2]" style=dotted];
+	2274 [shape=circle style=dotted label="[0:0]"];
+}

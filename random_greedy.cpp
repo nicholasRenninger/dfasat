@@ -18,10 +18,10 @@ merge_list random_greedy_bounded_run(state_merger* merger){
     while( true ){
         merger->reset();
         while( true ){
-            if(EXTEND_ANY_RED) while(merger->extend_red() == true);
+            if(EXTEND_ANY_RED) while(merger->extend_red() == true) cerr << "+";
             merge_map possible_merges = merger->get_possible_merges();
             if(!EXTEND_ANY_RED && possible_merges.empty()){
-                if(merger->extend_red() == true) continue;
+                if(merger->extend_red() == true) { cerr << "+"; continue; }
                 cerr << "no more possible merges" << endl;
                 break;
             }
@@ -42,16 +42,16 @@ merge_list random_greedy_bounded_run(state_merger* merger){
                 break;
             }*/
 
-            merge_pair top_pair = (*possible_merges.rbegin()).second;
-            float top_score = (*possible_merges.rbegin()).first;
+            merge_pair top_pair = (*possible_merges.begin()).second;
+            float top_score = (*possible_merges.begin()).first;
             if(GREEDY_METHOD == RANDOMG){
                 merge_map randomized_merges;
                 for(merge_map::reverse_iterator it = possible_merges.rbegin(); it != possible_merges.rend(); it++){
                     //if((*it).first < LOWER_BOUND) break;
                     randomized_merges.insert(pair<int, merge_pair>((*it).first * (rand() / (double)RAND_MAX), (*it).second));
                 }
-                top_score = (*randomized_merges.rbegin()).first;
-                top_pair = (*randomized_merges.rbegin()).second;
+                top_score = (*randomized_merges.begin()).first;
+                top_pair = (*randomized_merges.begin()).second;
             }
             cerr << top_score << " ";
             merger->perform_merge(top_pair.first, top_pair.second);

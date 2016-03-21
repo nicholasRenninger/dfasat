@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "container:lib/apta.h">
+   </FileRef>
+   <FileRef
+      location = "group:../../Repositories/Dfasat/dfasat/lib/parameters.h">
+   </FileRef>
+   <FileRef
+      location = "group:../../Repositories/Dfasat/dfasat/parameters.cpp">
+   </FileRef>
+   <Group
+      location = "group:../../../Repositories/Dfasat/dfasat/lib"
+      name = "lib">
+      <FileRef
+         location = "group:apta.h">
+      </FileRef>
+      <FileRef
+         location = "group:dfasat.h">
+      </FileRef>
+      <FileRef
+         location = "group:evaluate.h">
+      </FileRef>
+      <FileRef
+         location = "group:evaluation_factory.h">
+      </FileRef>
+      <FileRef
+         location = "group:evaluators.h">
+      </FileRef>
+      <FileRef
+         location = "group:parameters.h">
+      </FileRef>
+      <FileRef
+         location = "group:random_greedy.h">
+      </FileRef>
+      <FileRef
+         location = "group:state_merger.h">
+      </FileRef>
+   </Group>
+   <Group
+      location = "group:evaluation"
+      name = "evaluation">
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/aike.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/aike.h">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/aike.o">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/alergia.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/alergia.h">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/alergia.o">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/depth-driven.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/depth-driven.h">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/depth-driven.o">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/evaluate.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/evaluate.o">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/evidence-driven.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/evidence-driven.h">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/evidence-driven.o">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/kldistance.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/kldistance.h">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/kldistance.o">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/likelihood.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/likelihood.h">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/likelihood.o">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/metric-driven.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/metric-driven.h">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/metric-driven.o">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/mse-error.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/mse-error.h">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/mse-error.o">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/overlap-driven.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/overlap-driven.h">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/overlap-driven.o">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/series-driven.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/series-driven.h">
+      </FileRef>
+      <FileRef
+         location = "group:../../../Repositories/Dfasat/dfasat/evaluation/series-driven.o">
+      </FileRef>
+   </Group>
+</Workspace>

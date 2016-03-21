@@ -12,35 +12,38 @@
 
 using namespace std;
 
-extern int HEURISTIC;
-
-const int EDSM = 1;
-const int OVERLAP = 2;
-const int COUNT_DRIVEN = 3;
-const int LIKELIHOODRATIO = 4;
-const int AIC = 5;
-const int KULLBACKLEIBLER = 6;
-
-extern int STATE_COUNT;
-extern int SYMBOL_COUNT;
-extern float CORRECTION;
-extern float CHECK_PARAMETER;
-extern bool USE_SINKS;
-extern float LOWER_BOUND;
-
-
 #define REGISTER_DEC_TYPE(NAME) \
     static DerivedRegister<NAME> reg
 
 #define REGISTER_DEF_TYPE(NAME) \
     DerivedRegister<NAME> NAME::reg(#NAME)
 
-/* Return a sink type, or -1 if no sink
- * Sinks are special states that optionally are not considered as merge candidates,
- * and are optionally merged into one (for every type) before starting exact solving */
-int sink_type(apta_node* node);
-bool sink_consistent(apta_node* node, int type);
-int num_sink_types();
+/* The data contained in every node of the prefix tree or DFA */
+class evaluation_data {
+  public:
+  
+    /* counts of positive and negative transition uses */
+    num_map num_pos;
+    num_map num_neg;
+
+    /* depth of the node in the apta */
+    int depth;
+    int old_depth;
+
+    /* counts of positive and negative endings */
+    int num_accepting;
+    int num_rejecting;
+
+    /* counts of positive and negative traversals */
+    int accepting_paths;
+    int rejecting_paths;
+
+	double_list occs;
+    double_list::iterator occ_merge_point;
+
+	node_list conflicts;
+    node_list::iterator merge_point;
+};
 
 class evaluation_function  {
 
@@ -91,6 +94,16 @@ public:
 *
 * called only once for every run, can be complex */
   virtual void initialize(state_merger *);
+  
+/* Return a sink type, or -1 if no sink
+ * Sinks are special states that optionally are not considered as merge candidates,
+ * and are optionally merged into one (for every type) before starting exact solving */
+  virtual int sink_type(apta_node* node);
+  virtual bool sink_consistent(apta_node* node, int type);
+  virtual int num_sink_types();
+
+  virtual void read_file(FILE*, state_merger *);
+  virtual void print_dot(FILE*, state_merger *);
 };
 
 

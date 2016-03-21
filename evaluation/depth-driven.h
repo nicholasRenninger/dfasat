@@ -5,12 +5,13 @@
 
 class depth_driven: public evaluation_function{
 
+
 protected:
   REGISTER_DEC_TYPE(depth_driven);
 
-public:
   double merge_error;
-
+  
+public:
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
   virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);

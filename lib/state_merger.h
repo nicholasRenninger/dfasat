@@ -13,7 +13,6 @@
 
 #include "apta.h"
 
-class evaluation_data;
 class evaluation_function;
 
 using namespace std;

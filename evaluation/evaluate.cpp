@@ -8,13 +8,89 @@
 #include <stdio.h>
 #include <gsl/gsl_cdf.h>
 
-int STATE_COUNT = 0;
-int SYMBOL_COUNT = 0;
-float CORRECTION = 0.0;
-float CHECK_PARAMETER = 0.0;
-bool USE_SINKS = 0;
-float MINIMUM_SCORE = 0;
-float LOWER_BOUND = 0;
+
+            else {
+                if(positive){
+                    node->num_pos[c] = node->pos(c) + 1;
+                    node->accepting_paths++;
+                } else {
+                    node->num_neg[c] = node->neg(c) + 1;
+                    node->rejecting_paths++;
+                }
+            }
+            //node->input_output
+            if(occ >= 0)
+                node->occs.push_front(occ);
+                //node->child(c)->occs.push_front(occ);
+        if(positive) node->num_accepting++;
+        else node->num_rejecting++;
+
+    num_pos = num_map();
+    num_neg = num_map();
+
+    num_accepting = 0;
+    num_rejecting = 0;
+    accepting_paths = 0;
+    rejecting_paths = 0;
+
+
+    left->num_accepting += right->num_accepting;
+    left->num_rejecting += right->num_rejecting;
+    left->accepting_paths += right->accepting_paths;
+    left->rejecting_paths += right->rejecting_paths;
+
+    //left->old_depth = left->depth;
+    //left->depth = min(left->depth, right->depth);
+
+    right->merge_point = left->conflicts.end();
+    --(right->merge_point);
+    left->conflicts.splice(left->conflicts.end(), right->conflicts);
+    ++(right->merge_point);
+
+    right->occ_merge_point = left->occs.end();
+    --(right->occ_merge_point);
+    left->occs.splice(left->occs.end(), right->occs);
+    ++(right->occ_merge_point);
+
+    for(num_map::iterator it = right->num_pos.begin();it != right->num_pos.end(); ++it){
+        left->num_pos[(*it).first] = left->pos((*it).first) + (*it).second;
+    }
+    for(num_map::iterator it = right->num_neg.begin();it != right->num_neg.end(); ++it){
+        left->num_neg[(*it).first] = left->neg((*it).first) + (*it).second;
+    }
+
+
+
+    left->num_accepting -= right->num_accepting;
+    left->num_rejecting -= right->num_rejecting;
+    left->accepting_paths -= right->accepting_paths;
+    left->rejecting_paths -= right->rejecting_paths;
+
+    //left->depth = left->old_depth;
+
+    for(num_map::iterator it = right->num_pos.begin();it != right->num_pos.end(); ++it){
+        left->num_pos[(*it).first] = left->pos((*it).first) - (*it).second;
+    }
+    for(num_map::iterator it = right->num_neg.begin();it != right->num_neg.end(); ++it){
+        left->num_neg[(*it).first] = left->neg((*it).first) - (*it).second;
+    }
+
+    right->conflicts.splice(right->conflicts.begin(), left->conflicts, right->merge_point, left->conflicts.end());
+    right->occs.splice(right->occs.begin(), left->occs, right->occ_merge_point, left->occs.end());
+
+
+    inline int pos(int i){
+        num_map::iterator it = num_pos.find(i);
+        if(it == num_pos.end()) return 0;
+        return (*it).second;
+    }
+
+    inline int neg(int i){
+        num_map::iterator it = num_neg.find(i);
+        if(it == num_neg.end()) return 0;
+        return (*it).second;
+    }
+
 
 /* When is an APTA node a sink state?
  * sink states are not considered merge candidates
@@ -59,6 +135,28 @@ bool is_single_event_sink(apta_node* node){
     return is_single_event_sink(child, event);
 }
 
+bool is_all_the_same_sink(apta_node* node){
+    node = node->find();
+    if(node->children.size() == 0) return true;
+    if(node->children.size() != 1) return false;
+    for(child_map::iterator it = node->children.begin(); it != node->children.end(); ++it){
+        int event = (*it).first;
+        apta_node* child = node->child(event);
+        if(is_all_the_same_sink(child) == false) return false;
+    }
+    return true;
+}
+
+bool is_zero_occ_sink(apta_node* node){
+    node = node->find();
+    if(node->children.size() == 0) return true;
+    //if(node->children.size() != 1) return false;
+    if(node->occs.size() > 0) return false;
+    int event = (*node->children.begin()).first;
+    apta_node* child = node->child(event);
+    return is_zero_occ_sink(child);
+}
+
 int get_event_type(apta_node* node){
     node = node->find();
     return (*node->children.begin()).first;
@@ -67,10 +165,16 @@ int get_event_type(apta_node* node){
 int sink_type(apta_node* node){
     if(!USE_SINKS) return -1;
 
-    //if (is_single_event_sink(node)) return get_event_type(node);
-    //return -1;
+    if (is_zero_occ_sink(node)) return 0;
+    return -1;
 
+    if (is_all_the_same_sink(node)) return 0;
+    return -1;
+    
     if (is_low_count_sink(node)) return 0;
+    return -1;
+    
+    if (is_single_event_sink(node)) return get_event_type(node);
     return -1;
     
     if (is_accepting_sink(node)) return 0;
@@ -81,10 +185,16 @@ int sink_type(apta_node* node){
 bool sink_consistent(apta_node* node, int type){
     if(!USE_SINKS) return false;
     
-    //return sink_type(node) == type;
+    if(type == 0) return is_zero_occ_sink(node);
+    return true;
+
+    if(type == 0) return is_all_the_same_sink(node);
+    return true;
 
     if(type == 0) return is_low_count_sink(node);
     return true;
+    
+    return sink_type(node) == type;
     
     if(type == 0) return node->rejecting_paths == 0 && node->num_rejecting == 0;
     if(type == 1) return node->accepting_paths == 0 && node->num_accepting == 0;
@@ -93,7 +203,8 @@ bool sink_consistent(apta_node* node, int type){
 
 int num_sink_types(){
     if(!USE_SINKS) return 0;
-    //return alphabet_size;
+    return 1;
+    return alphabet_size;
     return 1;
     return 2;
 }

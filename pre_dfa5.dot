@@ -1,0 +1,110 @@
+digraph DFA {
+	0 [label="root" shape=box];
+		I -> 0;
+	0 [shape=circle label="
+5.015
+6.500
+196"];
+		0 -> 1 [label=" <1> [109:0]"];
+		0 -> 26 [label=" <2> [87:0]"];
+	1 [shape=circle label="
+2.612
+12.784
+109"];
+		1 -> 2 [label=" <0> [52:0]"];
+		1 -> 149 [label=" <2> [30:0]"];
+		1 -> 362 [label=" <1> [27:0]"];
+	26 [shape=circle label="
+5.729
+8.291
+87"];
+	S26t0 [label="sink 0" shape=box];
+		26 -> S26t0 [label=" <1> [14:0] <0> [12:0]"];
+		26 -> 69 [label=" <2> [61:0]"];
+	69 [shape=circle label="
+8.057
+1.689
+61"];
+	S69t0 [label="sink 0" shape=box];
+		69 -> S69t0 [label=" <1> [13:0]"];
+		69 -> 70 [label=" <2> [48:0]"];
+	2 [shape=circle label="
+4.269
+9.043
+52"];
+	S2t0 [label="sink 0" shape=box];
+		2 -> S2t0 [label=" <1> [23:0] <0> [11:0] <2> [18:0]"];
+	70 [shape=circle label="
+5.333
+10.931
+48"];
+	S70t0 [label="sink 0" shape=box];
+		70 -> S70t0 [label=" <0> [10:0]"];
+		70 -> 71 [label=" <2> [38:0]"];
+	71 [shape=circle label="
+-0.724
+2.825
+38"];
+	S71t0 [label="sink 0" shape=box];
+		71 -> S71t0 [label=" <2> [1:0]"];
+		71 -> 72 [label=" <0> [37:0]"];
+	72 [shape=circle label="
+-1.000
+0.000
+37"];
+		72 -> 73 [label=" <0> [37:0]"];
+	73 [shape=circle label="
+-1.000
+0.000
+37"];
+		73 -> 74 [label=" <0> [37:0]"];
+	74 [shape=circle label="
+7.676
+2.449
+37"];
+	S74t0 [label="sink 0" shape=box];
+		74 -> S74t0 [label=" <1> [6:0]"];
+		74 -> 75 [label=" <2> [31:0]"];
+	75 [shape=circle label="
+8.177
+0.460
+31"];
+		75 -> 76 [label=" <2> [31:0]"];
+	76 [shape=circle label="
+7.710
+0.819
+31"];
+	S76t0 [label="sink 0" shape=box];
+		76 -> S76t0 [label=" <1> [1:0]"];
+		76 -> 77 [label=" <2> [30:0]"];
+	77 [shape=circle label="
+-1.000
+0.000
+30"];
+		77 -> 78 [label=" <0> [30:0]"];
+	78 [shape=circle label="
+7.367
+0.899
+30"];
+	S78t0 [label="sink 0" shape=box];
+		78 -> S78t0 [label=" <1> [1:0]"];
+		78 -> 79 [label=" <2> [29:0]"];
+	149 [shape=circle label="
+6.683
+4.175
+30"];
+	S149t0 [label="sink 0" shape=box];
+		149 -> S149t0 [label=" <1> [6:0] <0> [1:0] <2> [23:0]"];
+	79 [shape=circle label="
+4.655
+14.916
+29"];
+	S79t0 [label="sink 0" shape=box];
+		79 -> S79t0 [label=" <0> [9:0] <2> [20:0]"];
+	362 [shape=circle label="
+6.093
+1.760
+27"];
+	S362t0 [label="sink 0" shape=box];
+		362 -> S362t0 [label=" <1> [8:0] <2> [19:0]"];
+}
