@@ -13,8 +13,11 @@ REGISTER_DEF_TYPE(evidence_driven);
 
 /* Evidence driven state merging, count number of pos-pos and neg-neg merges */
 void evidence_driven::update_score(state_merger *merger, apta_node* left, apta_node* right){
-  if(left->num_accepting > 0 && right->num_accepting > 0) num_pos += 1;
-  if(left->num_rejecting > 0 && right->num_rejecting > 0) num_neg += 1;
+    edsm_data* l = (edsm_data*) left->data;
+    edsm_data* r = (edsm_data*) right->data;
+
+    if(l->num_accepting > 0 && r->num_accepting > 0) num_pos += 1;
+    if(l->num_rejecting > 0 && r->num_rejecting > 0) num_neg += 1;
 };
 
 int evidence_driven::compute_score(state_merger *merger, apta_node* left, apta_node* right){

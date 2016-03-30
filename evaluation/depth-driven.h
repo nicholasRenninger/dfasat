@@ -3,8 +3,21 @@
 
 #include "evaluate.h"
 
-class depth_driven: public evaluation_function{
+class depth_data: public evaluation_data {
 
+protected:
+  REGISTER_DEC_TYPE(depth_driven);
+
+public:
+    int depth;
+
+    depth_data::depth_data();
+
+    void read(int type, int index, int length, int symbol, string data);
+};
+
+
+class depth_driven: public evaluation_function{
 
 protected:
   REGISTER_DEC_TYPE(depth_driven);
@@ -12,11 +25,8 @@ protected:
   double merge_error;
   
 public:
-  virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
-  virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
-  virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
-  virtual void reset(state_merger *merger);
-  virtual bool compute_consistency(state_merger *merger, apta_node* left, apta_node* right);
+  int  compute_score(state_merger*, apta_node* left, apta_node* right);
+  void reset(state_merger *merger);
 };
 
 #endif

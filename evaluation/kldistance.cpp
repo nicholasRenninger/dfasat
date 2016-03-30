@@ -11,60 +11,82 @@
 
 REGISTER_DEF_TYPE(kldistance);
 
+void kldistance::update_perplexity(double left_count, double right_count, double left_divider, double right_divider){
+    if(count_left != 0){
+        perplexity += count_left * (count_left / left_divider) * log(count_left / left_divider);
+        perplexity -= count_left * (count_left / left_divider)
+                    * log((count_left + count_right) / (left_divider + right_divider));
+    }
+    if(count_right != 0){
+        perplexity += count_right * (count_right / right_divider) * log(count_right / right_divider);
+        perplexity -= count_right * (count_right / right_divider)
+                    * log((count_left + count_right) / (left_divider + right_divider));
+    }
+    if(count_left > 0.0 && count_right > 0.0) extra_parameters = extra_parameters + 1;
+};
+
 /* Kullback-Leibler divergence (KL), MDI-like, computes the KL value/extra parameters and uses it as score and consistency */
 void kldistance::update_score(state_merger *merger, apta_node* left, apta_node* right){
-  depth_driven::update_score(merger, left, right);
+    overlap_data* l = (likelihood_data*) left->data;
+    overlap_data* r = (likelihood_data*) right->data;
 
-  if(right->accepting_paths < STATE_COUNT || left->accepting_paths < STATE_COUNT) return;
+    if(r->accepting_paths < STATE_COUNT || l->accepting_paths < STATE_COUNT) return;
 
-  double left_divider, right_divider, count_left, count_right, left_pool, right_pool, corr;
+    double left_divider, right_divider, corr;
+    double left_count = 0.0;
+    double right_count  = 0.0;
 
-  corr = 1.0;
-  for(int a = 0; a < alphabet_size; ++a){
-    if(left->num_pos[a] >= SYMBOL_COUNT
-       || right->num_pos[a] >= SYMBOL_COUNT)
+    corr = 1.0;
+    for(int a = 0; a < alphabet_size; ++a){
+    if(l->num_pos[a] >= SYMBOL_COUNT || r->num_pos[a] >= SYMBOL_COUNT)
       corr += CORRECTION;
-  }
-
-  left_divider = (double)left->accepting_paths + corr;
-  right_divider = (double)right->accepting_paths + corr;
-
-  left_pool = 0.0;
-  right_pool = 0.0;
-  for(int a = 0; a < alphabet_size; ++a){
-    count_left = (double)left->pos(a);
-    count_right = (double)right->pos(a);
-
-    if(count_left >= SYMBOL_COUNT || count_right >= SYMBOL_COUNT){
-      count_left = count_left + CORRECTION;
-      count_right = count_right + CORRECTION;
-
-        if(count_left != 0){
-          perplexity += count_left * (count_left / left_divider) * log(count_left / left_divider);
-          perplexity -= count_left * (count_left / left_divider)
-                      * log((count_left + count_right) / (left_divider + right_divider));
-        }
-        if(count_right != 0){
-          perplexity += count_right * (count_right / right_divider) * log(count_right / right_divider);
-          perplexity -= count_right * (count_right / right_divider)
-                      * log((count_left + count_right) / (left_divider + right_divider));
-        }
-        if(count_left > 0.0 && count_right > 0.0) extra_parameters = extra_parameters + 1;
-    } else {
-      left_pool += count_left;
-      right_pool += count_right;
     }
-  }
-  left_pool = left_pool + CORRECTION;
-  right_pool = right_pool + CORRECTION;
-  if(left_pool != 0.0){
-    perplexity += left_pool * (left_pool / left_divider) * log(left_pool / left_divider);
-    perplexity -= left_pool * (left_pool / left_divider) * log((left_pool + right_pool) / (left_divider + right_divider));
-  }
-  if(right_pool != 0.0){
-    perplexity += right_pool * (right_pool / right_divider) * log(right_pool / right_divider);
-    perplexity -= right_pool * (right_pool / right_divider) * log((left_pool + right_pool) / (left_divider + right_divider));
-  }
+
+    left_divider = (double)l->accepting_paths + corr;
+    right_divider = (double)r->accepting_paths + corr;
+    
+    int l1_pool = 0;
+    int r1_pool = 0;
+    int l2_pool = 0;
+    int r2_pool = 0;
+    int matching_right = 0;
+
+    for(num_map::iterator it = l->num_pos.begin(); it != l->num_pos.end(); ++it){
+        left_count = (*it).second;
+        right_count = r->pos((*it).first);
+        matching_right += right_count;
+        
+        if(left_count >= SYMBOL_COUNT && right_count >= SYMBOL_COUNT)
+            update_perplexity(left_count, right_count, left_divider, right_divider);
+
+        if(right_count < SYMBOL_COUNT){
+            l1_pool += left_count;
+            r1_pool += right_count;
+        }
+        if(left_count < SYMBOL_COUNT) {
+            l2_pool += left_count;
+            r2_pool += right_count;
+        }
+    }
+    r2_pool += r->accepting_paths - matching_right;
+    
+    left_count = l1_pool;
+    right_count = r1_pool;
+    
+    if(right_count >= SYMBOL_COUNT || right_count >= SYMBOL_COUNT)
+        update_perplexity(left_count, right_count, left_divider, right_divider);
+    
+    left_count = l2_pool;
+    right_count = r2_pool;
+    
+    if(right_count >= SYMBOL_COUNT || right_count >= SYMBOL_COUNT)
+        update_perplexity(left_count, right_count, left_divider, right_divider);
+    
+    left_count = l->num_accepting;
+    right_count = r->num_accepting;
+
+    if(right_count >= SYMBOL_COUNT || right_count >= SYMBOL_COUNT)
+        update_perplexity(left_count, right_count, left_divider, right_divider);
 };
 
 bool kldistance::compute_consistency(state_merger *merger, apta_node* left, apta_node* right){
@@ -74,6 +96,14 @@ bool kldistance::compute_consistency(state_merger *merger, apta_node* left, apta
   if ((perplexity / extra_parameters) > CHECK_PARAMETER) return false;
 
   return true;
+};
+
+int kldistance::compute_score(state_merger *merger, apta_node* left, apta_node* right){
+  if (extra_parameters == 0) return -1;
+
+  double val = (perplexity / extra_parameters);
+
+  return (int)val * 100.0;
 };
 
 void kldistance::reset(state_merger *merger){

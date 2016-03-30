@@ -4,6 +4,12 @@
 #include "evaluate.h"
 #include "likelihood.h"
 
+/* The data contained in every node of the prefix tree or DFA */
+class aic_data: public likelihood_data {
+protected:
+  REGISTER_DEC_TYPE(aic);
+};
+
 class aic: public likelihoodratio{
 
 protected:

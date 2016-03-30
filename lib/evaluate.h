@@ -18,31 +18,25 @@ using namespace std;
 #define REGISTER_DEF_TYPE(NAME) \
     DerivedRegister<NAME> NAME::reg(#NAME)
 
-/* The data contained in every node of the prefix tree or DFA */
+/* Local data, contained in every node of the prefix tree or DFA */
 class evaluation_data {
-  public:
-  
-    /* counts of positive and negative transition uses */
-    num_map num_pos;
-    num_map num_neg;
 
-    /* depth of the node in the apta */
-    int depth;
-    int old_depth;
+protected:
+    static DerivedRegister<evaluation_function> reg;
 
-    /* counts of positive and negative endings */
-    int num_accepting;
-    int num_rejecting;
+public:
 
-    /* counts of positive and negative traversals */
-    int accepting_paths;
-    int rejecting_paths;
-
-	double_list occs;
-    double_list::iterator occ_merge_point;
-
-	node_list conflicts;
-    node_list::iterator merge_point;
+    int node_type;
+    evaluation_data* undo_pointer;
+    
+    evaluation_data();
+    
+/* Set values from input string */
+    virtual void read(int type, int index, int length, int symbol, string data);
+/* Update values when merging */
+    virtual void update(evaluation_data* other);
+/* Undo updates when undoing merge */
+    virtual void undo(evaluation_data* other);
 };
 
 class evaluation_function  {
@@ -52,9 +46,9 @@ protected:
 
 public:
 
-  int num_merges;
+/* Global data */
   bool inconsistency_found;
-
+  
 /* Boolean indicating the evaluation function type;
    there are two kinds: computed before or after/during a merge.
    When computed before a merge, a merge is only tried for consistency.
@@ -67,14 +61,15 @@ public:
 /* An evaluation function needs to implement all of these functions */
 
 /* Called when performing a merge, for every pair of merged nodes,
-* compute the local consistency of a merge
+* compute the local consistency of a merge and update stored data values
 *
 * huge influence on performance, needs to be simple */
   virtual bool consistent(state_merger*, apta_node* left, apta_node* right);
   virtual void update_score(state_merger*, apta_node* left, apta_node* right);
+  virtual void undo_update(state_merger*, apta_node* left, apta_node* right);
 
 /* Called when testing a merge
-* compute the score and consistency of a merge, and reset counters/structures
+* compute the score and consistency of a merge, and reset global counters/structures
 *
 * influence on performance, needs to be somewhat simple */
   virtual bool compute_consistency(state_merger *, apta_node* left, apta_node* right);

@@ -10,39 +10,39 @@
 #include <unordered_map>
 #include <string>
 
-class evaluation_data;
-
 using namespace std;
-
-extern int alphabet_size;
-extern bool MERGE_SINKS_DSOLVE;
 
 class apta;
 class apta_node;
+class evaluation_data;
 
 typedef list<apta_node*> node_list;
 typedef list<int> int_list;
 typedef list<double> double_list;
 
 typedef map<int, apta_node*> child_map;
-typedef map<int, int> num_map;
 
 class apta_node{
 public:
-    /* UNION/FIND datastructure */
+    /* parent state in the prefix tree */
     apta_node* source;
+    /* UNION/FIND datastructure */
     apta_node* representative;
+    /* target states */
     child_map children;
     /* UNDO information */
     child_map det_undo;
 
-    /* get transition target */
-    apta_node* get_child(int);
-
     /* the incomming transition label */
     int label;
+    
+    /* the type of node (accepting/rejecting/other)*/
+    int type;
 
-    /* unique state identifiers, used by encoding */
+    /* depth of the node in the apta */
+    int depth;
+
+    /* unique state identifiers, used by SAT encoding */
     int number;
     int satnumber;
     int colour;
@@ -51,7 +51,7 @@ public:
     int size;
     
     /* extra information for merging heursitics and consistency checks */
-    evaluation_data data;
+    evaluation_data* data;
 
     apta_node();
     ~apta_node();
@@ -60,6 +60,9 @@ public:
     apta_node* find();
     apta_node* find_until(apta_node*, int);
 
+    /* get transition target */
+    apta_node* get_child(int);
+    
     inline apta_node* child(int i){
         child_map::iterator it = children.find(i);
         if(it == children.end()) return 0;
@@ -80,7 +83,7 @@ public:
     int merge_count;
     int max_depth;
 
-    apta(ifstream &input_stream);
+    apta();
     ~apta();
 
     state_set &get_states();

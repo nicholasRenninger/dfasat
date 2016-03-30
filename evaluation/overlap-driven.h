@@ -3,19 +3,24 @@
 
 #include "evaluate.h"
 
-class overlap_driven: public evaluation_function{
+/* The data contained in every node of the prefix tree or DFA */
+class overlap_data: public count_data{
+protected:
+  REGISTER_DEC_TYPE(overlap-driven);
+};
+
+class overlap_driven: public count_driven{
 
 protected:
-  static DerivedRegister<overlap_driven> reg;
+  REGISTER_DEC_TYPE(overlap-driven);
 
 public:
   int overlap;
   
-  virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
-  virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
-  virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
-  virtual void reset(state_merger *merger);
-  virtual bool compute_consistency(state_merger *merger, apta_node* left, apta_node* right);
+  bool consistent(state_merger *merger, apta_node* left, apta_node* right);
+  void update_score(state_merger *merger, apta_node* left, apta_node* right);
+  int  compute_score(state_merger*, apta_node* left, apta_node* right);
+  void reset(state_merger *merger);
 };
 
 #endif

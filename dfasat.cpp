@@ -14,12 +14,6 @@
 #include <sys/wait.h>
 #include <ctime>
 
-bool MERGE_SINKS_PRESOLVE = 0;
-int OFFSET = 1;
-int EXTRA_STATES = 0;
-bool TARGET_REJECTING = 0;
-bool SYMMETRY_BREAKING = 0;
-bool FORCING = 0;
 
 int literal_counter = 1;
 int clause_counter = 0;

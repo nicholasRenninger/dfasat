@@ -3,10 +3,18 @@
 
 #include "evaluate.h"
 
-class likelihoodratio: public evaluation_function {
+/* The data contained in every node of the prefix tree or DFA */
+class likelihood_data: public alergia_data {
+protected:
+  REGISTER_DEC_TYPE(likelihoodratio);
+};
+
+class likelihoodratio: public alergia {
 
 protected:
   REGISTER_DEC_TYPE(likelihoodratio);
+  
+  void update_likelihood(double,double,double,double);
 
 public:
   double loglikelihood_orig;

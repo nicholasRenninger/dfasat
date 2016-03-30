@@ -6,11 +6,6 @@
 
 #include "random_greedy.h"
 
-int GREEDY_METHOD = 0;
-int APTA_BOUND = 0;
-int CLIQUE_BOUND = 0;
-bool EXTEND_ANY_RED = 0;
-
 merge_list random_greedy_bounded_run(state_merger* merger){
     cerr << "starting greedy merging" << endl;
     int num = 1;

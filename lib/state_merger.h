@@ -96,7 +96,6 @@ public:
 
     evaluation_function* eval;
 
-    state_merger();
     state_merger(evaluation_function*, apta*);
 
     void reset();

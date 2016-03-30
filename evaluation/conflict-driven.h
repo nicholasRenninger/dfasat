@@ -4,25 +4,19 @@
 #include "evaluate.h"
 
 /* The data contained in every node of the prefix tree or DFA */
-class overlap_data: public evaluation_function {
+class conflict_data: public evaluation_data {
   public:
-    /* counts of positive and negative transition uses */
-    num_map num_pos;
-    num_map num_neg;
-
-    /* counts of positive and negative endings */
-    int num_accepting;
-    int num_rejecting;
+	node_list conflicts;
+    node_list::iterator merge_point;
 };
 
-class overlap_driven: public evaluation_function{
+
+class conflict_driven: public evaluation_function{
 
 protected:
   static DerivedRegister<overlap_driven> reg;
 
 public:
-  int overlap;
-  
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
   virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
