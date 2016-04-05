@@ -28,7 +28,7 @@ struct positive_weight_compare;
 extern int alphabet_size;
 extern bool MERGE_SINKS_DSOLVE;
 
-typedef set<apta_node*, total_weight_compare> state_set;
+//typedef set<apta_node*, total_weight_compare> state_set;
 typedef list< pair<apta_node*, apta_node*> > merge_list;
 typedef multimap<int, pair<apta_node*, apta_node*> > merge_map;
 typedef pair<apta_node*, apta_node*> merge_pair;
@@ -42,49 +42,6 @@ typedef map<int, int> num_map;
 
 bool is_accepting_sink(apta_node* node);
 bool is_rejecting_sink(apta_node* node);
-
-
-struct size_compare
-{
-    bool operator()(apta_node* left, apta_node* right) const
-    {
-        if(left->size > right->size)
-            return 1;
-        if(left->size < right->size)
-            return 0;
-        return left < right;
-    }
-};
-
-struct positive_weight_compare
-{
-    bool operator()(apta_node* left, apta_node* right) const
-    {
-        int left_weight = left->num_accepting + left->accepting_paths;
-        int right_weight = right->num_accepting + right->accepting_paths;
-
-        if(left_weight > right_weight)
-            return 1;
-        if(left_weight < right_weight)
-            return 0;
-        return left < right;
-    }
-};
-
-struct total_weight_compare
-{
-    bool operator()(apta_node* left, apta_node* right) const
-    {
-        int left_weight = left->accepting_paths + left->rejecting_paths;
-        int right_weight = right->accepting_paths + right->rejecting_paths;
-
-        if(left_weight > right_weight)
-            return 1;
-        if(left_weight < right_weight)
-            return 0;
-        return left < right;
-    }
-};
 
 class state_merger{
 public:
@@ -117,8 +74,6 @@ public:
 
     bool perform_merge(apta_node*, apta_node*);
 
-    state_set &get_red_states();
-    state_set &get_blue_states();
     state_set &get_candidate_states();
     state_set &get_sink_states();
 

@@ -170,15 +170,13 @@ void evaluation_function::read_file(FILE* input, state_merger* merger){
 void evaluation_function::print_dot(FILE* output, state_merger* merger){
     apta* aut = merger->aut;
     state_set candidates  = merger->get_candidate_states();
-    state_set& red_states  = merger->get_red_states();
-    state_set& blue_states = merger->get_red_states();
     
     //state_set sinks = get_sink_states();
 
     fprintf(output,"digraph DFA {\n");
     fprintf(output,"\t%i [label=\"root\" shape=box];\n", aut->root->find()->number);
     fprintf(output,"\t\tI -> %i;\n", aut->root->find()->number);
-    for(state_set::iterator it = red_states.begin(); it != merger->red_states.end(); ++it){
+    for(state_set::iterator it = merger->red_states.begin(); it != merger->red_states.end(); ++it){
         apta_node* n = *it;
 
         double error = 0.0;

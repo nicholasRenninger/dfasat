@@ -80,14 +80,6 @@ state_set &state_merger::get_sink_states(){
     return *sink_states;
 }
 
-state_set &state_merger::get_red_states(){
-    return red_states;
-}
-
-state_set &state_merger::get_blue_states(){
-    return blue_states;
-}
-
 int state_merger::get_final_apta_size(){
     return red_states.size() + get_candidate_states().size();
 }

@@ -15,12 +15,14 @@ using namespace std;
 class apta;
 class apta_node;
 class evaluation_data;
+struct size_compare;
 
 typedef list<apta_node*> node_list;
 typedef list<int> int_list;
 typedef list<double> double_list;
 
 typedef map<int, apta_node*> child_map;
+typedef set<apta_node*, size_compare> state_set;
 
 class apta_node{
 public:
@@ -93,6 +95,16 @@ public:
     string alph_str(int i);
 };
 
-
+struct size_compare
+{
+    bool operator()(apta_node* left, apta_node* right) const
+    {
+        if(left->size > right->size)
+            return 1;
+        if(left->size < right->size)
+            return 0;
+        return left < right;
+    }
+};
 
 #endif

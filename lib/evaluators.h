@@ -6,8 +6,6 @@
 #include "evaluation/evidence-driven.h"
 #include "evaluation/kldistance.h"
 #include "evaluation/likelihood.h"
-#include "evaluation/metric-driven.h"
-#include "evaluation/mse-error.h"
+#include "evaluation/num_count.h"
 #include "evaluation/overlap-driven.h"
-#include "evaluation/series-driven.h"
 #endif
