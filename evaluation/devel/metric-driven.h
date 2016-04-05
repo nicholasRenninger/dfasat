@@ -1,17 +1,16 @@
-#ifndef __DEPTHDRIVEN__
-#define __DEPTHDRIVEN__
+#ifndef __METRICDRIVEN__
+#define __METRICDRIVEN__
 
 #include "evaluate.h"
 
-class depth_driven: public evaluation_function{
-
+class metric_driven: public evaluation_function{
 
 protected:
-  REGISTER_DEC_TYPE(depth_driven);
+  static DerivedRegister<metric_driven> reg;
 
-  double merge_error;
-  
 public:
+  int overlap;
+  
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
   virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
