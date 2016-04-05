@@ -9,6 +9,7 @@
 #include <gsl/gsl_cdf.h>
 
 REGISTER_DEF_TYPE(count_driven);
+REGISTER_DEF_DATATYPE(count_data);
 
 count_data::count_data(){
     num_accepting = 0;

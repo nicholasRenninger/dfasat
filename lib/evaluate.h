@@ -12,6 +12,15 @@
 
 using namespace std;
 
+// for registering evaluation data objects
+#define REGISTER_DEC_DATATYPE(NAME) \
+    static DerivedDataRegister<NAME> reg
+
+#define REGISTER_DEF_DATATYPE(NAME) \
+    DerivedDataRegister<NAME> NAME::reg(#NAME)
+
+
+// for registering evaluation function objects
 #define REGISTER_DEC_TYPE(NAME) \
     static DerivedRegister<NAME> reg
 
@@ -22,7 +31,7 @@ using namespace std;
 class evaluation_data {
 
 protected:
-    static DerivedRegister<evaluation_function> reg;
+    static DerivedDataRegister<evaluation_data> reg;
 
 public:
 

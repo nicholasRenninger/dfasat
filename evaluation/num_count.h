@@ -7,7 +7,7 @@
 class count_data: public evaluation_data {
 
 protected:
-  REGISTER_DEC_TYPE(count_driven);
+  REGISTER_DEC_DATATYPE(count_data);
 
 public:
     int num_accepting;

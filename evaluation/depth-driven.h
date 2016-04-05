@@ -2,11 +2,12 @@
 #define __DEPTHDRIVEN__
 
 #include "evaluate.h"
+#include "num_count.h"
 
 class depth_data: public evaluation_data {
 
 protected:
-  REGISTER_DEC_TYPE(depth_driven);
+  REGISTER_DEC_DATATYPE(depth_data);
 
 public:
     int depth;
