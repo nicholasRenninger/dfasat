@@ -12,7 +12,7 @@ protected:
 public:
     int depth;
 
-    depth_data::depth_data();
+    depth_data();
 
     void read(int type, int index, int length, int symbol, string data);
 };

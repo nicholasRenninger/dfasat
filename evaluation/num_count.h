@@ -15,7 +15,7 @@ public:
     int accepting_paths;
     int rejecting_paths;
 
-    count_data::count_data();
+    count_data();
     
     void read(int type, int index, int length, int symbol, string data);
     void update(evaluation_data* right);
