@@ -152,11 +152,10 @@ int main(int argc, const char *argv[]){
     
     poptFreeContext( optCon );
     
-    srand(param->seed);
-    
-    ifstream input_stream(param->dfa_file);
-    apta* the_apta = new apta(input_stream);
+    apta* the_apta = new apta();
     state_merger merger;
+
+    srand(param->seed);
     
     APTA_BOUND = param->apta_bound;
     CLIQUE_BOUND = param->dfa_bound;
@@ -232,7 +231,9 @@ int main(int argc, const char *argv[]){
     }
 }	
 
-	
+    ifstream input_stream(param->dfa_file);
+    merger.read_apta(input_stream);
+
     if(param->method == 1) GREEDY_METHOD = RANDOMG;
     if(param->method == 2) GREEDY_METHOD = NORMALG;
     

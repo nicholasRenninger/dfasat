@@ -40,10 +40,13 @@ apta_node::apta_node(){
     colour = 0;
     size = 1;
     depth = 0;
+    
+    data = new evaluation_data();
 }
 
 apta_node::~apta_node(){
     for(child_map::iterator it = children.begin();it != children.end(); ++it){
         delete (*it).second;
     }
+    delete data;
 }

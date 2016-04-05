@@ -33,54 +33,6 @@ void evaluation_data::undo(evaluation_data* right){
     }
 };
 
-            else {
-                if(positive){
-                    node->num_pos[c] = node->pos(c) + 1;
-                    node->accepting_paths++;
-                } else {
-                    node->num_neg[c] = node->neg(c) + 1;
-                    node->rejecting_paths++;
-                }
-            }
-            //node->input_output
-            if(occ >= 0)
-                node->occs.push_front(occ);
-                //node->child(c)->occs.push_front(occ);
-        if(positive) node->num_accepting++;
-        else node->num_rejecting++;
-
-    right->merge_point = left->conflicts.end();
-    --(right->merge_point);
-    left->conflicts.splice(left->conflicts.end(), right->conflicts);
-    ++(right->merge_point);
-
-    right->occ_merge_point = left->occs.end();
-    --(right->occ_merge_point);
-    left->occs.splice(left->occs.end(), right->occs);
-    ++(right->occ_merge_point);
-
-    for(num_map::iterator it = right->num_pos.begin();it != right->num_pos.end(); ++it){
-        left->num_pos[(*it).first] = left->pos((*it).first) + (*it).second;
-    }
-    for(num_map::iterator it = right->num_neg.begin();it != right->num_neg.end(); ++it){
-        left->num_neg[(*it).first] = left->neg((*it).first) + (*it).second;
-    }
-
-    left->num_accepting -= right->num_accepting;
-    left->num_rejecting -= right->num_rejecting;
-    left->accepting_paths -= right->accepting_paths;
-    left->rejecting_paths -= right->rejecting_paths;
-
-    //left->depth = left->old_depth;
-
-    for(num_map::iterator it = right->num_pos.begin();it != right->num_pos.end(); ++it){
-        left->num_pos[(*it).first] = left->pos((*it).first) - (*it).second;
-    }
-    for(num_map::iterator it = right->num_neg.begin();it != right->num_neg.end(); ++it){
-        left->num_neg[(*it).first] = left->neg((*it).first) - (*it).second;
-    }
-
-
 /* default evaluation, count number of performed merges */
 bool evaluation_function::consistent(state_merger *merger, apta_node* left, apta_node* right){
   if(inconsistency_found) return false;
@@ -161,6 +113,8 @@ int evaluation_function::num_sink_types(){
 };
 
 void evaluation_function::read_file(FILE* input, state_merger* merger){
+    apta* aut = merger->aut;
+
     int num_words;
     int num_alph = 0;
     map<string, int> seen;
@@ -170,8 +124,8 @@ void evaluation_function::read_file(FILE* input, state_merger* merger){
     for(int line = 0; line < num_words; line++){
         int type;
         int length;
-        apta_node* node = root;
-        root->depth = 0;
+        apta_node* node = aut->root;
+        aut->root->depth = 0;
         input_stream >> type >> length;
         
         int depth = 0;
@@ -189,14 +143,14 @@ void evaluation_function::read_file(FILE* input, state_merger* merger){
             std::getline(lineStream,data);
             
             if(seen.find(symbol) == seen.end()){
-                alphabet[num_alph] = symbol;
+                aut->alphabet[num_alph] = symbol;
                 seen[symbol] = num_alph;
                 num_alph++;
             }
 
             int c = seen[symbol];
 
-            node->data->from_string(type, index, length, c, data);
+            node->data->read(type, index, length, c, data);
 
             if(node->child(c) == 0){
                 apta_node* next_node = new apta_node();
@@ -214,13 +168,17 @@ void evaluation_function::read_file(FILE* input, state_merger* merger){
 };
 
 void evaluation_function::print_dot(FILE* output, state_merger* merger){
-    state_set candidates = get_candidate_states();
+    apta* aut = merger->aut;
+    state_set candidates  = merger->get_candidate_states();
+    state_set& red_states  = merger->get_red_states();
+    state_set& blue_states = merger->get_red_states();
+    
     //state_set sinks = get_sink_states();
 
     fprintf(output,"digraph DFA {\n");
     fprintf(output,"\t%i [label=\"root\" shape=box];\n", aut->root->find()->number);
     fprintf(output,"\t\tI -> %i;\n", aut->root->find()->number);
-    for(state_set::iterator it = red_states.begin(); it != red_states.end(); ++it){
+    for(state_set::iterator it = red_states.begin(); it != merger->red_states.end(); ++it){
         apta_node* n = *it;
 
         double error = 0.0;

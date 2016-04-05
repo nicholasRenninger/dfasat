@@ -80,6 +80,14 @@ state_set &state_merger::get_sink_states(){
     return *sink_states;
 }
 
+state_set &state_merger::get_red_states(){
+    return red_states;
+}
+
+state_set &state_merger::get_blue_states(){
+    return blue_states;
+}
+
 int state_merger::get_final_apta_size(){
     return red_states.size() + get_candidate_states().size();
 }
@@ -260,6 +268,23 @@ merge_map &state_merger::get_possible_merges(){
     return *mset;
 }
 
+void state_merger::read_apta(FILE* input){
+    eval->read_file(input, this);
+}
+
 void state_merger::todot(FILE* output){
     eval->print_dot(output, this);
 }
+
+int state_merger::sink_type(apta_node* node){
+    return eval->sink_type(node);
+};
+
+bool state_merger::sink_consistent(apta_node* node, int type){
+    return eval->sink_consistent(node, type)
+};
+
+int state_merger::num_sink_types(){
+    return eval->num_sink_types();
+};
+

@@ -117,12 +117,19 @@ public:
 
     bool perform_merge(apta_node*, apta_node*);
 
+    state_set &get_red_states();
+    state_set &get_blue_states();
     state_set &get_candidate_states();
     state_set &get_sink_states();
 
     int get_final_apta_size();
 
     void todot(FILE*);
+    void read_apta(FILE*);
+
+    int sink_type(apta_node* node);
+    bool sink_consistent(apta_node* node, int type);
+    int num_sink_types();
 };
 
 #endif /* _STATE_MERGER_H_ */
