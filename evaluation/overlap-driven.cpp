@@ -8,7 +8,9 @@
 #include <gsl/gsl_cdf.h>
 
 #include "overlap-driven.h"
+#include "parameters.h"
 
+REGISTER_DEF_DATATYPE(overlap_data);
 REGISTER_DEF_TYPE(overlap_driven);
 //DerivedRegister<overlap_driven> overlap_driven::reg("overlap_driven");
 

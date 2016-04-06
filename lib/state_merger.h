@@ -11,19 +11,7 @@
 #include <unordered_map>
 #include <string>
 
-#include "apta.h"
-
-class evaluation_function;
-
 using namespace std;
-
-class apta;
-class apta_node;
-
-class merge_compare;
-struct size_compare;
-struct total_weight_compare;
-struct positive_weight_compare;
 
 extern int alphabet_size;
 extern bool MERGE_SINKS_DSOLVE;
@@ -32,16 +20,18 @@ extern bool MERGE_SINKS_DSOLVE;
 typedef list< pair<apta_node*, apta_node*> > merge_list;
 typedef multimap<int, pair<apta_node*, apta_node*> > merge_map;
 typedef pair<apta_node*, apta_node*> merge_pair;
+
 typedef list<apta_node*> node_list;
 typedef list<int> int_list;
 typedef list<double> double_list;
 
+typedef set<apta_node*, size_compare> state_set;
+
 typedef map<int, apta_node*> child_map;
 typedef map<int, int> num_map;
 
-
-bool is_accepting_sink(apta_node* node);
-bool is_rejecting_sink(apta_node* node);
+#include "apta.h"
+#include "evaluate.h"
 
 class state_merger{
 public:
@@ -86,5 +76,6 @@ public:
     bool sink_consistent(apta_node* node, int type);
     int num_sink_types();
 };
+
 
 #endif /* _STATE_MERGER_H_ */

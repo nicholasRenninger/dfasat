@@ -1,5 +1,5 @@
-#ifndef __EVIDENCE__
-#define __EVIDENCE__
+#ifndef __COUNT__
+#define __COUNT__
 
 #include "evaluate.h"
 
@@ -17,9 +17,9 @@ public:
 
     count_data();
     
-    void read(int type, int index, int length, int symbol, string data);
-    void update(evaluation_data* right);
-    void undo(evaluation_data* right);
+    virtual void read(int type, int index, int length, int symbol, string data);
+    virtual void update(evaluation_data* right);
+    virtual void undo(evaluation_data* right);
 };
 
 class count_driven: public evaluation_function {
@@ -30,10 +30,15 @@ protected:
 public:
   int num_merges;
 
-  void update_score(state_merger *merger, apta_node* left, apta_node* right);
-  void undo_update(state_merger *merger, apta_node* left, apta_node* right);
-  int  compute_score(state_merger*, apta_node* left, apta_node* right);
-  void reset(state_merger *merger);
+  virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
+  virtual void undo_update(state_merger *merger, apta_node* left, apta_node* right);
+  virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
+  virtual void reset(state_merger *merger);
+  virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
+
+  virtual int sink_type(apta_node* node);
+  virtual bool sink_consistent(apta_node* node, int type);
+  virtual int num_sink_types();
 };
 
 #endif

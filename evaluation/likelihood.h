@@ -1,12 +1,12 @@
 #ifndef __LIKELIHOOD__
 #define __LIKELIHOOD__
 
-#include "evaluate.h"
+#include "alergia.h"
 
 /* The data contained in every node of the prefix tree or DFA */
 class likelihood_data: public alergia_data {
 protected:
-  REGISTER_DEC_TYPE(likelihoodratio);
+  REGISTER_DEC_DATATYPE(likelihood_data);
 };
 
 class likelihoodratio: public alergia {

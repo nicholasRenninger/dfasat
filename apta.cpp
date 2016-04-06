@@ -10,10 +10,12 @@
 #include <string>
 #include <sstream>
 
+#include "evaluators.h"
+
 using namespace std;
 
 /* constructors and destructors */
-apta::apta(ifstream &input_stream){
+apta::apta(){
     root = new apta_node();
     max_depth = 0;
     merge_count = 0;
@@ -41,7 +43,11 @@ apta_node::apta_node(){
     size = 1;
     depth = 0;
     
-    data = new evaluation_data();
+    try {
+       data = (DerivedRegister<evaluation_data>::getMap())->at(param->hName)();
+    } catch(const std::out_of_range& oor ) {
+       std::cerr << "No data type found..." << std::endl;
+    }
 }
 
 apta_node::~apta_node(){

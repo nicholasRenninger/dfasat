@@ -7,6 +7,8 @@
 #define REGISTER_DEF_DATATYPE(NAME) \
     DerivedDataRegister<NAME> NAME::reg(#NAME)
 
+#include "evaluate.h"
+
 // shorthands for data and evaluation function objects
 template<typename T> evaluation_data * createDataT() { return new T; }
 template<typename T> evaluation_function * createT() { return new T; }

@@ -8,6 +8,7 @@
 #include <gsl/gsl_cdf.h>
 
 #include "depth-driven.h"
+#include "parameters.h"
 
 //DerivedRegister<series_driven> series_driven::reg("series-driven");
 REGISTER_DEF_TYPE(depth_driven);

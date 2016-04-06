@@ -14,7 +14,7 @@ public:
 
     depth_data();
 
-    void read(int type, int index, int length, int symbol, string data);
+    virtual void read(int type, int index, int length, int symbol, string data);
 };
 
 
@@ -26,8 +26,8 @@ protected:
   double merge_error;
   
 public:
-  int  compute_score(state_merger*, apta_node* left, apta_node* right);
-  void reset(state_merger *merger);
+  virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
+  virtual void reset(state_merger *merger);
 };
 
 #endif

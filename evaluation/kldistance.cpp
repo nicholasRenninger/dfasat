@@ -9,9 +9,12 @@
 #include "evaluate.h"
 #include "kldistance.h"
 
+#include "parameters.h"
+
+REGISTER_DEF_DATATYPE(kl_data);
 REGISTER_DEF_TYPE(kldistance);
 
-void kldistance::update_perplexity(double left_count, double right_count, double left_divider, double right_divider){
+void kldistance::update_perplexity(double count_left, double count_right, double left_divider, double right_divider){
     if(count_left != 0){
         perplexity += count_left * (count_left / left_divider) * log(count_left / left_divider);
         perplexity -= count_left * (count_left / left_divider)
@@ -27,8 +30,8 @@ void kldistance::update_perplexity(double left_count, double right_count, double
 
 /* Kullback-Leibler divergence (KL), MDI-like, computes the KL value/extra parameters and uses it as score and consistency */
 void kldistance::update_score(state_merger *merger, apta_node* left, apta_node* right){
-    overlap_data* l = (likelihood_data*) left->data;
-    overlap_data* r = (likelihood_data*) right->data;
+    kl_data* l = (kl_data*) left->data;
+    kl_data* r = (kl_data*) right->data;
 
     if(r->accepting_paths < STATE_COUNT || l->accepting_paths < STATE_COUNT) return;
 
@@ -107,7 +110,7 @@ int kldistance::compute_score(state_merger *merger, apta_node* left, apta_node* 
 };
 
 void kldistance::reset(state_merger *merger){
-  depth_driven::reset(merger);
+  alergia::reset(merger);
   inconsistency_found = false;
   perplexity = 0;
   extra_parameters = 0;

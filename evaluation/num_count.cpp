@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include <gsl/gsl_cdf.h>
 
+#include "parameters.h"
+#include "num_count.h"
+
 REGISTER_DEF_TYPE(count_driven);
 REGISTER_DEF_DATATYPE(count_data);
 
@@ -33,7 +36,7 @@ void count_data::read(int type, int index, int length, int symbol, string data){
 };
 
 void count_data::update(evaluation_data* right){
-    count_data other = (count_data*)right;
+    count_data* other = (count_data*)right;
     num_accepting += other->num_accepting;
     num_rejecting += other->num_rejecting;
     accepting_paths += other->accepting_paths;
@@ -41,7 +44,7 @@ void count_data::update(evaluation_data* right){
 };
 
 void count_data::undo(evaluation_data* right){
-    count_data other = (count_data*)right;
+    count_data* other = (count_data*)right;
     num_accepting -= other->num_accepting;
     num_rejecting -= other->num_rejecting;
     accepting_paths -= other->accepting_paths;
@@ -73,5 +76,44 @@ void count_driven::reset(state_merger *merger){
   inconsistency_found = false;
   num_merges = 0;
 };
+
+bool is_accepting_sink(apta_node* node){
+    count_data* d = (count_data*) node->data;
+
+    node = node->find();
+    return d->rejecting_paths == 0 && d->num_rejecting == 0;
+};
+
+bool is_rejecting_sink(apta_node* node){
+    count_data* d = (count_data*) node->data;
+
+    node = node->find();
+    return d->accepting_paths == 0 && d->num_accepting == 0;
+};
+
+int evaluation_function::sink_type(apta_node* node){
+    if(!USE_SINKS) return -1;
+
+    if (is_accepting_sink(node)) return 0;
+    if (is_rejecting_sink(node)) return 1;
+    return -1;
+};
+
+bool evaluation_function::sink_consistent(apta_node* node, int type){
+    if(!USE_SINKS) return false;
+    
+    if(type == 0) return is_accepting_sink(node);
+    if(type == 1) return is_rejecting_sink(node);
+    
+    return true;
+};
+
+int evaluation_function::num_sink_types(){
+    if(!USE_SINKS) return 0;
+    
+    // accepting or rejecting
+    return 2;
+};
+
 
 

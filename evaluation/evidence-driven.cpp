@@ -9,6 +9,9 @@
 #include "evaluate.h"
 #include "evidence-driven.h"
 
+#include "parameters.h"
+
+REGISTER_DEF_DATATYPE(edsm_data);
 REGISTER_DEF_TYPE(evidence_driven);
 
 /* Evidence driven state merging, count number of pos-pos and neg-neg merges */

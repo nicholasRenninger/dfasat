@@ -8,7 +8,9 @@
 #include "state_merger.h"
 #include "evaluate.h"
 #include "likelihood.h"
+#include "parameters.h"
 
+REGISTER_DEF_DATATYPE(likelihood_data);
 REGISTER_DEF_TYPE(likelihoodratio);
 
 void likelihoodratio::update_likelihood(double left_count, double right_count, double left_divider, double right_divider){
@@ -24,8 +26,8 @@ void likelihoodratio::update_likelihood(double left_count, double right_count, d
 
 /* Likelihood Ratio (LR), computes an LR-test (used in RTI) and uses the p-value as score and consistency */
 void likelihoodratio::update_score(state_merger *merger, apta_node* left, apta_node* right){
-    overlap_data* l = (likelihood_data*) left->data;
-    overlap_data* r = (likelihood_data*) right->data;
+    likelihood_data* l = (likelihood_data*) left->data;
+    likelihood_data* r = (likelihood_data*) right->data;
 
     if(r->accepting_paths < STATE_COUNT || l->accepting_paths < STATE_COUNT) return;
 

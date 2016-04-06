@@ -1,13 +1,12 @@
 #ifndef __KLDISTANCE__
 #define __KLDISTANCE__
 
-#include "evaluate.h"
-#include "depth-driven.h"
+#include "alergia.h"
 
 /* The data contained in every node of the prefix tree or DFA */
-class likelihood_data: public alergia_data {
+class kl_data: public alergia_data {
 protected:
-  REGISTER_DEC_TYPE(kldistance);
+  REGISTER_DEC_DATATYPE(kl_data);
 };
 
 class kldistance: public alergia {

@@ -14,7 +14,6 @@ using namespace std;
 
 class apta;
 class apta_node;
-class evaluation_data;
 struct size_compare;
 
 typedef list<apta_node*> node_list;
@@ -22,7 +21,8 @@ typedef list<int> int_list;
 typedef list<double> double_list;
 
 typedef map<int, apta_node*> child_map;
-typedef set<apta_node*, size_compare> state_set;
+
+#include "evaluate.h"
 
 class apta_node{
 public:

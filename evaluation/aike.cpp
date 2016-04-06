@@ -9,7 +9,9 @@
 #include "evaluate.h"
 #include "depth-driven.h"
 #include "aike.h"
+#include "parameters.h"
 
+REGISTER_DEF_DATATYPE(aic_data);
 REGISTER_DEF_TYPE(aic);
 
 /* Akaike Information Criterion (AIC), computes the AIC value and uses it as score, AIC increases are inconsistent */

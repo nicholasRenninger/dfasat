@@ -10,7 +10,7 @@ typedef map<int, int> num_map;
 class alergia_data: public count_data {
 
 protected:
-  REGISTER_DEC_TYPE(alergia);
+  REGISTER_DEC_DATATYPE(alergia_data);
 
 public:
     /* counts of positive and negative transition uses */
@@ -29,11 +29,11 @@ public:
         return (*it).second;
     }
     
-    alergia_data() : count_data();
+    alergia_data();
 
-    void read(int type, int index, int length, int symbol, string data);
-    void update(evaluation_data* right);
-    void undo(evaluation_data* right);
+    virtual void read(int type, int index, int length, int symbol, string data);
+    virtual void update(evaluation_data* right);
+    virtual void undo(evaluation_data* right);
 };
 
 

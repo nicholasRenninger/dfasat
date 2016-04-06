@@ -15,6 +15,8 @@
 #include "evaluation_factory.h"
 #include <string>
 
+#include "parameters.h"
+
 // this file is generaterated by collector.sh
 // during make, so contributors don't have to
 // touch anything than their own files

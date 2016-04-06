@@ -1,13 +1,13 @@
 #ifndef __EVIDENCE__
 #define __EVIDENCE__
 
-#include "evaluate.h"
+#include "num_count.h"
 
 /* The data contained in every node of the prefix tree or DFA */
 class edsm_data: public count_data {
 
 protected:
-  REGISTER_DEC_TYPE(evidence_driven);
+  REGISTER_DEC_DATATYPE(edsm_data);
 
 public:
 };

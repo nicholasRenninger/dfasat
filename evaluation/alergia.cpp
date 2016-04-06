@@ -10,9 +10,12 @@
 #include "depth-driven.h"
 #include "alergia.h"
 
+#include "parameters.h"
+
+REGISTER_DEF_DATATYPE(alergia_data);
 REGISTER_DEF_TYPE(alergia);
 
-alergia_data::alergia_data() : count_data() {
+alergia_data::alergia_data(){
     num_pos = num_map();
     num_neg = num_map();
 };
@@ -20,9 +23,9 @@ alergia_data::alergia_data() : count_data() {
 void alergia_data::read(int type, int index, int length, int symbol, string data){
     count_data::read(type, index, length, symbol, data);
     if(type == 1){
-        num_pos[c] = pos(c) + 1;
+        num_pos[symbol] = pos(symbol) + 1;
     } else {
-        num_neg[c] = neg(c) + 1;
+        num_neg[symbol] = neg(symbol) + 1;
     }
 };
 

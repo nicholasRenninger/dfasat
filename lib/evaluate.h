@@ -6,6 +6,9 @@
 #include <list>
 #include <map>
 
+class evaluation_data;
+class evaluation_function;
+
 #include "evaluation_factory.h"
 #include "apta.h"
 #include "state_merger.h"
@@ -57,6 +60,7 @@ public:
 
 /* Global data */
   bool inconsistency_found;
+  int num_merges;
   
 /* Boolean indicating the evaluation function type;
    there are two kinds: computed before or after/during a merge.
@@ -106,7 +110,7 @@ public:
   virtual bool sink_consistent(apta_node* node, int type);
   virtual int num_sink_types();
 
-  virtual void read_file(FILE*, state_merger *);
+  virtual void read_file(ifstream &input_stream, state_merger *);
   virtual void print_dot(FILE*, state_merger *);
 };
 
