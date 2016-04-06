@@ -34,6 +34,7 @@ public:
     const char* dot_file;
     const char* sat_program;
     const char* hName;
+    const char* hData;
     int tries;
     int sinkson;
     int seed;
@@ -61,6 +62,7 @@ public:
 parameters::parameters(){
     dot_file = "dfa";
     hName = "default";
+    hData = "evaluation_data";
     tries = 100;
     sinkson = 1;
     seed = 12345678;
@@ -95,6 +97,7 @@ int main(int argc, const char *argv[]){
         { "seed", 's', POPT_ARG_INT, &(param->seed), 's', "Seed for random merge heuristic; default=12345678", "integer" },
         { "output file name", 'o', POPT_ARG_STRING, &(param->dot_file), 'o', "The filename in which to store the learned DFAs in .dot and .aut format, default: \"dfa\".", "string" },
 	{ "heuristic-name", 'q', POPT_ARG_STRING, &(param->hName), 'q', "Name of the merge heurstic to use; will default back on -p flag if not specified.", "string" },
+{ "data-name", 'z', POPT_ARG_STRING, &(param->hData), 'z', "Name of the merge data class to use.", "string" },
         { "runs", 'n', POPT_ARG_INT, &(param->tries), 'n', "Number of DFASAT runs/iterations; default=100", "integer" },
         {"sink states", 'i', POPT_ARG_INT, &(param->sinkson), 'i', "Set to 1 to use sink states, 0 to consider all states", "integer"},
         { "apta bound", 'b', POPT_ARG_INT, &(param->apta_bound), 'b', "Maximum number of remaining states in the partially learned DFA before starting the SAT search process. The higher this value, the larger the problem sent to the SAT solver; default=2000", "integer" },
@@ -182,6 +185,7 @@ int main(int argc, const char *argv[]){
 
     evaluation_function *eval;
 
+    cout << "getting data" << endl;
     try {
        eval_string = param->hName;
        eval = (DerivedRegister<evaluation_function>::getMap())->at(param->hName)();
@@ -190,7 +194,10 @@ int main(int argc, const char *argv[]){
 
     } catch(const std::out_of_range& oor ) {
        std::cerr << "No named heuristic found, defaulting back on -h flag" << std::endl;
-     
+
+    
+    eval_string = param->hData;
+    
 /*    if (param->heuristic==1){
         evaluation_function *eval = new evaluation_function(); 
         merger = state_merger(eval ,the_apta);
