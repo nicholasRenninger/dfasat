@@ -11,10 +11,12 @@
 #include <unordered_map>
 #include <string>
 
-using namespace std;
+class state_merger;
 
-extern int alphabet_size;
-extern bool MERGE_SINKS_DSOLVE;
+#include "apta.h"
+#include "evaluate.h"
+
+using namespace std;
 
 //typedef set<apta_node*, total_weight_compare> state_set;
 typedef list< pair<apta_node*, apta_node*> > merge_list;
@@ -25,13 +27,8 @@ typedef list<apta_node*> node_list;
 typedef list<int> int_list;
 typedef list<double> double_list;
 
-typedef set<apta_node*, size_compare> state_set;
-
 typedef map<int, apta_node*> child_map;
 typedef map<int, int> num_map;
-
-#include "apta.h"
-#include "evaluate.h"
 
 class state_merger{
 public:
@@ -42,7 +39,8 @@ public:
     state_set blue_states;
 
     evaluation_function* eval;
-
+    
+    state_merger();
     state_merger(evaluation_function*, apta*);
 
     void reset();
@@ -70,7 +68,7 @@ public:
     int get_final_apta_size();
 
     void todot(FILE*);
-    void read_apta(FILE*);
+    void read_apta(ifstream &input_stream);
 
     int sink_type(apta_node* node);
     bool sink_consistent(apta_node* node, int type);

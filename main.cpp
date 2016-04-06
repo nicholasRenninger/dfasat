@@ -183,6 +183,7 @@ int main(int argc, const char *argv[]){
     evaluation_function *eval;
 
     try {
+       eval_string = param->hName;
        eval = (DerivedRegister<evaluation_function>::getMap())->at(param->hName)();
        std::cout << "Using heuristic " << param->hName << std::endl;
        merger = state_merger(eval,the_apta);
@@ -190,7 +191,7 @@ int main(int argc, const char *argv[]){
     } catch(const std::out_of_range& oor ) {
        std::cerr << "No named heuristic found, defaulting back on -h flag" << std::endl;
      
-    if (param->heuristic==1){
+/*    if (param->heuristic==1){
         evaluation_function *eval = new evaluation_function(); 
         merger = state_merger(eval ,the_apta);
     }
@@ -226,11 +227,11 @@ int main(int argc, const char *argv[]){
         kldistance *eval = new kldistance();
         merger = state_merger(eval,the_apta);
     }   
-    /* metric driven merging - addition by chrham */
+     metric driven merging - addition by chrham
      if (param->heuristic==10){
         metric_driven *eval = new metric_driven();
         merger = state_merger(eval,the_apta);
-    }
+    }*/
 }	
 
     ifstream input_stream(param->dfa_file);

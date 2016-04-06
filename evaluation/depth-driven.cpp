@@ -14,6 +14,10 @@
 REGISTER_DEF_TYPE(depth_driven);
 REGISTER_DEF_DATATYPE(depth_data);
 
+depth_data::depth_data(){
+    depth = -1;
+}
+
 // I assume this is actually for depth_data not count_data
 void depth_data::read(int type, int index, int length, int symbol, string data){
     depth = length - index;

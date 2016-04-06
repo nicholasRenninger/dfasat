@@ -12,6 +12,11 @@
 #include <stdio.h>
 #include <gsl/gsl_cdf.h>
 
+#include "parameters.h"
+
+state_merger::state_merger(){
+}
+
 state_merger::state_merger(evaluation_function* e, apta* a){
     aut = a;
     eval = e;
@@ -46,7 +51,7 @@ state_set &apta::get_accepting_states(){
     state_set states = get_states();
     state_set* accepting_states = new state_set();
     for(state_set::iterator it = states.begin();it != states.end();++it){
-        if((*it)->num_accepting != 0) accepting_states->insert(*it);
+        if((*it)->type == 1) accepting_states->insert(*it);
     }
     return *accepting_states;
 }
@@ -55,7 +60,7 @@ state_set &apta::get_rejecting_states(){
     state_set states = get_states();
     state_set* rejecting_states = new state_set();
     for(state_set::iterator it = states.begin();it != states.end();++it){
-        if((*it)->num_rejecting != 0) rejecting_states->insert(*it);
+        if((*it)->type != 1) rejecting_states->insert(*it);
     }
     return *rejecting_states;
 }
@@ -238,7 +243,7 @@ merge_map &state_merger::get_possible_merges(){
     apta_node* max_blue = 0;
     for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
         if(!MERGE_SINKS_DSOLVE && (sink_type(*it) != -1)) continue;
-        if(max_blue == 0 || max_blue->occs.size() < (*it)->occs.size())
+        if(max_blue == 0 || max_blue->size < (*it)->size)
             max_blue = *it;
     }
 
@@ -260,8 +265,8 @@ merge_map &state_merger::get_possible_merges(){
     return *mset;
 }
 
-void state_merger::read_apta(FILE* input){
-    eval->read_file(input, this);
+void state_merger::read_apta(ifstream &input_stream){
+    eval->read_file(input_stream, this);
 }
 
 void state_merger::todot(FILE* output){
@@ -273,7 +278,7 @@ int state_merger::sink_type(apta_node* node){
 };
 
 bool state_merger::sink_consistent(apta_node* node, int type){
-    return eval->sink_consistent(node, type)
+    return eval->sink_consistent(node, type);
 };
 
 int state_merger::num_sink_types(){

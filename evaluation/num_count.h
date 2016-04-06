@@ -31,7 +31,6 @@ public:
   int num_merges;
 
   virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
-  virtual void undo_update(state_merger *merger, apta_node* left, apta_node* right);
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
   virtual void reset(state_merger *merger);
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);

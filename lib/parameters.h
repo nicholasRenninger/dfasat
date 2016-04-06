@@ -20,5 +20,6 @@ extern int EXTRA_STATES;
 extern bool TARGET_REJECTING;
 extern bool SYMMETRY_BREAKING;
 extern bool FORCING;
-
+extern bool MERGE_SINKS_DSOLVE;
+extern const char* eval_string;
 #endif

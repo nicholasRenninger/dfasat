@@ -5,6 +5,7 @@
 #include <cstdlib>
 
 #include "random_greedy.h"
+#include "parameters.h"
 
 merge_list random_greedy_bounded_run(state_merger* merger){
     cerr << "starting greedy merging" << endl;

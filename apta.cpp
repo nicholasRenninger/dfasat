@@ -11,6 +11,7 @@
 #include <sstream>
 
 #include "evaluators.h"
+#include "parameters.h"
 
 using namespace std;
 
@@ -44,7 +45,7 @@ apta_node::apta_node(){
     depth = 0;
     
     try {
-       data = (DerivedRegister<evaluation_data>::getMap())->at(param->hName)();
+       data = (DerivedDataRegister<evaluation_data>::getMap())->at(eval_string)();
     } catch(const std::out_of_range& oor ) {
        std::cerr << "No data type found..." << std::endl;
     }

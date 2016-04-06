@@ -50,6 +50,9 @@ void evaluation_function::update_score(state_merger *merger, apta_node* left, ap
   num_merges += 1;
 };
 
+void evaluation_function::undo_update(state_merger *merger, apta_node* left, apta_node* right){
+};
+
 bool evaluation_function::compute_consistency(state_merger *merger, apta_node* left, apta_node* right){
   return inconsistency_found == false && compute_score(merger, left, right) > LOWER_BOUND;
 };
@@ -84,8 +87,8 @@ int evaluation_function::sink_type(apta_node* node){
     if(!USE_SINKS) return -1;
 
     if (is_low_count_sink(node)) return 0;
-    if (is_accepting_sink(node)) return 1;
-    if (is_rejecting_sink(node)) return 2;
+    //if (is_accepting_sink(node)) return 1;
+    //if (is_rejecting_sink(node)) return 2;
     return -1;
 };
 
@@ -93,8 +96,8 @@ bool evaluation_function::sink_consistent(apta_node* node, int type){
     if(!USE_SINKS) return false;
     
     if(type == 0) return is_low_count_sink(node);
-    if(type == 1) return is_accepting_sink(node);
-    if(type == 2) return is_rejecting_sink(node);
+    //if(type == 1) return is_accepting_sink(node);
+    //if(type == 2) return is_rejecting_sink(node);
     
     return true;
 };
