@@ -91,7 +91,7 @@ bool is_rejecting_sink(apta_node* node){
     return d->accepting_paths == 0 && d->num_accepting == 0;
 };
 
-int evaluation_function::sink_type(apta_node* node){
+int count_driven::sink_type(apta_node* node){
     if(!USE_SINKS) return -1;
 
     if (is_accepting_sink(node)) return 0;
@@ -99,7 +99,7 @@ int evaluation_function::sink_type(apta_node* node){
     return -1;
 };
 
-bool evaluation_function::sink_consistent(apta_node* node, int type){
+bool count_driven::sink_consistent(apta_node* node, int type){
     if(!USE_SINKS) return false;
     
     if(type == 0) return is_accepting_sink(node);
@@ -108,7 +108,7 @@ bool evaluation_function::sink_consistent(apta_node* node, int type){
     return true;
 };
 
-int evaluation_function::num_sink_types(){
+int count_driven::num_sink_types(){
     if(!USE_SINKS) return 0;
     
     // accepting or rejecting

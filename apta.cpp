@@ -12,6 +12,7 @@
 
 #include "evaluators.h"
 #include "parameters.h"
+#include "evaluation_factory.h"
 
 using namespace std;
 

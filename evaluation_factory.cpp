@@ -4,5 +4,5 @@
 #include "evaluation_factory.h"
 
 map_type* BaseFactory::map = NULL;
-
+map_datatype* BaseDataFactory::map = NULL;
 
