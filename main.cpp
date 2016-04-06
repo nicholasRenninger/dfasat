@@ -193,9 +193,11 @@ int main(int argc, const char *argv[]){
     } catch(const std::out_of_range& oor ) {
        std::cerr << "No named heuristic found, defaulting back on -h flag" << std::endl;
 
-    
-    eval_string = param->hData;
-    
+   }
+    cout << "storing eval string" << endl; 
+    eval_string = "depth_data"; //param->hData;
+   
+    cout << "creating apta " <<  "using " << eval_string << endl; 
     apta* the_apta = new apta();
     merger = state_merger(eval,the_apta);
 
@@ -240,7 +242,7 @@ int main(int argc, const char *argv[]){
         metric_driven *eval = new metric_driven();
         merger = state_merger(eval,the_apta);
     }*/
-}	
+	
 
     ifstream input_stream(param->dfa_file);
     merger.read_apta(input_stream);
