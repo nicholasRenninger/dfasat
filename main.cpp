@@ -157,7 +157,6 @@ int main(int argc, const char *argv[]){
     
     poptFreeContext( optCon );
     
-    apta* the_apta = new apta();
     state_merger merger;
 
     srand(param->seed);
@@ -190,14 +189,16 @@ int main(int argc, const char *argv[]){
        eval_string = param->hName;
        eval = (DerivedRegister<evaluation_function>::getMap())->at(param->hName)();
        std::cout << "Using heuristic " << param->hName << std::endl;
-       merger = state_merger(eval,the_apta);
-
+       
     } catch(const std::out_of_range& oor ) {
        std::cerr << "No named heuristic found, defaulting back on -h flag" << std::endl;
 
     
     eval_string = param->hData;
     
+    apta* the_apta = new apta();
+    merger = state_merger(eval,the_apta);
+
 /*    if (param->heuristic==1){
         evaluation_function *eval = new evaluation_function(); 
         merger = state_merger(eval ,the_apta);
