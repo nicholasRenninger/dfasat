@@ -25,6 +25,7 @@ void evaluation_data::read(int type, int index, int length, int symbol, string d
 };
 
 void evaluation_data::update(evaluation_data* right){
+    cerr << "read " << endl;
     if(node_type == -1){
         node_type = right->node_type;
         undo_pointer = right;

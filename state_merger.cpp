@@ -144,6 +144,7 @@ void state_merger::merge(apta_node* left, apta_node* right){
 }
 
 void state_merger::undo_merge(apta_node* left, apta_node* right){
+    if(left == 0 || right == 0) return;
     if(right->representative != left) return;
 
     for(child_map::reverse_iterator it = right->children.rbegin();it != right->children.rend(); ++it){
@@ -162,7 +163,6 @@ void state_merger::undo_merge(apta_node* left, apta_node* right){
     }
 
     left->data->undo(right->data);
-
     left->size -= right->size;
     right->representative = 0;
     eval->undo_update(this, left, right);
@@ -262,6 +262,7 @@ merge_map &state_merger::get_possible_merges(){
             }
         }
     }
+    
     return *mset;
 }
 

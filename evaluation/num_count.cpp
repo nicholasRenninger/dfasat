@@ -15,7 +15,6 @@ REGISTER_DEF_TYPE(count_driven);
 REGISTER_DEF_DATATYPE(count_data);
 
 count_data::count_data(){
-    cerr << "constructing";
     num_accepting = 0;
     num_rejecting = 0;
     accepting_paths = 0;
@@ -23,7 +22,6 @@ count_data::count_data(){
 };
 
 void count_data::read(int type, int index, int length, int symbol, string data){
-    cerr << "read " << symbol << " " << data << endl;
     if(type == 1){
         accepting_paths++;
         if(length == index+1){
@@ -38,7 +36,7 @@ void count_data::read(int type, int index, int length, int symbol, string data){
 };
 
 void count_data::update(evaluation_data* right){
-    count_data* other = (count_data*)right;
+    count_data* other = reinterpret_cast<count_data*>(right);
     num_accepting += other->num_accepting;
     num_rejecting += other->num_rejecting;
     accepting_paths += other->accepting_paths;
@@ -46,7 +44,7 @@ void count_data::update(evaluation_data* right){
 };
 
 void count_data::undo(evaluation_data* right){
-    count_data* other = (count_data*)right;
+    count_data* other = reinterpret_cast<count_data*>(right);
     num_accepting -= other->num_accepting;
     num_rejecting -= other->num_rejecting;
     accepting_paths -= other->accepting_paths;
@@ -57,8 +55,8 @@ void count_data::undo(evaluation_data* right){
 bool count_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
     if(inconsistency_found) return false;
   
-    count_data* l = (count_data*) left->data;
-    count_data* r = (count_data*) right->data;
+    count_data* l = reinterpret_cast<count_data*>(left->data);
+    count_data* r = reinterpret_cast<count_data*>(right->data);
     
     if(l->num_accepting != 0 && r->num_rejecting != 0){ inconsistency_found = true; return false; }
     if(l->num_rejecting != 0 && r->num_accepting != 0){ inconsistency_found = true; return false; }
@@ -80,14 +78,14 @@ void count_driven::reset(state_merger *merger){
 };
 
 bool is_accepting_sink(apta_node* node){
-    count_data* d = (count_data*) node->data;
+    count_data* d = reinterpret_cast<count_data*>(node->data);
 
     node = node->find();
     return d->rejecting_paths == 0 && d->num_rejecting == 0;
 };
 
 bool is_rejecting_sink(apta_node* node){
-    count_data* d = (count_data*) node->data;
+    count_data* d = reinterpret_cast<count_data*>(node->data);
 
     node = node->find();
     return d->accepting_paths == 0 && d->num_accepting == 0;

@@ -195,7 +195,7 @@ int main(int argc, const char *argv[]){
 
    }
     cout << "storing eval string" << endl; 
-    eval_string = "depth_data"; //param->hData;
+    eval_string = param->hData;
    
     cout << "creating apta " <<  "using " << eval_string << endl; 
     apta* the_apta = new apta();
