@@ -186,7 +186,7 @@ int main(int argc, const char *argv[]){
 
     cout << "getting data" << endl;
     try {
-       eval_string = param->hName;
+       eval_string = param->hData;
        eval = (DerivedRegister<evaluation_function>::getMap())->at(param->hName)();
        std::cout << "Using heuristic " << param->hName << std::endl;
        

@@ -1,10 +1,6 @@
 digraph DFA {
 	0 [label="root" shape=box];
 		I -> 0;
-	0 [shape=doublecircle label="
-2.000
-0.000
-1"];
-	S0t0 [label="sink 0" shape=box];
-		0 -> S0t0 [label=" <1> [1:0]"];
+	0 [shape=circle label="[10538]"];
+		0 -> 0 [label=" 1 0"];
 }

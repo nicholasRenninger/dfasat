@@ -1,110 +1,105 @@
 digraph DFA {
 	0 [label="root" shape=box];
 		I -> 0;
-	0 [shape=circle label="
-5.015
-6.500
-196"];
-		0 -> 1 [label=" <1> [109:0]"];
-		0 -> 26 [label=" <2> [87:0]"];
-	1 [shape=circle label="
-2.612
-12.784
-109"];
-		1 -> 2 [label=" <0> [52:0]"];
-		1 -> 149 [label=" <2> [30:0]"];
-		1 -> 362 [label=" <1> [27:0]"];
-	26 [shape=circle label="
-5.729
-8.291
-87"];
-	S26t0 [label="sink 0" shape=box];
-		26 -> S26t0 [label=" <1> [14:0] <0> [12:0]"];
-		26 -> 69 [label=" <2> [61:0]"];
-	69 [shape=circle label="
-8.057
-1.689
-61"];
-	S69t0 [label="sink 0" shape=box];
-		69 -> S69t0 [label=" <1> [13:0]"];
-		69 -> 70 [label=" <2> [48:0]"];
-	2 [shape=circle label="
-4.269
-9.043
-52"];
+	0 [shape=circle label="[1]"];
+	S0t0 [label="sink 0" shape=box];
+		0 -> S0t0 [label=" 0 [1]"];
+		0 -> 1 [label=" 1"];
+	1 [shape=circle label="[1]"];
+	S1t0 [label="sink 0" shape=box];
+		1 -> S1t0 [label=" 1 [1]"];
+		1 -> 2 [label=" 0"];
+	2 [shape=circle label="[1]"];
 	S2t0 [label="sink 0" shape=box];
-		2 -> S2t0 [label=" <1> [23:0] <0> [11:0] <2> [18:0]"];
-	70 [shape=circle label="
-5.333
-10.931
-48"];
-	S70t0 [label="sink 0" shape=box];
-		70 -> S70t0 [label=" <0> [10:0]"];
-		70 -> 71 [label=" <2> [38:0]"];
-	71 [shape=circle label="
--0.724
-2.825
-38"];
-	S71t0 [label="sink 0" shape=box];
-		71 -> S71t0 [label=" <2> [1:0]"];
-		71 -> 72 [label=" <0> [37:0]"];
-	72 [shape=circle label="
--1.000
-0.000
-37"];
-		72 -> 73 [label=" <0> [37:0]"];
-	73 [shape=circle label="
--1.000
-0.000
-37"];
-		73 -> 74 [label=" <0> [37:0]"];
-	74 [shape=circle label="
-7.676
-2.449
-37"];
-	S74t0 [label="sink 0" shape=box];
-		74 -> S74t0 [label=" <1> [6:0]"];
-		74 -> 75 [label=" <2> [31:0]"];
-	75 [shape=circle label="
-8.177
-0.460
-31"];
-		75 -> 76 [label=" <2> [31:0]"];
-	76 [shape=circle label="
-7.710
-0.819
-31"];
-	S76t0 [label="sink 0" shape=box];
-		76 -> S76t0 [label=" <1> [1:0]"];
-		76 -> 77 [label=" <2> [30:0]"];
-	77 [shape=circle label="
--1.000
-0.000
-30"];
-		77 -> 78 [label=" <0> [30:0]"];
-	78 [shape=circle label="
-7.367
-0.899
-30"];
-	S78t0 [label="sink 0" shape=box];
-		78 -> S78t0 [label=" <1> [1:0]"];
-		78 -> 79 [label=" <2> [29:0]"];
-	149 [shape=circle label="
-6.683
-4.175
-30"];
-	S149t0 [label="sink 0" shape=box];
-		149 -> S149t0 [label=" <1> [6:0] <0> [1:0] <2> [23:0]"];
-	79 [shape=circle label="
-4.655
-14.916
-29"];
-	S79t0 [label="sink 0" shape=box];
-		79 -> S79t0 [label=" <0> [9:0] <2> [20:0]"];
-	362 [shape=circle label="
-6.093
-1.760
-27"];
-	S362t0 [label="sink 0" shape=box];
-		362 -> S362t0 [label=" <1> [8:0] <2> [19:0]"];
+		2 -> S2t0 [label=" 1 [1]"];
+		2 -> 3 [label=" 0"];
+	3 [shape=circle style=dotted label="[1]"];
+		3 -> 4 [label="0 [1]" style=dotted];
+	4 [shape=circle style=dotted label="[1]"];
+		4 -> 5 [label="0 [1]" style=dotted];
+	5 [shape=circle style=dotted label="[1]"];
+		5 -> 6 [label="0 [1]" style=dotted];
+	6 [shape=circle style=dotted label="[1]"];
+		6 -> 7 [label="0 [1]" style=dotted];
+	7 [shape=circle style=dotted label="[1]"];
+		7 -> 8 [label="0 [1]" style=dotted];
+	8 [shape=circle style=dotted label="[1]"];
+		8 -> 9 [label="0 [1]" style=dotted];
+	9 [shape=circle style=dotted label="[1]"];
+		9 -> 501 [label="0 [1]" style=dotted];
+		47 -> 48 [label="0 [1]" style=dotted];
+	48 [shape=circle style=dotted label="[1]"];
+		243 -> 244 [label="0 [1]" style=dotted];
+	244 [shape=circle style=dotted label="[1]"];
+		244 -> 511 [label="0 [1]" style=dotted];
+		487 -> 488 [label="0 [1]" style=dotted];
+	488 [shape=circle style=dotted label="[1]"];
+		488 -> 489 [label="0 [1]" style=dotted];
+	489 [shape=circle style=dotted label="[1]"];
+		489 -> 490 [label="0 [1]" style=dotted];
+	490 [shape=circle style=dotted label="[1]"];
+		490 -> 491 [label="0 [1]" style=dotted];
+	491 [shape=circle style=dotted label="[1]"];
+	501 [shape=circle style=dotted label="[1]"];
+		501 -> 502 [label="0 [1]" style=dotted];
+	502 [shape=circle style=dotted label="[1]"];
+		504 -> 3711 [label="0 [1]" style=dotted];
+		505 -> 506 [label="0 [1]" style=dotted];
+	506 [shape=circle style=dotted label="[1]"];
+		506 -> 507 [label="0 [1]" style=dotted];
+	507 [shape=circle style=dotted label="[1]"];
+		507 -> 508 [label="0 [1]" style=dotted];
+	508 [shape=circle style=dotted label="[1]"];
+	511 [shape=circle style=dotted label="[1]"];
+		511 -> 1738 [label="0 [1]" style=dotted];
+		742 -> 743 [label="0 [1]" style=dotted];
+	743 [shape=circle style=dotted label="[1]"];
+		743 -> 744 [label="0 [1]" style=dotted];
+	744 [shape=circle style=dotted label="[1]"];
+		782 -> 783 [label="0 [1]" style=dotted];
+	783 [shape=circle style=dotted label="[1]"];
+		786 -> 787 [label="0 [1]" style=dotted];
+	787 [shape=circle style=dotted label="[1]"];
+		863 -> 864 [label="0 [1]" style=dotted];
+	864 [shape=circle style=dotted label="[1]"];
+		976 -> 1202 [label="0 [1]" style=dotted];
+		977 -> 978 [label="0 [1]" style=dotted];
+	978 [shape=circle style=dotted label="[1]"];
+		1023 -> 5132 [label="0 [1]" style=dotted];
+	1202 [shape=circle style=dotted label="[1]"];
+		1202 -> 1203 [label="0 [1]" style=dotted];
+	1203 [shape=circle style=dotted label="[1]"];
+		1247 -> 1248 [label="0 [1]" style=dotted];
+	1248 [shape=circle style=dotted label="[1]"];
+		1373 -> 1374 [label="0 [1]" style=dotted];
+	1374 [shape=circle style=dotted label="[1]"];
+		1374 -> 1375 [label="0 [1]" style=dotted];
+	1375 [shape=circle style=dotted label="[1]"];
+		1377 -> 1378 [label="0 [1]" style=dotted];
+	1378 [shape=circle style=dotted label="[1]"];
+		1507 -> 1508 [label="0 [1]" style=dotted];
+	1508 [shape=circle style=dotted label="[1]"];
+		1508 -> 1509 [label="0 [1]" style=dotted];
+	1509 [shape=circle style=dotted label="[1]"];
+	1738 [shape=circle style=dotted label="[1]"];
+		2479 -> 2480 [label="0 [1]" style=dotted];
+	2480 [shape=circle style=dotted label="[1]"];
+		3207 -> 3208 [label="0 [1]" style=dotted];
+	3208 [shape=circle style=dotted label="[1]"];
+		3210 -> 3211 [label="0 [1]" style=dotted];
+	3211 [shape=circle style=dotted label="[1]"];
+		3211 -> 3212 [label="0 [1]" style=dotted];
+	3212 [shape=circle style=dotted label="[1]"];
+	3711 [shape=circle style=dotted label="[1]"];
+		4302 -> 4303 [label="0 [1]" style=dotted];
+	4303 [shape=circle style=dotted label="[1]"];
+		4575 -> 4576 [label="0 [1]" style=dotted];
+	4576 [shape=circle style=dotted label="[1]"];
+		4962 -> 4963 [label="0 [1]" style=dotted];
+	4963 [shape=circle style=dotted label="[1]"];
+	5132 [shape=circle style=dotted label="[1]"];
+		5724 -> 5725 [label="0 [1]" style=dotted];
+	5725 [shape=circle style=dotted label="[1]"];
+		7234 -> 7235 [label="0 [1]" style=dotted];
+	7235 [shape=circle style=dotted label="[1]"];
 }

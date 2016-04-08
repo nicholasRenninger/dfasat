@@ -18,6 +18,7 @@ evaluation_data::evaluation_data(){
 };
 
 void evaluation_data::read(int type, int index, int length, int symbol, string data){
+    cerr << "read " << symbol << " " << data << endl;
     if(length == index){
         node_type = type;
     }
@@ -41,7 +42,7 @@ void evaluation_data::undo(evaluation_data* right){
 bool evaluation_function::consistent(state_merger *merger, apta_node* left, apta_node* right){
   if(inconsistency_found) return false;
   
-  if(left->data->node_type != right->data->node_type){ inconsistency_found = true; return false; }
+  if(left->data->node_type != -1 && right->data->node_type != -1 && left->data->node_type != right->data->node_type){ inconsistency_found = true; return false; }
     
   return true;
 };
@@ -156,6 +157,7 @@ void evaluation_function::read_file(ifstream &input_stream, state_merger* merger
                 next_node->label  = c;
                 next_node->number = node_number++;
                 next_node->depth = depth;
+                next_node->type = type;
             }
             node = node->child(c);
         }

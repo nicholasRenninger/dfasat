@@ -15,6 +15,7 @@ REGISTER_DEF_TYPE(count_driven);
 REGISTER_DEF_DATATYPE(count_data);
 
 count_data::count_data(){
+    cerr << "constructing";
     num_accepting = 0;
     num_rejecting = 0;
     accepting_paths = 0;
@@ -22,6 +23,7 @@ count_data::count_data(){
 };
 
 void count_data::read(int type, int index, int length, int symbol, string data){
+    cerr << "read " << symbol << " " << data << endl;
     if(type == 1){
         accepting_paths++;
         if(length == index+1){
