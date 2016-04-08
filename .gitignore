@@ -1,0 +1,8 @@
+# ignore all output
+*.dot
+*.pdf
+# ignore all object files
+*.o
+evaluation/*.o
+# ignore binaries
+dfasat
