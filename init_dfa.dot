@@ -1,7 +1,0 @@
-digraph DFA {
-	0 [label="root" shape=box];
-		I -> 0;
-	0 [shape=circle label="[1]"];
-		0 -> 1 [label=" 1"];
-		0 -> 10 [label=" 0"];
-}
