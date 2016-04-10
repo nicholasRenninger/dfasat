@@ -1,5 +1,6 @@
 #include "state_merger.h"
 #include "evaluate.h"
+#include "evaluation_factory.h"
 #include <stdlib.h>
 #include <math.h>
 #include <vector>
@@ -7,180 +8,145 @@
 #include <stdio.h>
 #include <gsl/gsl_cdf.h>
 
-#include "depth-driven.h"
+#include "parameters.h"
+#include "mealy.h"
 
-//DerivedRegister<series_driven> series_driven::reg("series-driven");
-REGISTER_DEF_TYPE(depth_driven);
-/* RPNI like, merges shallow states (of lowest depth) first */
-/*void depth_driven::update_score(state_merger *merger, apta_node* left, apta_node* right){
-  if(depth == 0) depth = max(left->depth, right->depth);
+REGISTER_DEF_TYPE(mealy);
+REGISTER_DEF_DATATYPE(mealy_data);
+
+int mealy_data::num_outputs;
+si_map mealy_data::output_int;
+is_map mealy_data::int_output;
+
+void mealy_data::read_from(int type, int index, int length, int symbol, string data){
+    //cerr << "read: " << symbol << "/" << data << endl;
+    evaluation_data::read_from(type, index, length, symbol, data);
+    if(output_int.find(data) == output_int.end()){
+       output_int[data] = num_outputs;
+       int_output[num_outputs] = data;
+       num_outputs++;
+    } else {
+       outputs[symbol] = output_int[data];
+    }
 };
 
-int depth_driven::compute_score(state_merger *merger, apta_node* left, apta_node* right){
-  return depth;
+void mealy_data::update(evaluation_data* right){
+    mealy_data* other = reinterpret_cast<mealy_data*>(right);
+    
+    for(output_map::iterator it = other->outputs.begin(); it != other->outputs.end(); ++it){
+        int input  = (*it).first;
+        int output = (*it).second;
+        
+        if(outputs.find(input) == outputs.end()){
+            outputs[input] = output;
+            undo_info[input] = other;
+        }
+    }
 };
 
-void depth_driven::reset(state_merger *merger ){
-  inconsistency_found = false;
-  depth = 0;
-};*/
+void mealy_data::undo(evaluation_data* right){
+    mealy_data* other = reinterpret_cast<mealy_data*>(right);
 
-bool depth_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
-    if(evaluation_function::consistent(merger,left,right) == false) return false;
-    if(left->accepting_paths < STATE_COUNT || right->accepting_paths < STATE_COUNT) return true;
-    /*if(left->depth < 3 || right->depth < 3){
-        inconsistency_found = true;
-        return false;
-    }*/
-
-/*
-
-
-    double max_left = -1;
-    double max_right =-1;
-    int left_symbol = -1;
-    int right_symbol = -1;
-
-    for(int i = 0; i < alphabet_size; ++i){
-
-        if( (double)left->pos(i) > max_left ) {
-        max_left = (double)left->pos(i);
-        left_symbol = i;
-      }
-
-        if ((double)right->pos(i) > max_right) {
-        max_right = (double)right->pos(i);
-        right_symbol = i;
-      }
-
+    for(output_map::iterator it = other->outputs.begin(); it != other->outputs.end(); ++it){
+        int input  = (*it).first;
+        int output = (*it).second;
+        
+        undo_map::iterator it2 = undo_info.find(input);
+        
+        if(it2 != undo_info.end() && (*it2).second == other){
+            outputs.erase(input);
+            undo_info.erase(input);
+        }
     }
+};
 
-    if(left_symbol != right_symbol) {
-        inconsistency_found = true;
-        return false;
+/* default evaluation, count number of performed merges */
+bool mealy::consistent(state_merger *merger, apta_node* left, apta_node* right){
+    if(inconsistency_found) return false;
+  
+    mealy_data* l = reinterpret_cast<mealy_data*>(left->data);
+    mealy_data* r = reinterpret_cast<mealy_data*>(right->data);
+    
+    int matched = 0;
+    
+    for(output_map::iterator it = r->outputs.begin(); it != r->outputs.end(); ++it){
+        int input  = (*it).first;
+        int output = (*it).second;
+
+        if(l->outputs.find(input) != l->outputs.end()){
+            if(l->outputs[input] != output){
+                inconsistency_found = true;
+                return false;
+            }
+            matched = matched + 1;
+        }
     }
-    return true;*/
-
-    double error_left = 0.0;
-    double error_right = 0.0;
-    double error_total = 0.0;
-    double mean_left = 0.0;
-    double mean_right = 0.0;
-    double mean_total = 0.0;
-
-    for(double_list::iterator it = left->occs.begin(); it != left->occs.end(); ++it){
-        mean_left = mean_left + (double)*it;
-    }
-    for(double_list::iterator it = right->occs.begin(); it != right->occs.end(); ++it){
-        mean_right = mean_right + (double)*it;
-    }
-    mean_total = (mean_left + mean_right) / ((double)left->occs.size() + (double)right->occs.size());
-    mean_right = mean_right / (double)right->occs.size();
-    mean_left = mean_left / (double)left->occs.size();
-
-    /*for(double_list::iterator it = left->occs.begin(); it != left->occs.end(); ++it){
-        error_left = error_left + ((mean_left - (double)*it)*(mean_left - (double)*it));
-        error_total = error_total + ((mean_total - (double)*it)*(mean_total - (double)*it));
-    }
-    for(double_list::iterator it = right->occs.begin(); it != right->occs.end(); ++it){
-        error_right = error_right + ((mean_right - (double)*it)*(mean_right - (double)*it));
-        error_total = error_total + ((mean_total - (double)*it)*(mean_total - (double)*it));
-    }*/
-
-    //error_right = error_right / ((double)left->occs.size() + (double)right->occs.size());
-    //error_left = error_left / ((double)left->occs.size() + (double)right->occs.size());
-    //error_total = (error_total) / ((double)left->occs.size() + (double)right->occs.size());
-
-    //if(error_total - (error_left + error_right) > CHECK_PARAMETER){ inconsistency_found = true; return false; }
-    if(mean_left - mean_right > CHECK_PARAMETER){ inconsistency_found = true; return false; }
-    if(mean_right - mean_left > CHECK_PARAMETER){ inconsistency_found = true; return false; }
-
-    //merge_error = merge_error + (error_total - (error_left + error_right));
-
+    
+    num_unmatched = num_unmatched + (l->outputs.size() - matched);
+    num_unmatched = num_unmatched + (r->outputs.size() - matched);
+    num_matched   = num_matched   + matched;
+    
     return true;
 };
 
-void depth_driven::update_score(state_merger *merger, apta_node* left, apta_node* right){
-    if (inconsistency_found) return;
-    if (consistent(merger, left, right) == false) return;
-    double error_left = 0.0;
-    double error_right = 0.0;
-    double error_total = 0.0;
-    double mean_left = 0.0;
-    double mean_right = 0.0;
-    double mean_total = 0.0;
-
-    for(double_list::iterator it = left->occs.begin(); it != left->occs.end(); ++it){
-        mean_left = mean_left + (double)*it;
-    }
-    for(double_list::iterator it = right->occs.begin(); it != right->occs.end(); ++it){
-        mean_right = mean_right + (double)*it;
-    }
-    mean_total = (mean_left + mean_right) / ((double)left->occs.size() + (double)right->occs.size());
-    mean_right = mean_right / (double)right->occs.size();
-    mean_left = mean_left / (double)left->occs.size();
-
-    for(double_list::iterator it = left->occs.begin(); it != left->occs.end(); ++it){
-        error_left = error_left + ((mean_left - (double)*it)*(mean_left - (double)*it));
-        error_total = error_total + ((mean_total - (double)*it)*(mean_total - (double)*it));
-    }
-    for(double_list::iterator it = right->occs.begin(); it != right->occs.end(); ++it){
-        error_right = error_right + ((mean_right - (double)*it)*(mean_right - (double)*it));
-        error_total = error_total + ((mean_total - (double)*it)*(mean_total - (double)*it));
-    }
-
-    error_right = error_right / ((double)left->occs.size() + (double)right->occs.size());
-    error_left = error_left / ((double)left->occs.size() + (double)right->occs.size());
-    error_total = (error_total) / ((double)left->occs.size() + (double)right->occs.size());
-
-    merge_error = merge_error + (error_total - (error_left + error_right));
-
-    return;
-    /*
-    double max_left = -1;
-    double max_right =-1;
-    double max_total = -1;
-    int left_symbol = -1;
-    int right_symbol = -1;
-
-    for(int i = 0; i < alphabet_size; ++i){
-        if( (double)left->pos(i) + right->pos(i) > max_total ) {
-            max_total = (double)left->pos(i) + (double)right->pos(i);
-        }
-
-        if( (double)left->pos(i) > max_left ) {
-            max_left = (double)left->pos(i);
-            left_symbol = i;
-        }
-
-        if ((double)right->pos(i) > max_right) {
-            max_right = (double)right->pos(i);
-            right_symbol = i;
-        }
-    }
-
-    int error_left  = left->accepting_paths  - max_left;
-    int error_right = right->accepting_paths - max_right;
-    int error_total = left->accepting_paths + right->accepting_paths - max_total;
-
-    //if(left_symbol == right_symbol) merge_error = merge_error + 1;
-    merge_error = merge_error + (error_total - error_left - error_right);*/
-};
-
-int depth_driven::compute_score(state_merger *merger, apta_node* left, apta_node* right){
-    //if(left->source != 0 && right->source != 0 && left->source->find() == right->source->find()) merge_error = merge_error / 2.0;
-    //if(merge_error > 1) return -1;
-    return 1000.0 - merge_error;
-    //return merge_error;
-};
-
-bool depth_driven::compute_consistency(state_merger *merger, apta_node* left, apta_node* right){
+bool mealy::compute_consistency(state_merger* merger, apta_node* left, apta_node* right){
     if(evaluation_function::compute_consistency(merger, left, right) == false) return false;
-    //if(merge_error > 0) return false;
-    return true;
+    return num_matched > num_unmatched;
 };
 
-void depth_driven::reset(state_merger *merger ){
-    inconsistency_found = false;
-    merge_error = 0.0;
+void mealy::reset(state_merger* merger){
+    evaluation_function::reset(merger);
+    num_matched = 0;
+    num_unmatched = 0;
 };
+
+void mealy::print_dot(FILE* output, state_merger* merger){
+    apta* aut = merger->aut;
+    state_set s  = merger->red_states;
+    
+    cerr << "size: " << s.size() << endl;
+    
+    fprintf(output,"digraph DFA {\n");
+    fprintf(output,"\t%i [label=\"root\" shape=box];\n", aut->root->find()->number);
+    fprintf(output,"\t\tI -> %i;\n", aut->root->find()->number);
+    for(state_set::iterator it = s.begin(); it != s.end(); ++it){
+        apta_node* n = *it;
+        mealy_data* l = reinterpret_cast<mealy_data*>(n->data);
+        fprintf(output,"\t%i [shape=circle label=\"%i\"];\n", n->number, n->size);
+        
+        state_set childnodes;
+        set<int> sinks;
+        for(int i = 0; i < alphabet_size; ++i){
+            apta_node* child = n->get_child(i);
+            if(child == 0){
+                // no output
+            } else {
+                 childnodes.insert(child);
+            }
+        }
+        for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
+            apta_node* child = *it2;
+            fprintf(output, "\t\t%i -> %i [label=\"" ,n->number, child->number);
+            for(int i = 0; i < alphabet_size; ++i){
+                if(n->get_child(i) != 0 && n->get_child(i) == child){
+                    fprintf(output, " %s\\\\%s", aut->alph_str(i).c_str(), mealy_data::int_output[l->outputs[i]].c_str());
+                }
+            }
+            fprintf(output, "\"];\n");
+        }
+    }
+
+    s = merger->get_candidate_states();
+    for(state_set::iterator it = s.begin(); it != s.end(); ++it){
+        apta_node* n = *it;
+        mealy_data* l = reinterpret_cast<mealy_data*>(n->data);
+        fprintf(output,"\t%i [shape=circle label=\"%i\"];\n", n->number, n->size);
+        for(child_map::iterator it2 = n->children.begin(); it2 != n->children.end(); ++it2){
+            apta_node* child = (*it2).second;
+            int symbol = (*it2).first;
+            fprintf(output, "\t\t%i -> %i [style=dotted label=\"%s\\\\%s\"];\n", n->number, child->number, aut->alph_str(symbol).c_str(), mealy_data::int_output[l->outputs[symbol]].c_str());
+        }
+    }
+    fprintf(output,"}\n");
+};
+

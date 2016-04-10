@@ -117,6 +117,7 @@ apta_node* apta_node::find_until(apta_node* node, int i){
 
 /* state merging */
 void state_merger::merge(apta_node* left, apta_node* right){
+    //cerr << "merge: " << left << " " << right << endl;
     if(left == 0 || right == 0) return;
     if(eval->consistent(this, left, right) == false) return;
 
@@ -144,6 +145,7 @@ void state_merger::merge(apta_node* left, apta_node* right){
 }
 
 void state_merger::undo_merge(apta_node* left, apta_node* right){
+    //cerr << "undo merge: " << left << " " << right << endl;
     if(left == 0 || right == 0) return;
     if(right->representative != left) return;
 
@@ -155,13 +157,12 @@ void state_merger::undo_merge(apta_node* left, apta_node* right){
         }
         else if(left->child(i) != 0){
             apta_node* other_child = right_child->find_until(right, i);
-            apta_node* child = other_child->representative;
-            if(child != other_child)
-                undo_merge(child, other_child);
-            other_child->det_undo.erase(i);
+            apta_node* child = right_child->representative;
+            if(child != right_child)
+                undo_merge(child, right_child);
+            right_child->det_undo.erase(i);
         }
     }
-
     left->data->undo(right->data);
     left->size -= right->size;
     right->representative = 0;
@@ -229,9 +230,10 @@ bool state_merger::perform_merge(apta_node* left, apta_node* right){
 int state_merger::testmerge(apta_node* left, apta_node* right){
     eval->reset(this);
     int result = -1;
-    if(eval->compute_before_merge) result = eval->compute_score(this, left, right);
+    //if(eval->compute_before_merge) result = eval->compute_score(this, left, right);
     merge(left,right);
-    if(!eval->compute_before_merge) result = eval->compute_score(this, left, right);
+    //if(!eval->compute_before_merge)
+    result = eval->compute_score(this, left, right);
     if(eval->compute_consistency(this, left, right) == false) result = -1;
     undo_merge(left,right);
     return result;

@@ -2,7 +2,7 @@
 #define __ALERGIA__
 
 #include "evaluate.h"
-#include "depth-driven.h"
+#include "num_count.h"
 
 typedef map<int, int> num_map;
 
@@ -31,7 +31,7 @@ public:
     
     alergia_data();
 
-    virtual void read(int type, int index, int length, int symbol, string data);
+    virtual void read_from(int type, int index, int length, int symbol, string data);
     virtual void update(evaluation_data* right);
     virtual void undo(evaluation_data* right);
 };
@@ -44,6 +44,7 @@ protected:
 
 public:
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
+  virtual void print_dot(FILE*, state_merger *);
 };
 
 #endif

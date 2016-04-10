@@ -17,7 +17,8 @@ public:
 
     count_data();
     
-    virtual void read(int type, int index, int length, int symbol, string data);
+    virtual void read_from(int type, int index, int length, int symbol, string data);
+    virtual void read_to(int type, int index, int length, int symbol, string data);
     virtual void update(evaluation_data* right);
     virtual void undo(evaluation_data* right);
 };
@@ -38,6 +39,8 @@ public:
   virtual int sink_type(apta_node* node);
   virtual bool sink_consistent(apta_node* node, int type);
   virtual int num_sink_types();
+
+  virtual void print_dot(FILE*, state_merger *);
 };
 
 #endif

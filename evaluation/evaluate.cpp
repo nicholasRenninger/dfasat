@@ -17,8 +17,13 @@ evaluation_data::evaluation_data(){
     undo_pointer = 0;
 };
 
-void evaluation_data::read(int type, int index, int length, int symbol, string data){
-    cerr << "read " << symbol << " " << data << endl;
+void evaluation_data::read_from(int type, int index, int length, int symbol, string data){
+    if(length == index){
+        node_type = type;
+    }
+};
+
+void evaluation_data::read_to(int type, int index, int length, int symbol, string data){
     if(length == index){
         node_type = type;
     }
@@ -128,6 +133,7 @@ void evaluation_function::read_file(ifstream &input_stream, state_merger* merger
         input_stream >> type >> length;
         
         int depth = 0;
+        cerr << endl;
         for(int index = 0; index < length; index++){
             depth++;
             string tuple;
@@ -146,11 +152,7 @@ void evaluation_function::read_file(ifstream &input_stream, state_merger* merger
                 seen[symbol] = num_alph;
                 num_alph++;
             }
-
             int c = seen[symbol];
-
-            node->data->read(type, index, length, c, data);
-
             if(node->child(c) == 0){
                 apta_node* next_node = new apta_node();
                 node->children[c] = next_node;
@@ -158,9 +160,11 @@ void evaluation_function::read_file(ifstream &input_stream, state_merger* merger
                 next_node->label  = c;
                 next_node->number = node_number++;
                 next_node->depth = depth;
-                next_node->type = type;
             }
+            node->size = node->size + 1;
+            node->data->read_from(type, index, length, c, data);
             node = node->child(c);
+            node->data->read_to(type, index, length, c, data);
         }
         if(depth > aut->max_depth) aut->max_depth = depth;
         node->type = type;

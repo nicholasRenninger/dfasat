@@ -44,7 +44,8 @@ public:
     evaluation_data();
     
 /* Set values from input string */
-    virtual void read(int type, int index, int length, int symbol, string data);
+    virtual void read_from(int type, int index, int length, int symbol, string data);
+    virtual void read_to(int type, int index, int length, int symbol, string data);
 /* Update values when merging */
     virtual void update(evaluation_data* other);
 /* Undo updates when undoing merge */
