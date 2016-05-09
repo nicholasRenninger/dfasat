@@ -16,6 +16,7 @@ protected:
 
 public:
   int overlap;
+  int non_overlap;
   
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
   virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);

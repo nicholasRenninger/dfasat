@@ -253,7 +253,7 @@ merge_map &state_merger::get_possible_merges(){
         apta_node* blue = *(it);
         if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
         
-        if(*it != max_blue) continue;
+        //if(*it != max_blue) continue;
 
         for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;

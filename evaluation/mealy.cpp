@@ -25,9 +25,8 @@ void mealy_data::read_from(int type, int index, int length, int symbol, string d
        output_int[data] = num_outputs;
        int_output[num_outputs] = data;
        num_outputs++;
-    } else {
-       outputs[symbol] = output_int[data];
     }
+    outputs[symbol] = output_int[data];
 };
 
 void mealy_data::update(evaluation_data* right){
