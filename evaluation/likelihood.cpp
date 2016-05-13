@@ -81,6 +81,8 @@ void likelihoodratio::update_score(state_merger *merger, apta_node* left, apta_n
     if(right_count >= SYMBOL_COUNT || right_count >= SYMBOL_COUNT)
         update_likelihood(left_count, right_count, left_divider, right_divider);
     
+    return;
+    
     left_count = l->num_accepting;
     right_count = r->num_accepting;
 

@@ -24,8 +24,8 @@ bool overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node
     if(l->accepting_paths >= STATE_COUNT){
         for(num_map::iterator it = r->num_pos.begin(); it != r->num_pos.end(); ++it){
             if((*it).second >= SYMBOL_COUNT && l->pos((*it).first) == 0){
-                //inconsistency_found = true;
-                //return false;
+                inconsistency_found = true;
+                return false;
                 non_overlap += 1;
             }
         }
@@ -40,8 +40,8 @@ bool overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node
     if(r->accepting_paths >= STATE_COUNT){
         for(num_map::iterator it = l->num_pos.begin(); it != l->num_pos.end(); ++it){
             if((*it).second >= SYMBOL_COUNT && r->pos((*it).first) == 0){
-                //inconsistency_found = true;
-                //return false;
+                inconsistency_found = true;
+                return false;
                 non_overlap += 1;
             }
         }

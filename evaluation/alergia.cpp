@@ -111,6 +111,8 @@ bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right
         if(gamma < -bound){ inconsistency_found = true; return false; }
     }
     
+    return true;
+    
     left_count = l->num_accepting;
     right_count = r->num_accepting;
 
@@ -123,6 +125,44 @@ bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right
     return true;
 };
 
+
+/* When is an APTA node a sink state?
+ * sink states are not considered merge candidates
+ *
+ * accepting sink = only accept, accept now, accept afterwards
+ * rejecting sink = only reject, reject now, reject afterwards 
+ * low count sink = frequency smaller than STATE_COUNT */
+bool is_low_count_sink_alergia(apta_node* node){
+    node = node->find();
+    return node->size < STATE_COUNT;
+}
+
+int alergia::sink_type(apta_node* node){
+    if(!USE_SINKS) return -1;
+
+    if (is_low_count_sink_alergia(node)) return 0;
+    //if (is_accepting_sink(node)) return 1;
+    //if (is_rejecting_sink(node)) return 2;
+    return -1;
+};
+
+bool alergia::sink_consistent(apta_node* node, int type){
+    if(!USE_SINKS) return false;
+    
+    if(type == 0) return is_low_count_sink_alergia(node);
+    //if(type == 1) return is_accepting_sink(node);
+    //if(type == 2) return is_rejecting_sink(node);
+    
+    return true;
+};
+
+int alergia::num_sink_types(){
+    if(!USE_SINKS) return 0;
+    
+    // accepting, rejecting, and low count
+    return 1;
+};
+
 void alergia::print_dot(FILE* output, state_merger* merger){
     apta* aut = merger->aut;
     state_set s  = merger->red_states;
@@ -132,16 +172,9 @@ void alergia::print_dot(FILE* output, state_merger* merger){
     fprintf(output,"digraph DFA {\n");
     fprintf(output,"\t%i [label=\"root\" shape=box];\n", aut->root->find()->number);
     fprintf(output,"\t\tI -> %i;\n", aut->root->find()->number);
-    for(state_set::iterator it = s.begin(); it != s.end(); ++it){
+    for(state_set::iterator it = merger->red_states.begin(); it != merger->red_states.end(); ++it){
         apta_node* n = *it;
-        alergia_data* l = reinterpret_cast<alergia_data*>(n->data);
-        if(l->num_accepting != 0){
-            fprintf(output,"\t%i [shape=doublecircle label=\"%i:%i\\n[%i:%i]\"];\n", n->number, l->num_accepting, l->num_rejecting, l->accepting_paths, l->rejecting_paths);
-        } else if(l->num_rejecting != 0){
-            fprintf(output,"\t%i [shape=Mcircle label=\"%i:%i\\n[%i:%i]\"];\n", n->number, l->num_accepting, l->num_rejecting, l->accepting_paths, l->rejecting_paths);
-        } else {
-            fprintf(output,"\t%i [shape=circle label=\"0:0\\n[%i:%i]\"];\n", n->number, l->accepting_paths, l->rejecting_paths);
-        }
+        fprintf(output,"\t%i [shape=circle label=\"[%i]\"];\n", n->number, n->size);
         state_set childnodes;
         set<int> sinks;
         for(int i = 0; i < alphabet_size; ++i){
@@ -149,15 +182,30 @@ void alergia::print_dot(FILE* output, state_merger* merger){
             if(child == 0){
                 // no output
             } else {
-                 childnodes.insert(child);
+                 if(merger->sink_type(child) != -1){
+                     sinks.insert(sink_type(child));
+                 } else {
+                     childnodes.insert(child);
+                 }
             }
+        }
+        for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
+            int stype = *it2;
+            fprintf(output,"\tS%it%i [label=\"sink %i\" shape=box];\n", n->number, stype, stype);
+            fprintf(output, "\t\t%i -> S%it%i [label=\"" ,n->number, n->number, stype);
+            for(int i = 0; i < alphabet_size; ++i){
+                if(n->get_child(i) != 0 && sink_type(n->get_child(i)) == stype){
+                    fprintf(output, " %s [%i]", aut->alph_str(i).c_str(), n->size);
+                }
+            }
+            fprintf(output, "\"];\n");
         }
         for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
             apta_node* child = *it2;
             fprintf(output, "\t\t%i -> %i [label=\"" ,n->number, child->number);
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && n->get_child(i) == child){
-                    fprintf(output, " %s [%i:%i]", aut->alph_str(i).c_str(), l->num_pos[i], l->num_neg[i]);
+                    fprintf(output, " %s", aut->alph_str(i).c_str());
                 }
             }
             fprintf(output, "\"];\n");

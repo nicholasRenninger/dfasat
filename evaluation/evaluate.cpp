@@ -113,7 +113,7 @@ int evaluation_function::num_sink_types(){
     if(!USE_SINKS) return 0;
     
     // accepting, rejecting, and low count
-    return 3;
+    return 1;
 };
 
 void evaluation_function::read_file(ifstream &input_stream, state_merger* merger){
@@ -133,7 +133,6 @@ void evaluation_function::read_file(ifstream &input_stream, state_merger* merger
         input_stream >> type >> length;
         
         int depth = 0;
-        cerr << endl;
         for(int index = 0; index < length; index++){
             depth++;
             string tuple;

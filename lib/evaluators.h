@@ -7,6 +7,7 @@
 #include "evaluation/kldistance.h"
 #include "evaluation/likelihood.h"
 #include "evaluation/mealy.h"
+#include "evaluation/mse-error.h"
 #include "evaluation/num_count.h"
 #include "evaluation/overlap-driven.h"
 #endif
