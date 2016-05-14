@@ -24,7 +24,8 @@ void mse_data::read_from(int type, int index, int length, int symbol, string dat
 void mse_data::update(evaluation_data* right){
     mse_data* r = (mse_data*) right;
     
-    if(occs.size() != 0 && r->occs.size() != 0)
+    //if(occs.size() != 0 && r->occs.size() != 0)
+    if(r->occs.size() != 0)
         mean = ((mean * ((double)occs.size()) + (r->mean * ((double)r->occs.size())))) / ((double)occs.size() + (double)r->occs.size());
 
     r->merge_point = occs.end();
@@ -38,8 +39,11 @@ void mse_data::undo(evaluation_data* right){
 
     r->occs.splice(r->occs.begin(), occs, r->merge_point, occs.end());
     
-    if(occs.size() != 0 && r->occs.size() != 0)
+    if(occs.size() != 0)// && r->occs.size() != 0)
+    //if(r->occs.size() != 0)
         mean = ((mean * ((double)occs.size() + (double)r->occs.size())) - (r->mean * ((double)r->occs.size()))) / ((double)occs.size());
+    else
+        mean = 0;
 };
 
 bool mse_error::consistent(state_merger *merger, apta_node* left, apta_node* right){
@@ -47,7 +51,7 @@ bool mse_error::consistent(state_merger *merger, apta_node* left, apta_node* rig
     mse_data* l = (mse_data*) left->data;
     mse_data* r = (mse_data*) right->data;
 
-    if(left->size < STATE_COUNT || right->size < STATE_COUNT) return true;
+    if(l->occs.size() < 5 || r->occs.size() < 5) return true;
     
     if(l->mean - r->mean > CHECK_PARAMETER){ inconsistency_found = true; return false; }
     if(r->mean - l->mean > CHECK_PARAMETER){ inconsistency_found = true; return false; }
@@ -59,7 +63,7 @@ void mse_error::update_score(state_merger *merger, apta_node* left, apta_node* r
     mse_data* l = (mse_data*) left->data;
     mse_data* r = (mse_data*) right->data;
 
-    if(left->size == 0 || right->size ==0) return;
+    if(l->occs.size() == 0 || r->occs.size() == 0) return;
     
     num_merges = num_merges + 1;
     num_points = num_points + l->occs.size() + r->occs.size();
@@ -89,6 +93,13 @@ void mse_error::update_score(state_merger *merger, apta_node* left, apta_node* r
 };
 
 int mse_error::compute_score(state_merger *merger, apta_node* left, apta_node* right){
+    mse_data* l = (mse_data*) left->data;
+    mse_data* r = (mse_data*) right->data;
+    
+    //double n_points = l->occs.size()+r->occs.size();
+    //return 2*num_merges+(log(RSS_before)-log(RSS_after));
+    //return 2*num_merges+n_points*(log(RSS_before)-log(RSS_after));
+    
     //if(num_merges < 4) return -1;
     if(2*num_merges + num_points*(log(RSS_before/num_points)) - num_points*log(RSS_after/num_points) < 0) return -1;
     return 2*num_merges + num_points*(log(RSS_before/num_points)) - num_points*log(RSS_after/num_points);
