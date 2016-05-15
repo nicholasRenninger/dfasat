@@ -51,7 +51,8 @@ bool mse_error::consistent(state_merger *merger, apta_node* left, apta_node* rig
     mse_data* l = (mse_data*) left->data;
     mse_data* r = (mse_data*) right->data;
 
-    if(l->occs.size() < 5 || r->occs.size() < 5) return true;
+    //if(l->occs.size() < STATE_COUNT || r->occs.size() < STATE_COUNT) return true;    
+    if(l->occs.size() < SYMBOL_COUNT || r->occs.size() < SYMBOL_COUNT) return true;
     
     if(l->mean - r->mean > CHECK_PARAMETER){ inconsistency_found = true; return false; }
     if(r->mean - l->mean > CHECK_PARAMETER){ inconsistency_found = true; return false; }
@@ -62,8 +63,10 @@ bool mse_error::consistent(state_merger *merger, apta_node* left, apta_node* rig
 void mse_error::update_score(state_merger *merger, apta_node* left, apta_node* right){
     mse_data* l = (mse_data*) left->data;
     mse_data* r = (mse_data*) right->data;
+    
+    total_merges = total_merges + 1;
 
-    if(l->occs.size() == 0 || r->occs.size() == 0) return;
+    if(l->occs.size() < STATE_COUNT || r->occs.size() < STATE_COUNT) return;
     
     num_merges = num_merges + 1;
     num_points = num_points + l->occs.size() + r->occs.size();
@@ -100,7 +103,7 @@ int mse_error::compute_score(state_merger *merger, apta_node* left, apta_node* r
     //return 2*num_merges+(log(RSS_before)-log(RSS_after));
     //return 2*num_merges+n_points*(log(RSS_before)-log(RSS_after));
     
-    //if(num_merges < 4) return -1;
+    //if(num_merges < 2) return -1;
     if(2*num_merges + num_points*(log(RSS_before/num_points)) - num_points*log(RSS_after/num_points) < 0) return -1;
     return 2*num_merges + num_points*(log(RSS_before/num_points)) - num_points*log(RSS_after/num_points);
 };
@@ -111,6 +114,31 @@ void mse_error::reset(state_merger *merger ){
     num_points = 0.0;
     RSS_before = 0.0;
     RSS_after = 0.0;
+    total_merges = 0;
+};
+
+bool is_low_occ_sink(apta_node* node){
+    mse_data* l = (mse_data*) node->data;
+    return l->occs.size() < STATE_COUNT;
+}
+
+int mse_error::sink_type(apta_node* node){
+    if(!USE_SINKS) return -1;
+
+    if (is_low_occ_sink(node)) return 0;
+    return -1;
+};
+
+bool mse_error::sink_consistent(apta_node* node, int type){
+    if(!USE_SINKS) return false;
+    
+    if(type == 0) return is_low_occ_sink(node);
+    return true;
+};
+
+int mse_error::num_sink_types(){
+    if(!USE_SINKS) return 0;
+    return 1;
 };
 
 void mse_error::print_dot(FILE* output, state_merger* merger){
@@ -139,7 +167,7 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
                 // no output
             } else {
                  mse_data* cd = (mse_data*)child->data;
-                 if(cd->occs.size() == 0) continue;
+                 //if(cd->occs.size() == 0) continue;
                  if(sink_type(child) != -1){
                      sinks.insert(sink_type(child));
                  } else {

@@ -34,12 +34,17 @@ public:
   double num_points = 0;
   double RSS_before = 0.0;
   double RSS_after = 0.0;
+  int total_merges = 0;
   
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
   virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
   virtual void reset(state_merger *merger);
   virtual void print_dot(FILE*, state_merger *);
+
+  virtual int sink_type(apta_node* node);
+  virtual bool sink_consistent(apta_node* node, int type);
+  virtual int num_sink_types();
 };
 
 #endif
