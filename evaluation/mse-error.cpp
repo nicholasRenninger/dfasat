@@ -51,7 +51,7 @@ bool mse_error::consistent(state_merger *merger, apta_node* left, apta_node* rig
     mse_data* l = (mse_data*) left->data;
     mse_data* r = (mse_data*) right->data;
 
-    //if(l->occs.size() < STATE_COUNT || r->occs.size() < STATE_COUNT) return true;    
+    //if(l->occs.size() < STATE_COUNT || r->occs.size() < STATE_COUNT) return true;
     if(l->occs.size() < SYMBOL_COUNT || r->occs.size() < SYMBOL_COUNT) return true;
     
     if(l->mean - r->mean > CHECK_PARAMETER){ inconsistency_found = true; return false; }
@@ -66,9 +66,9 @@ void mse_error::update_score(state_merger *merger, apta_node* left, apta_node* r
     
     total_merges = total_merges + 1;
 
-    if(l->occs.size() < STATE_COUNT || r->occs.size() < STATE_COUNT) return;
+    if(l->occs.size() >= STATE_COUNT && r->occs.size() >= STATE_COUNT)
+        num_merges = num_merges + 1;
     
-    num_merges = num_merges + 1;
     num_points = num_points + l->occs.size() + r->occs.size();
 
     double error_left = 0.0;
