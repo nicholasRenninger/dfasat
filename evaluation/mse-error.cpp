@@ -66,8 +66,12 @@ void mse_error::update_score(state_merger *merger, apta_node* left, apta_node* r
     
     total_merges = total_merges + 1;
 
-    if(l->occs.size() >= STATE_COUNT && r->occs.size() >= STATE_COUNT)
+    if(l->occs.size() >= STATE_COUNT && r->occs.size() >= STATE_COUNT){
         num_merges = num_merges + 1;
+    } else {
+        if(l->occs.size() < r->occs.size()) num_merges = num_merges + (((double)l->occs.size())/ ((double)STATE_COUNT));
+        else num_merges = num_merges + (((double)r->occs.size())/ ((double)STATE_COUNT));
+    }
     
     num_points = num_points + l->occs.size() + r->occs.size();
 
