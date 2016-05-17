@@ -30,6 +30,21 @@ using namespace std;
 #define REGISTER_DEF_TYPE(NAME) \
     DerivedRegister<NAME> NAME::reg(#NAME)
 
+
+// for auto-generating names
+inline std::string className(const std::string& prettyFunction)
+{
+    size_t colons = prettyFunction.find("::");
+    if (colons == std::string::npos)
+        return "::";
+    size_t begin = prettyFunction.substr(0,colons).rfind(" ") + 1;
+    size_t end = colons - begin;
+
+    return prettyFunction.substr(begin,end);
+}
+
+#define __CLASS_NAME__ className(__PRETTY_FUNCTION__)
+
 /* Local data, contained in every node of the prefix tree or DFA */
 class evaluation_data {
 
