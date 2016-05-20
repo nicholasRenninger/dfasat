@@ -61,6 +61,8 @@ bool mse_error::consistent(state_merger *merger, apta_node* left, apta_node* rig
 };
 
 void mse_error::update_score(state_merger *merger, apta_node* left, apta_node* right){
+    return;
+    
     mse_data* l = (mse_data*) left->data;
     mse_data* r = (mse_data*) right->data;
     
@@ -99,7 +101,35 @@ void mse_error::update_score(state_merger *merger, apta_node* left, apta_node* r
     RSS_after  += error_total;
 };
 
+double compute_RSS(apta_node* node){
+    mse_data* l = (mse_data*) node->data;
+    double error = 0.0;
+    
+    for(double_list::iterator it = l->occs.begin(); it != l->occs.end(); ++it){
+        error  += ((l->mean    - (double)*it)*(l->mean    - (double)*it));
+    }
+    
+    return error;
+};
+
 int mse_error::compute_score(state_merger *merger, apta_node* left, apta_node* right){
+    state_set states = merger->aut->get_states();
+    double RSS_total = 0.0;
+    double num_parameters = 0.0;
+    double num_data_points = 0.0;
+    
+    for(state_set::iterator it = states.begin(); it != states.end(); ++it){
+        apta_node* node = *it;
+        mse_data* l = (mse_data*) node->data;
+
+        RSS_total += compute_RSS(node);
+        num_parameters += 1;
+        num_data_points += l->occs.size();
+    }
+    
+    return 10000000 - 2*num_parameters + (num_data_points * log(RSS_total / num_data_points));
+
+
     mse_data* l = (mse_data*) left->data;
     mse_data* r = (mse_data*) right->data;
     

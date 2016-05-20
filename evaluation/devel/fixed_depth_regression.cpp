@@ -9,26 +9,8 @@
 
 #include "depth-driven.h"
 
-//DerivedRegister<series_driven> series_driven::reg("series-driven");
-REGISTER_DEF_TYPE(depth_driven);
-/* RPNI like, merges shallow states (of lowest depth) first */
-/*void depth_driven::update_score(state_merger *merger, apta_node* left, apta_node* right){
-  if(depth == 0) depth = max(left->depth, right->depth);
-};
-
-int depth_driven::compute_score(state_merger *merger, apta_node* left, apta_node* right){
-  return depth;
-};
-
-void depth_driven::reset(state_merger *merger ){
-  inconsistency_found = false;
-  depth = 0;
-};*/
-            //node->input_output
-            if(occ >= 0)
-                node->occs.push_front(occ);
-                //node->child(c)->occs.push_front(occ);
-
+REGISTER_DEF_DATATYPE(fixed_depth_mse_data);
+REGISTER_DEF_TYPE(fixed_depth_mse_error);
 
 bool is_single_event_sink(apta_node* node, int event){
     node = node->find();
