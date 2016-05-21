@@ -123,9 +123,11 @@ int mse_error::compute_score(state_merger *merger, apta_node* left, apta_node* r
         apta_node* node = *it;
         mse_data* l = (mse_data*) node->data;
 
-        RSS_total += compute_RSS(node);
-        num_parameters += 1;
-        num_data_points += l->occs.size();
+        if (l->occs.size() != 0){
+            RSS_total += compute_RSS(node);
+            num_parameters += 1;
+            num_data_points += l->occs.size();
+        }
     }
 
     //cerr << "prev " << prev_AIC << " next " << " num_merges: " << total_merges << " num_par: " << num_parameters << " num_dat: " << num_data_points << " RSS: " << RSS_total << " AIC: " << 2.0*num_parameters + (num_data_points * log(RSS_total)) << endl;
@@ -166,9 +168,11 @@ void mse_error::reset(state_merger *merger ){
         apta_node* node = *it;
         mse_data* l = (mse_data*) node->data;
 
-        RSS_total += compute_RSS(node);
-        num_parameters += 1;
-        num_data_points += l->occs.size();
+        if (l->occs.size() != 0){
+            RSS_total += compute_RSS(node);
+            num_parameters += 1;
+            num_data_points += l->occs.size();
+        }
     }
 
     //prev_AIC = 2.0*num_parameters + (num_data_points * log(RSS_total / num_data_points));
