@@ -104,6 +104,7 @@ public:
     ~apta();
 
     state_set &get_states();
+    state_set &get_merged_states();
     state_set &get_accepting_states();
     state_set &get_rejecting_states();
 

@@ -35,6 +35,7 @@ public:
   double RSS_before = 0.0;
   double RSS_after = 0.0;
   int total_merges = 0;
+  double prev_AIC = 0;
   
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
   virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);

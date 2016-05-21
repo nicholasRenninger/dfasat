@@ -152,9 +152,24 @@ void add_states(apta_node* state, state_set& states){
     }
 }
 
+void add_merged_states(apta_node* state, state_set& states){
+    if(states.find(state) != states.end()) return;
+    states.insert(state);
+    for(child_map::iterator it = state->children.begin();it != state->children.end(); ++it){
+        apta_node* child = (*it).second;
+        if(child != 0) add_states(child->find(), states);
+    }
+}
+
 state_set &apta::get_states(){
     state_set* states = new state_set();
     add_states(root->find(), *states);
+    return *states;
+}
+
+state_set &apta::get_merged_states(){
+    state_set* states = new state_set();
+    add_merged_states(root->find(), *states);
     return *states;
 }
 

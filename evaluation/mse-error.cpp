@@ -61,6 +61,7 @@ bool mse_error::consistent(state_merger *merger, apta_node* left, apta_node* rig
 };
 
 void mse_error::update_score(state_merger *merger, apta_node* left, apta_node* right){
+    total_merges = total_merges + 1;
     return;
     
     mse_data* l = (mse_data*) left->data;
@@ -113,11 +114,11 @@ double compute_RSS(apta_node* node){
 };
 
 int mse_error::compute_score(state_merger *merger, apta_node* left, apta_node* right){
-    state_set states = merger->aut->get_states();
     double RSS_total = 0.0;
     double num_parameters = 0.0;
     double num_data_points = 0.0;
     
+    state_set states = merger->aut->get_merged_states();
     for(state_set::iterator it = states.begin(); it != states.end(); ++it){
         apta_node* node = *it;
         mse_data* l = (mse_data*) node->data;
@@ -126,9 +127,14 @@ int mse_error::compute_score(state_merger *merger, apta_node* left, apta_node* r
         num_parameters += 1;
         num_data_points += l->occs.size();
     }
-    
-    return 10000000 - 2*num_parameters + (num_data_points * log(RSS_total / num_data_points));
 
+    //cerr << "prev " << prev_AIC << " next " << " num_merges: " << total_merges << " num_par: " << num_parameters << " num_dat: " << num_data_points << " RSS: " << RSS_total << " AIC: " << 2.0*num_parameters + (num_data_points * log(RSS_total)) << endl;
+    
+    //if(prev_AIC - 2.0*num_parameters - (num_data_points * log(RSS_total / num_data_points)) < 0) return -1;
+    //return prev_AIC - 2*num_parameters - (num_data_points * log(RSS_total / num_data_points));
+
+    if(prev_AIC - 2.0*num_parameters - (num_data_points * log(RSS_total)) < 0) return -1;
+    return prev_AIC - 2.0*num_parameters - (num_data_points * log(RSS_total));
 
     mse_data* l = (mse_data*) left->data;
     mse_data* r = (mse_data*) right->data;
@@ -149,6 +155,26 @@ void mse_error::reset(state_merger *merger ){
     RSS_before = 0.0;
     RSS_after = 0.0;
     total_merges = 0;
+    prev_AIC = 0.0;
+    
+    double RSS_total = 0.0;
+    double num_parameters = 0.0;
+    double num_data_points = 0.0;
+    
+    state_set states = merger->aut->get_merged_states();
+    for(state_set::iterator it = states.begin(); it != states.end(); ++it){
+        apta_node* node = *it;
+        mse_data* l = (mse_data*) node->data;
+
+        RSS_total += compute_RSS(node);
+        num_parameters += 1;
+        num_data_points += l->occs.size();
+    }
+
+    //prev_AIC = 2.0*num_parameters + (num_data_points * log(RSS_total / num_data_points));
+    prev_AIC = 2.0*num_parameters + (num_data_points * log(RSS_total));
+    //cerr << " next " << " num_par: " << num_parameters << " num_dat: " << num_data_points << " RSS: " << RSS_total << " AIC: " << 2.0*num_parameters + (num_data_points * log(RSS_total / num_data_points)) << endl;
+    //cerr << prev_AIC << endl;
 };
 
 bool is_low_occ_sink(apta_node* node){

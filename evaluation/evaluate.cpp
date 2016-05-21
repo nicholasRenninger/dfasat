@@ -61,7 +61,7 @@ void evaluation_function::undo_update(state_merger *merger, apta_node* left, apt
 };
 
 bool evaluation_function::compute_consistency(state_merger *merger, apta_node* left, apta_node* right){
-  return inconsistency_found == false && compute_score(merger, left, right) > LOWER_BOUND;
+  return inconsistency_found == false;
 };
 
 int evaluation_function::compute_score(state_merger *merger, apta_node* left, apta_node* right){
