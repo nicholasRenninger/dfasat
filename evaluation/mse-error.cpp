@@ -16,6 +16,7 @@ mse_data::mse_data(){
 };
 
 void mse_data::read_from(int type, int index, int length, int symbol, string data){
+    if(index < length - 1) return;
     double occ = std::stod(data);
     mean = ((mean * ((double)occs.size())) + occ) / ((double)(occs.size() + 1));
     occs.push_front(occ);
@@ -27,11 +28,16 @@ void mse_data::update(evaluation_data* right){
     //if(occs.size() != 0 && r->occs.size() != 0)
     if(r->occs.size() != 0)
         mean = ((mean * ((double)occs.size()) + (r->mean * ((double)r->occs.size())))) / ((double)occs.size() + (double)r->occs.size());
-
-    r->merge_point = occs.end();
-    --(r->merge_point);
-    occs.splice(occs.end(), r->occs);
-    ++(r->merge_point);
+    
+    if(occs.size() != 0){
+        r->merge_point = occs.end();
+        --(r->merge_point);
+        occs.splice(occs.end(), r->occs);
+        ++(r->merge_point);
+    } else {
+        r->merge_point = occs.begin();
+        occs.splice(occs.begin(), r->occs);
+    }
 };
 
 void mse_data::undo(evaluation_data* right){
@@ -48,6 +54,7 @@ void mse_data::undo(evaluation_data* right){
 
 bool mse_error::consistent(state_merger *merger, apta_node* left, apta_node* right){
     if(evaluation_function::consistent(merger, left, right) == false){ inconsistency_found = true; return false; }
+    if(left->depth != right->depth){ inconsistency_found = true; return false; }
     mse_data* l = (mse_data*) left->data;
     mse_data* r = (mse_data*) right->data;
 
@@ -220,7 +227,7 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
         
         double mean = l->mean;
         
-        if(l->occs.size() == 0) continue;
+        //if(l->occs.size() == 0) continue;
         fprintf(output,"\t%i [shape=circle label=\"\n%.3f\n%i\"];\n", n->number, mean, (int)l->occs.size());
         
         state_set childnodes;
