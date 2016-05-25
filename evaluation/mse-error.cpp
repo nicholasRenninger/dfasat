@@ -125,7 +125,9 @@ int mse_error::compute_score(state_merger *merger, apta_node* left, apta_node* r
     double num_parameters = 0.0;
     double num_data_points = 0.0;
     
-    state_set states = merger->aut->get_merged_states();
+    // leak workaround :D
+    state_set* state = &merger->aut->get_merged_states();
+    state_set states = *state;
     for(state_set::iterator it = states.begin(); it != states.end(); ++it){
         apta_node* node = *it;
         mse_data* l = (mse_data*) node->data;
@@ -136,7 +138,7 @@ int mse_error::compute_score(state_merger *merger, apta_node* left, apta_node* r
             num_data_points += l->occs.size();
         }
     }
-
+    delete state;
     //cerr << "prev " << prev_AIC << " next " << " num_merges: " << total_merges << " num_par: " << num_parameters << " num_dat: " << num_data_points << " RSS: " << RSS_total << " AIC: " << 2.0*num_parameters + (num_data_points * log(RSS_total)) << endl;
     
     //if(prev_AIC - 2.0*num_parameters - (num_data_points * log(RSS_total / num_data_points)) < 0) return -1;
@@ -169,8 +171,10 @@ void mse_error::reset(state_merger *merger ){
     double RSS_total = 0.0;
     double num_parameters = 0.0;
     double num_data_points = 0.0;
-    
-    state_set states = merger->aut->get_merged_states();
+   
+    // leak workaround 
+    state_set *state = &merger->aut->get_merged_states();
+    state_set  states = *state;
     for(state_set::iterator it = states.begin(); it != states.end(); ++it){
         apta_node* node = *it;
         mse_data* l = (mse_data*) node->data;
@@ -181,7 +185,7 @@ void mse_error::reset(state_merger *merger ){
             num_data_points += l->occs.size();
         }
     }
-
+    delete state; 
     //prev_AIC = 2.0*num_parameters + (num_data_points * log(RSS_total / num_data_points));
     prev_AIC = 2.0*num_parameters + (num_data_points * log(RSS_total));
     //cerr << " next " << " num_par: " << num_parameters << " num_dat: " << num_data_points << " RSS: " << RSS_total << " AIC: " << 2.0*num_parameters + (num_data_points * log(RSS_total / num_data_points)) << endl;
