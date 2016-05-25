@@ -85,7 +85,7 @@ struct size_compare
             return 1;
         if(left->size < right->size)
             return 0;
-        return left < right;
+        return left->number < right->number;
     }
 };
 

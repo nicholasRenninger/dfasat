@@ -16,7 +16,7 @@ mse_data::mse_data(){
 };
 
 void mse_data::read_from(int type, int index, int length, int symbol, string data){
-    if(index < length - 1) return;
+    //if(index < length - 1) return;
     double occ = std::stod(data);
     mean = ((mean * ((double)occs.size())) + occ) / ((double)(occs.size() + 1));
     occs.push_front(occ);
