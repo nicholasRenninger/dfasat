@@ -85,7 +85,7 @@ state_set &state_merger::get_candidate_states(){
     state_set* candidate_states = new state_set();
     for(state_set::iterator it = blue_states.begin();it != blue_states.end();++it){
         if(sink_type(*it) == -1)
-            add_states(*it,*candidate_states);
+            add_merged_states((*it)->find(),*candidate_states);
     }
     return *candidate_states;
 }
@@ -95,7 +95,7 @@ state_set &state_merger::get_sink_states(){
     state_set* sink_states = new state_set();
     for(state_set::iterator it = blue_states.begin();it != blue_states.end();++it){
         if(sink_type(*it) != -1)
-            add_states(*it,*sink_states);
+            add_merged_states((*it)->find(),*sink_states);
     }
     return *sink_states;
 }

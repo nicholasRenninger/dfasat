@@ -35,8 +35,8 @@ void mse_data::update(evaluation_data* right){
         occs.splice(occs.end(), r->occs);
         ++(r->merge_point);
     } else {
-        r->merge_point = occs.begin();
         occs.splice(occs.begin(), r->occs);
+        r->merge_point = occs.begin();
     }
 };
 
