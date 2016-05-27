@@ -263,11 +263,11 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
             } else {
                  mse_data* cd = (mse_data*)child->data;
                  //if(cd->occs.size() == 0) continue;
-                 //if(sink_type(child) != -1){
-                     //sinks.insert(sink_type(child));
-                 //} else {
+                 if(sink_type(child) != -1){
+                     sinks.insert(sink_type(child));
+                 } else {
                      childnodes.insert(child);
-                 //}
+                 }
             }
         }
         for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
@@ -292,6 +292,8 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
             fprintf(output, "\"];\n");
         }
     }
+    fprintf(output,"}\n");
+    return;
     s = merger->get_sink_states();
     for(state_set::iterator it = s.begin(); it != s.end(); ++it){
         apta_node* n = *it;
@@ -311,11 +313,11 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
             } else {
                  mse_data* cd = (mse_data*)child->data;
                  //if(cd->occs.size() == 0) continue;
-                 //if(sink_type(child) != -1){
-                     //sinks.insert(sink_type(child));
-                 //} else {
+                 if(sink_type(child) != -1){
+                     sinks.insert(sink_type(child));
+                 } else {
                      childnodes.insert(child);
-                 //}
+                 }
             }
         }
         for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
@@ -358,11 +360,11 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
             } else {
                  mse_data* cd = (mse_data*)child->data;
                  //if(cd->occs.size() == 0) continue;
-                 //if(sink_type(child) != -1){
-                 //    sinks.insert(sink_type(child));
-                 //} else {
+                 if(sink_type(child) != -1){
+                     sinks.insert(sink_type(child));
+                 } else {
                      childnodes.insert(child);
-                 //}
+                 }
             }
         }
         for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
