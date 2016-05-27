@@ -263,11 +263,59 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
             } else {
                  mse_data* cd = (mse_data*)child->data;
                  //if(cd->occs.size() == 0) continue;
-                 if(sink_type(child) != -1){
-                     sinks.insert(sink_type(child));
-                 } else {
+                 //if(sink_type(child) != -1){
+                     //sinks.insert(sink_type(child));
+                 //} else {
                      childnodes.insert(child);
-                 }
+                 //}
+            }
+        }
+        for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
+            int stype = *it2;
+            fprintf(output,"\tS%it%i [label=\"sink %i\" shape=box];\n", n->number, stype, stype);
+            fprintf(output, "\t\t%i -> S%it%i [label=\"" ,n->number, n->number, stype);
+            for(int i = 0; i < alphabet_size; ++i){
+                if(n->get_child(i) != 0 && sink_type(n->get_child(i)) == stype){
+                    fprintf(output, " %s ", aut->alph_str(i).c_str());
+                }
+            }
+            fprintf(output, "\"];\n");
+        }
+        for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
+            apta_node* child = *it2;
+            fprintf(output, "\t\t%i -> %i [label=\"" ,n->number, child->number);
+            for(int i = 0; i < alphabet_size; ++i){
+                if(n->get_child(i) != 0 && n->get_child(i) == child){
+                    fprintf(output, " %s ", aut->alph_str(i).c_str());
+                }
+            }
+            fprintf(output, "\"];\n");
+        }
+    }
+    s = merger->get_sink_states();
+    for(state_set::iterator it = s.begin(); it != s.end(); ++it){
+        apta_node* n = *it;
+        mse_data* l = (mse_data*) n->data;
+        
+        double mean = l->mean;
+        
+        //if(l->occs.size() == 0) continue;
+        fprintf(output,"\t%i [shape=circle label=\"\n%.3f\n%i\"];\n", n->number, mean, (int)l->occs.size());
+        
+        state_set childnodes;
+        set<int> sinks;
+        for(int i = 0; i < alphabet_size; ++i){
+            apta_node* child = n->get_child(i);
+            if(child == 0){
+                // no output
+            } else {
+                 mse_data* cd = (mse_data*)child->data;
+                 //if(cd->occs.size() == 0) continue;
+                 //if(sink_type(child) != -1){
+                     //sinks.insert(sink_type(child));
+                 //} else {
+                     childnodes.insert(child);
+                 //}
             }
         }
         for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
@@ -309,12 +357,12 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
                 // no output
             } else {
                  mse_data* cd = (mse_data*)child->data;
-                 if(cd->occs.size() == 0) continue;
-                 if(sink_type(child) != -1){
-                     sinks.insert(sink_type(child));
-                 } else {
+                 //if(cd->occs.size() == 0) continue;
+                 //if(sink_type(child) != -1){
+                 //    sinks.insert(sink_type(child));
+                 //} else {
                      childnodes.insert(child);
-                 }
+                 //}
             }
         }
         for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
