@@ -133,10 +133,13 @@ void evaluation_function::read_file(ifstream &input_stream, state_merger* merger
         input_stream >> type >> length;
         
         int depth = 0;
+        //cerr << "line " << line << endl;
         for(int index = 0; index < length; index++){
             depth++;
             string tuple;
             input_stream >> tuple;
+            
+            //cerr << "reading: " << tuple << " at " << index;
             
             std::stringstream lineStream;
             lineStream.str(tuple);

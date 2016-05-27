@@ -54,7 +54,7 @@ void mse_data::undo(evaluation_data* right){
 
 bool mse_error::consistent(state_merger *merger, apta_node* left, apta_node* right){
     if(evaluation_function::consistent(merger, left, right) == false){ inconsistency_found = true; return false; }
-    if(left->depth != right->depth){ inconsistency_found = true; return false; }
+    //if(left->depth != right->depth){ inconsistency_found = true; return false; }
     mse_data* l = (mse_data*) left->data;
     mse_data* r = (mse_data*) right->data;
 
@@ -68,22 +68,27 @@ bool mse_error::consistent(state_merger *merger, apta_node* left, apta_node* rig
 };
 
 void mse_error::update_score(state_merger *merger, apta_node* left, apta_node* right){
-    total_merges = total_merges + 1;
-    return;
-    
     mse_data* l = (mse_data*) left->data;
     mse_data* r = (mse_data*) right->data;
     
+    if(l->occs.size() <= STATE_COUNT || r->occs.size() <= STATE_COUNT) return;
+    
+    bool already_merged = false;
+    if(aic_states.find(left) != aic_states.end()) already_merged = true;
+
     total_merges = total_merges + 1;
 
-    if(l->occs.size() >= STATE_COUNT && r->occs.size() >= STATE_COUNT){
-        num_merges = num_merges + 1;
-    } else {
-        if(l->occs.size() < r->occs.size()) num_merges = num_merges + (((double)l->occs.size())/ ((double)STATE_COUNT));
-        else num_merges = num_merges + (((double)r->occs.size())/ ((double)STATE_COUNT));
-    }
+    //if(l->occs.size() >= STATE_COUNT && r->occs.size() >= STATE_COUNT){
+    //    num_merges = num_merges + 1;
+    //} else {
+    //    if(l->occs.size() < r->occs.size()) num_merges = num_merges + (((double)l->occs.size())/ ((double)STATE_COUNT));
+    //    else num_merges = num_merges + (((double)r->occs.size())/ ((double)STATE_COUNT));
+    //}
     
-    num_points = num_points + l->occs.size() + r->occs.size();
+    if(already_merged)
+        num_points += r->occs.size();
+    else
+        num_points = num_points + l->occs.size() + r->occs.size();
 
     double error_left = 0.0;
     double error_right = 0.0;
@@ -105,8 +110,13 @@ void mse_error::update_score(state_merger *merger, apta_node* left, apta_node* r
     //error_left  = error_left / ((double)l->occs.size());
     //error_total = (error_total) / ((double)l->occs.size() + (double)r->occs.size());
     
-    RSS_before += error_right+error_left;
-    RSS_after  += error_total;
+    if(already_merged){
+        RSS_before += error_right;
+        RSS_after  += error_total - error_left;
+    } else {
+        RSS_before += error_right+error_left;
+        RSS_after  += error_total;
+    }
 };
 
 double compute_RSS(apta_node* node){
@@ -125,27 +135,32 @@ int mse_error::compute_score(state_merger *merger, apta_node* left, apta_node* r
     double num_parameters = 0.0;
     double num_data_points = 0.0;
     
+    if(2*total_merges + num_points*(log(RSS_before/num_points)) - num_points*log(RSS_after/num_points) < 0) return -1;
+    return 2*total_merges + num_points*(log(RSS_before/num_points)) - num_points*log(RSS_after/num_points);
+
     // leak workaround :D
-    state_set* state = &merger->aut->get_merged_states();
-    state_set states = *state;
-    for(state_set::iterator it = states.begin(); it != states.end(); ++it){
+    //state_set* state = &merger->aut->get_merged_states();
+    //state_set states = *state;
+    for(state_set::iterator it = aic_states.begin(); it != aic_states.end(); ++it){
         apta_node* node = *it;
         mse_data* l = (mse_data*) node->data;
 
-        if (l->occs.size() != 0){
+        //if (l->occs.size() >= STATE_COUNT){
             RSS_total += compute_RSS(node);
             num_parameters += 1;
             num_data_points += l->occs.size();
-        }
+        //}
     }
-    delete state;
+    //delete state;
     //cerr << "prev " << prev_AIC << " next " << " num_merges: " << total_merges << " num_par: " << num_parameters << " num_dat: " << num_data_points << " RSS: " << RSS_total << " AIC: " << 2.0*num_parameters + (num_data_points * log(RSS_total)) << endl;
     
     //if(prev_AIC - 2.0*num_parameters - (num_data_points * log(RSS_total / num_data_points)) < 0) return -1;
     //return prev_AIC - 2*num_parameters - (num_data_points * log(RSS_total / num_data_points));
-
-    if(prev_AIC - 2.0*num_parameters - (num_data_points * log(RSS_total)) < 0) return -1;
-    return prev_AIC - 2.0*num_parameters - (num_data_points * log(RSS_total));
+    
+    double cur_AIC = 2.0*num_parameters + (num_data_points * log(RSS_total/num_data_points));// + (2.0*num_parameters * (num_parameters + 1.0))/(num_data_points - num_parameters - 1);
+    
+    if(prev_AIC - cur_AIC < 0) return -1;
+    return prev_AIC - cur_AIC;
 
     mse_data* l = (mse_data*) left->data;
     mse_data* r = (mse_data*) right->data;
@@ -171,6 +186,9 @@ void mse_error::reset(state_merger *merger ){
     double RSS_total = 0.0;
     double num_parameters = 0.0;
     double num_data_points = 0.0;
+    aic_states.clear();
+    
+    return;
    
     // leak workaround 
     state_set *state = &merger->aut->get_merged_states();
@@ -179,15 +197,16 @@ void mse_error::reset(state_merger *merger ){
         apta_node* node = *it;
         mse_data* l = (mse_data*) node->data;
 
-        if (l->occs.size() != 0){
+        if (l->occs.size() >= STATE_COUNT){
             RSS_total += compute_RSS(node);
             num_parameters += 1;
             num_data_points += l->occs.size();
+            aic_states.insert(node);
         }
     }
     delete state; 
     //prev_AIC = 2.0*num_parameters + (num_data_points * log(RSS_total / num_data_points));
-    prev_AIC = 2.0*num_parameters + (num_data_points * log(RSS_total));
+    prev_AIC = 2.0*num_parameters + (num_data_points * log(RSS_total/num_data_points));// + (2.0*num_parameters * (num_parameters + 1.0))/(num_data_points - num_parameters - 1);
     //cerr << " next " << " num_par: " << num_parameters << " num_dat: " << num_data_points << " RSS: " << RSS_total << " AIC: " << 2.0*num_parameters + (num_data_points * log(RSS_total / num_data_points)) << endl;
     //cerr << prev_AIC << endl;
 };
@@ -223,6 +242,7 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
     cerr << "size: " << s.size() << endl;
     
     fprintf(output,"digraph DFA {\n");
+
     fprintf(output,"\t%i [label=\"root\" shape=box];\n", aut->root->find()->number);
     fprintf(output,"\t\tI -> %i;\n", aut->root->find()->number);
     for(state_set::iterator it = merger->red_states.begin(); it != merger->red_states.end(); ++it){

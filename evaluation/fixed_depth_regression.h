@@ -1,10 +1,11 @@
 #ifndef __DEPTHDRIVEN__
 #define __DEPTHDRIVEN__
 
-#include "evaluate.h"
+#include "mse-error.h"
 
 /* The data contained in every node of the prefix tree or DFA */
 class fixed_depth_mse_data: public mse_data {
+
 protected:
   REGISTER_DEC_DATATYPE(fixed_depth_mse_data);
 
@@ -13,14 +14,7 @@ public:
     int num_rejecting;
     int accepting_paths;
     int rejecting_paths;
-
-    fixed_depth_mse_data();
-    
-    virtual void read_from(int type, int index, int length, int symbol, string data);
-    virtual void read_to(int type, int index, int length, int symbol, string data);
-    virtual void update(evaluation_data* right);
-    virtual void undo(evaluation_data* right);
-
+    /* counts of positive and negative transition uses */
     num_map num_pos;
     num_map num_neg;
     
@@ -37,8 +31,9 @@ public:
     }
     
     fixed_depth_mse_data();
-
+    
     virtual void read_from(int type, int index, int length, int symbol, string data);
+    virtual void read_to(int type, int index, int length, int symbol, string data);
     virtual void update(evaluation_data* right);
     virtual void undo(evaluation_data* right);
 };
@@ -50,6 +45,7 @@ protected:
     
 public:
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
+  virtual void print_dot(FILE*, state_merger *);
 };
 
 #endif

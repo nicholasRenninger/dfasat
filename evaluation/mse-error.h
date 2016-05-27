@@ -10,7 +10,7 @@ class mse_data: public evaluation_data {
 
 protected:
   REGISTER_DEC_DATATYPE(mse_data);
-
+  
 public:
     /* occurences of this state */
     double_list occs;
@@ -28,6 +28,8 @@ class mse_error: public evaluation_function{
 
 protected:
   REGISTER_DEC_TYPE(mse_error);
+  
+  state_set aic_states;
 
 public:
   double num_merges = 0;
