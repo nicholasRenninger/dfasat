@@ -8,7 +8,7 @@ DFASAT in C++
 
 ### How do I get set up? ###
 
-Have libpopt installed and run make. Get lingeling from http://fmv.jku.at/lingeling/ and run its build.sh
+Have libpopt installed and run make clean all. If you want to use the SAT-solving part of it, get lingeling from http://fmv.jku.at/lingeling/ and run its build.sh, or a similar solver.
 
 ### How do I run it? ###
 
@@ -16,24 +16,18 @@ Run ./dfasat --help to get help.
 
 Example:
 
-$ ./dfasat -h 4 inputfile "./lingeling"
+$ ./dfasat -q alergia -z alergia_data -n 1 -b 0 -d 2000 inputfile "/bin/true"
 
-runs DFASAT using an overlap-driven merge heuristic as in the Stamina paper on the input file "inputfile" and uses lingeling as a SAT solver.
+q defines the algorithm, and z the data type. n defines the number of iterations, which is useful if you use the SAT-solver. -b and -d a used to decide when to switch from the heuristic to the SAT-solver. The parameters in the example essentially prevent the use of the solver.
 
 The thresholds for relevance of states and symbols can be adjusted using -t and -y.
-
-You can also access the evaluation heuristics using the -q flag
-
-$ ./dfasat -q mse_error inputfile "./lingeling"
-
 
 ### Output files ###
 
 DFASAT will generate several files:
 
 * pre_dfa1.dot, is a dot file of the problem instance send to the SAT solver
-* dfa1.dot is the result in dot format
-* dfa1.aut is the result used by verify
+* dfa1.dot is the result in dot format if you provided a SAT-solver
 
 You can plot the dot files via
 
@@ -49,4 +43,4 @@ after installing dot from graphviz.
 ### Who do I talk to? ###
 
 * Sicco Verwer
-* one of his PhD students
+* one of his PhD students: Qin, Nino, or Chris
