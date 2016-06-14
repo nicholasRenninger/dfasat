@@ -55,6 +55,7 @@ bool evaluation_function::consistent(state_merger *merger, apta_node* left, apta
 
 void evaluation_function::update_score(state_merger *merger, apta_node* left, apta_node* right){
   num_merges += 1;
+  merged_left_states.insert(left);
 };
 
 void evaluation_function::undo_update(state_merger *merger, apta_node* left, apta_node* right){
@@ -71,6 +72,7 @@ int evaluation_function::compute_score(state_merger *merger, apta_node* left, ap
 void evaluation_function::reset(state_merger *merger){
   inconsistency_found = false;
   num_merges = 0;
+  merged_left_states.clear();
 };
 
 void evaluation_function::update(state_merger *merger){

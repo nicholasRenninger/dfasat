@@ -14,22 +14,40 @@
 REGISTER_DEF_DATATYPE(kl_data);
 REGISTER_DEF_TYPE(kldistance);
 
-void kldistance::update_perplexity(double count_left, double count_right, double left_divider, double right_divider){
-    if(count_left != 0){
-        perplexity += count_left * (count_left / left_divider) * log(count_left / left_divider);
-        perplexity -= count_left * (count_left / left_divider)
-                    * log((count_left + count_right) / (left_divider + right_divider));
-    }
-    if(count_right != 0){
-        perplexity += count_right * (count_right / right_divider) * log(count_right / right_divider);
-        perplexity -= count_right * (count_right / right_divider)
-                    * log((count_left + count_right) / (left_divider + right_divider));
+bool kldistance::consistent(state_merger *merger, apta_node* left, apta_node* right){
+    return count_driven::consistent(merger, left, right);
+};
+
+void kldistance::update_perplexity(apta_node* left, double count_left, double count_right, double left_divider, double right_divider){
+    if(already_merged(left) == false){
+        if(count_left != 0){
+            perplexity += count_left * (count_left / left_divider) * log(count_left / left_divider);
+            perplexity -= count_left * (count_left / left_divider)
+                        * log((count_left + count_right) / (left_divider + right_divider));
+        }
+        if(count_right != 0){
+            perplexity += count_right * (count_right / right_divider) * log(count_right / right_divider);
+            perplexity -= count_right * (count_left / left_divider)
+                        * log((count_left + count_right) / (left_divider + right_divider));
+        }
+    } else {
+        if(count_left != 0){
+            perplexity -= count_left * (count_left / left_divider) * log(count_left / left_divider);
+            perplexity -= count_left * (count_left / left_divider)
+                        * log((count_left + count_right) / (left_divider + right_divider));
+        }
+        if(count_right != 0){
+            perplexity += count_right * (count_right / right_divider) * log(count_right / right_divider);
+            perplexity -= count_right * (count_left / left_divider)
+                        * log((count_left + count_right) / (left_divider + right_divider));
+        }
     }
     if(count_left > 0.0 && count_right > 0.0) extra_parameters = extra_parameters + 1;
 };
 
 /* Kullback-Leibler divergence (KL), MDI-like, computes the KL value/extra parameters and uses it as score and consistency */
 void kldistance::update_score(state_merger *merger, apta_node* left, apta_node* right){
+    evaluation_function::update_score(merger, left, right);
     kl_data* l = (kl_data*) left->data;
     kl_data* r = (kl_data*) right->data;
 
@@ -60,7 +78,7 @@ void kldistance::update_score(state_merger *merger, apta_node* left, apta_node* 
         matching_right += right_count;
         
         if(left_count >= SYMBOL_COUNT && right_count >= SYMBOL_COUNT)
-            update_perplexity(left_count, right_count, left_divider, right_divider);
+            update_perplexity(left, left_count, right_count, left_divider, right_divider);
 
         if(right_count < SYMBOL_COUNT){
             l1_pool += left_count;
@@ -77,19 +95,13 @@ void kldistance::update_score(state_merger *merger, apta_node* left, apta_node* 
     right_count = r1_pool;
     
     if(right_count >= SYMBOL_COUNT || right_count >= SYMBOL_COUNT)
-        update_perplexity(left_count, right_count, left_divider, right_divider);
+        update_perplexity(left, left_count, right_count, left_divider, right_divider);
     
     left_count = l2_pool;
     right_count = r2_pool;
     
     if(right_count >= SYMBOL_COUNT || right_count >= SYMBOL_COUNT)
-        update_perplexity(left_count, right_count, left_divider, right_divider);
-    
-    left_count = l->num_accepting;
-    right_count = r->num_accepting;
-
-    if(right_count >= SYMBOL_COUNT || right_count >= SYMBOL_COUNT)
-        update_perplexity(left_count, right_count, left_divider, right_divider);
+        update_perplexity(left, left_count, right_count, left_divider, right_divider);
 };
 
 bool kldistance::compute_consistency(state_merger *merger, apta_node* left, apta_node* right){
@@ -115,3 +127,8 @@ void kldistance::reset(state_merger *merger){
   perplexity = 0;
   extra_parameters = 0;
 };
+
+void kldistance::print_dot(FILE* output, state_merger* merger){
+    count_driven::print_dot(output, merger);
+}
+

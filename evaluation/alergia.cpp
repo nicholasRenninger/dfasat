@@ -51,6 +51,18 @@ void alergia_data::undo(evaluation_data* right){
     }
 };
 
+bool alergia_consistency(double right_count, double left_count, double right_total, double left_total){
+    double bound = (1.0 / sqrt(left_total) + 1.0 / sqrt(right_total));
+    bound = bound * sqrt(0.5 * log(2.0 / CHECK_PARAMETER));
+    
+    double gamma = (left_count / left_total) - (right_count / right_total);
+
+    if(gamma > bound) return false;
+    if(-gamma > bound) return false;
+
+    return true;
+}
+
 /* ALERGIA, consistency based on Hoeffding bound, only uses positive (type=1) data, pools infrequent counts */
 bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right){
     if(count_driven::consistent(merger, left, right) == false){ inconsistency_found = true; return false; }
@@ -58,28 +70,28 @@ bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right
     alergia_data* r = (alergia_data*) right->data;
 
     if(l->accepting_paths < STATE_COUNT || r->accepting_paths < STATE_COUNT) return true;
+    
+    double left_count = 0.0;
+    double right_count = 0.0;
+    
+    double left_total = (double)l->accepting_paths;
+    double right_total = (double)r->accepting_paths ;
 
-    double bound = sqrt(1.0 / (double)l->accepting_paths) + sqrt(1.0 / (double)r->accepting_paths);
-    bound = bound * sqrt(0.5 * log(2.0 / CHECK_PARAMETER));
-    
-    int left_count = 0;
-    int right_count  = 0;
-    
-    int l1_pool = 0;
-    int r1_pool = 0;
-    int l2_pool = 0;
-    int r2_pool = 0;
-    int matching_right = 0;
+    double l1_pool = 0.0;
+    double r1_pool = 0.0;
+    double l2_pool = 0.0;
+    double r2_pool = 0.0;
+    double matching_right = 0.0;
 
     for(num_map::iterator it = l->num_pos.begin(); it != l->num_pos.end(); ++it){
         left_count = (*it).second;
         right_count = r->pos((*it).first);
         matching_right += right_count;
         
-        if(right_count >= SYMBOL_COUNT && right_count >= SYMBOL_COUNT) {
-            double gamma = ((double)left_count / (double)l->accepting_paths) - ((double)right_count / (double)r->accepting_paths);
-            if(gamma > bound){ inconsistency_found = true; return false; }
-            if(gamma < -bound){ inconsistency_found = true; return false; }
+        if(left_count >= SYMBOL_COUNT && right_count >= SYMBOL_COUNT){
+            if(alergia_consistency(right_count, left_count, right_total, left_total) == false){
+                inconsistency_found = true; return false;
+            }
         }
 
         if(right_count < SYMBOL_COUNT){
@@ -96,30 +108,19 @@ bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right
     left_count = l1_pool;
     right_count = r1_pool;
     
-    if(right_count >= SYMBOL_COUNT || right_count >= SYMBOL_COUNT) {
-        double gamma = ((double)left_count / (double)l->accepting_paths) - ((double)right_count / (double)r->accepting_paths);
-        if(gamma > bound){ inconsistency_found = true; return false; }
-        if(gamma < -bound){ inconsistency_found = true; return false; }
+    if(left_count >= SYMBOL_COUNT || right_count >= SYMBOL_COUNT) {
+        if(alergia_consistency(right_count, left_count, right_total, left_total) == false){
+            inconsistency_found = true; return false;
+        }
     }
     
     left_count = l2_pool;
     right_count = r2_pool;
     
-    if(right_count >= SYMBOL_COUNT || right_count >= SYMBOL_COUNT) {
-        double gamma = ((double)left_count / (double)l->accepting_paths) - ((double)right_count / (double)r->accepting_paths);
-        if(gamma > bound){ inconsistency_found = true; return false; }
-        if(gamma < -bound){ inconsistency_found = true; return false; }
-    }
-    
-    return true;
-    
-    left_count = l->num_accepting;
-    right_count = r->num_accepting;
-
-    if(right_count >= SYMBOL_COUNT || right_count >= SYMBOL_COUNT) {
-        double gamma = ((double)left_count / (double)l->accepting_paths) - ((double)right_count / (double)r->accepting_paths);
-        if(gamma > bound){ inconsistency_found = true; return false; }
-        if(gamma < -bound){ inconsistency_found = true; return false; }
+    if(left_count >= SYMBOL_COUNT || right_count >= SYMBOL_COUNT) {
+        if(alergia_consistency(right_count, left_count, right_total, left_total) == false){
+            inconsistency_found = true; return false;
+        }
     }
     
     return true;
@@ -141,8 +142,6 @@ int alergia::sink_type(apta_node* node){
     if(!USE_SINKS) return -1;
 
     if (is_low_count_sink_alergia(node)) return 0;
-    //if (is_accepting_sink(node)) return 1;
-    //if (is_rejecting_sink(node)) return 2;
     return -1;
 };
 
@@ -150,16 +149,11 @@ bool alergia::sink_consistent(apta_node* node, int type){
     if(!USE_SINKS) return false;
     
     if(type == 0) return is_low_count_sink_alergia(node);
-    //if(type == 1) return is_accepting_sink(node);
-    //if(type == 2) return is_rejecting_sink(node);
-    
     return true;
 };
 
 int alergia::num_sink_types(){
     if(!USE_SINKS) return 0;
-    
-    // accepting, rejecting, and low count
     return 1;
 };
 
@@ -195,7 +189,7 @@ void alergia::print_dot(FILE* output, state_merger* merger){
             fprintf(output, "\t\t%i -> S%it%i [label=\"" ,n->number, n->number, stype);
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && sink_type(n->get_child(i)) == stype){
-                    fprintf(output, " %s [%i]", aut->alph_str(i).c_str(), n->size);
+                    fprintf(output, " %s", aut->alph_str(i).c_str());
                 }
             }
             fprintf(output, "\"];\n");

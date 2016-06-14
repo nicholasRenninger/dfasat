@@ -79,8 +79,7 @@ int count_driven::compute_score(state_merger *merger, apta_node* left, apta_node
 };
 
 void count_driven::reset(state_merger *merger){
-  inconsistency_found = false;
-  num_merges = 0;
+  evaluation_function::reset(merger);
 };
 
 bool is_accepting_sink(apta_node* node){
@@ -122,6 +121,7 @@ int count_driven::num_sink_types(){
 };
 
 void count_driven::print_dot(FILE* output, state_merger* merger){
+    cerr << "printing" << endl;
     apta* aut = merger->aut;
     //state_set s  = aut->get_states();
     state_set s  = merger->red_states;
