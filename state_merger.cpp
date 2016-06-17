@@ -20,7 +20,6 @@ state_merger::state_merger(){
 state_merger::state_merger(evaluation_function* e, apta* a){
     aut = a;
     eval = e;
-    eval->initialize(this);
     reset();
 }
 

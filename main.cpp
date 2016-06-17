@@ -199,7 +199,10 @@ int main(int argc, const char *argv[]){
    
     cout << "creating apta " <<  "using " << eval_string << endl; 
     apta* the_apta = new apta();
+    ifstream input_stream(param->dfa_file);
     merger = state_merger(eval,the_apta);
+    merger.read_apta(input_stream);
+    eval->initialize(&merger);
 
 /*    if (param->heuristic==1){
         evaluation_function *eval = new evaluation_function(); 
@@ -243,10 +246,6 @@ int main(int argc, const char *argv[]){
         merger = state_merger(eval,the_apta);
     }*/
 	
-
-    ifstream input_stream(param->dfa_file);
-    merger.read_apta(input_stream);
-
     if(param->method == 1) GREEDY_METHOD = RANDOMG;
     if(param->method == 2) GREEDY_METHOD = NORMALG;
     

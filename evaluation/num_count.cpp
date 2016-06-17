@@ -61,9 +61,9 @@ void count_data::undo(evaluation_data* right){
 bool count_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
     if(inconsistency_found) return false;
   
-    count_data* l = reinterpret_cast<count_data*>(left->data);
-    count_data* r = reinterpret_cast<count_data*>(right->data);
-    
+    count_data* l = (count_data*)left->data;
+    count_data* r = (count_data*)right->data;
+        
     if(l->num_accepting != 0 && r->num_rejecting != 0){ inconsistency_found = true; return false; }
     if(l->num_rejecting != 0 && r->num_accepting != 0){ inconsistency_found = true; return false; }
     

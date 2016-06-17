@@ -127,6 +127,8 @@ void evaluation_function::read_file(ifstream &input_stream, state_merger* merger
     int node_number = 1;
     input_stream >> num_words >> alphabet_size;
     
+    cerr << num_words << " " << alphabet_size << endl;
+    
     for(int line = 0; line < num_words; line++){
         int type;
         int length;
@@ -135,13 +137,10 @@ void evaluation_function::read_file(ifstream &input_stream, state_merger* merger
         input_stream >> type >> length;
         
         int depth = 0;
-        //cerr << "line " << line << endl;
         for(int index = 0; index < length; index++){
             depth++;
             string tuple;
             input_stream >> tuple;
-            
-            //cerr << "reading: " << tuple << " at " << index;
             
             std::stringstream lineStream;
             lineStream.str(tuple);
