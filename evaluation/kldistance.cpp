@@ -91,8 +91,6 @@ int kldistance::compute_score(state_merger *merger, apta_node* left, apta_node* 
 
   double val = (perplexity / (double)extra_parameters);
   
-  cerr << val << endl;
-  
   return 100000 - (int)(val * 100.0);
 };
 
