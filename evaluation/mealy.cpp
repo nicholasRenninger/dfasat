@@ -90,7 +90,11 @@ bool mealy::consistent(state_merger *merger, apta_node* left, apta_node* right){
 
 bool mealy::compute_consistency(state_merger* merger, apta_node* left, apta_node* right){
     if(evaluation_function::compute_consistency(merger, left, right) == false) return false;
-    return num_matched > num_unmatched;
+    return true;
+};
+
+int mealy::compute_score(state_merger* merger, apta_node* left, apta_node* right){
+    return num_matched;
 };
 
 void mealy::reset(state_merger* merger){
@@ -128,7 +132,7 @@ void mealy::print_dot(FILE* output, state_merger* merger){
             fprintf(output, "\t\t%i -> %i [label=\"" ,n->number, child->number);
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && n->get_child(i) == child){
-                    fprintf(output, " %s\\\\%s", aut->alph_str(i).c_str(), mealy_data::int_output[l->outputs[i]].c_str());
+                    fprintf(output, " %s/%s", aut->alph_str(i).c_str(), mealy_data::int_output[l->outputs[i]].c_str());
                 }
             }
             fprintf(output, "\"];\n");

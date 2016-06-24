@@ -123,5 +123,3 @@ void kldistance::initialize(state_merger* merger){
     delete state;
 };
 
-
-
