@@ -157,18 +157,18 @@ int alergia::num_sink_types(){
     return 1;
 };
 
-void alergia::print_dot(FILE* output, state_merger* merger){
+void alergia::print_dot(iostream& output, state_merger* merger){
     apta* aut = merger->aut;
     state_set s  = merger->red_states;
     
     cerr << "size: " << s.size() << endl;
     
-    fprintf(output,"digraph DFA {\n");
-    fprintf(output,"\t%i [label=\"root\" shape=box];\n", aut->root->find()->number);
-    fprintf(output,"\t\tI -> %i;\n", aut->root->find()->number);
+    output << "digraph DFA {\n";
+    output << "\t" << aut->root->find()->number << " [label=\"root\" shape=box];\n";
+    output << "\t\tI -> " << aut->root->find()->number << ";\n";
     for(state_set::iterator it = merger->red_states.begin(); it != merger->red_states.end(); ++it){
         apta_node* n = *it;
-        fprintf(output,"\t%i [shape=circle label=\"[%i]\"];\n", n->number, n->size);
+        output << "\t" << n->number << " [shape=circle label=\"[" << n->size << "]\"];\n";
         state_set childnodes;
         set<int> sinks;
         for(int i = 0; i < alphabet_size; ++i){
@@ -185,24 +185,24 @@ void alergia::print_dot(FILE* output, state_merger* merger){
         }
         for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
             int stype = *it2;
-            fprintf(output,"\tS%it%i [label=\"sink %i\" shape=box];\n", n->number, stype, stype);
-            fprintf(output, "\t\t%i -> S%it%i [label=\"" ,n->number, n->number, stype);
+            output << "\tS" << n->number << "t" << stype << " [label=\"sink " << stype << "\" shape=box];\n";
+            output << "\t\t" << n->number << " -> S" << n->number << "t" << stype << " [label=\"";
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && sink_type(n->get_child(i)) == stype){
-                    fprintf(output, " %s", aut->alph_str(i).c_str());
+                    output << " " << aut->alph_str(i).c_str();
                 }
             }
-            fprintf(output, "\"];\n");
+            output << "\"];\n";
         }
         for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
             apta_node* child = *it2;
-            fprintf(output, "\t\t%i -> %i [label=\"" ,n->number, child->number);
+            output << "\t\t" << n->number << " -> " << child->number << " [label=\"";
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && n->get_child(i) == child){
-                    fprintf(output, " %s", aut->alph_str(i).c_str());
+                    output << " " << aut->alph_str(i).c_str();
                 }
             }
-            fprintf(output, "\"];\n");
+            output << "\"];\n";
         }
     }
 
@@ -211,17 +211,17 @@ void alergia::print_dot(FILE* output, state_merger* merger){
         apta_node* n = *it;
         alergia_data* l = reinterpret_cast<alergia_data*>(n->data);
         if(l->num_accepting != 0){
-            fprintf(output,"\t%i [shape=doublecircle style=dotted label=\"%i:%i\\n[%i:%i]\"];\n", n->number, l->num_accepting, l->num_rejecting, l->accepting_paths, l->rejecting_paths);
+            output << "\t" << n->number << " [shape=doublecircle style=dotted label=\"" << l->num_accepting << ":" << l->num_rejecting << "\\n[" << l->accepting_paths << ":" << l->rejecting_paths << "]\"];\n";
         } else if(l->num_rejecting != 0){
-            fprintf(output,"\t%i [shape=Mcircle style=dotted label=\"%i:%i\\n[%i:%i]\"];\n", n->number, l->num_accepting, l->num_rejecting, l->accepting_paths, l->rejecting_paths);
+            output << "\t" << n->number << " [shape=Mcircle style=dotted label=\"" << l->num_accepting << ":" << l->num_rejecting << "\\n[" << l->accepting_paths << ":" << l->rejecting_paths << "]\"];\n";
         } else {
-            fprintf(output,"\t%i [shape=circle style=dotted label=\"0:0\\n[%i:%i]\"];\n", n->number, l->accepting_paths, l->rejecting_paths);
+            output << "\t" << n->number << " [shape=circle style=dotted label=\"0:0\\n[" << l->accepting_paths << ":" << l->rejecting_paths << "]\"];\n";
         }
         for(child_map::iterator it2 = n->children.begin(); it2 != n->children.end(); ++it2){
             apta_node* child = (*it2).second;
             int symbol = (*it2).first;
-            fprintf(output, "\t\t%i -> %i [style=dotted label=\"%s [%i:%i]\"];\n" ,n->number, child->number, aut->alph_str(symbol).c_str(), l->num_pos[symbol], l->num_neg[symbol]);
+            output << "\t\t" << n->number << " -> " << child->number << " [style=dotted label=\"" << aut->alph_str(symbol).c_str() << " [" << l->num_pos[symbol] << ":" << l->num_neg[symbol] << "]\"];\n";
         }
     }
-    fprintf(output,"}\n");
+    output << "}\n";
 };

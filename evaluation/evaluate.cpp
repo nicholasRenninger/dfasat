@@ -118,7 +118,7 @@ int evaluation_function::num_sink_types(){
     return 1;
 };
 
-void evaluation_function::read_file(ifstream &input_stream, state_merger* merger){
+void evaluation_function::read_file(istream &input_stream, state_merger* merger){
     apta* aut = merger->aut;
     
     int num_words;
@@ -174,16 +174,16 @@ void evaluation_function::read_file(ifstream &input_stream, state_merger* merger
     }
 };
 
-void evaluation_function::print_dot(FILE* output, state_merger* merger){
+void evaluation_function::print_dot(iostream& output, state_merger* merger){
     apta* aut = merger->aut;
     state_set candidates  = merger->get_candidate_states();
     
-    fprintf(output,"digraph DFA {\n");
-    fprintf(output,"\t%i [label=\"root\" shape=box];\n", aut->root->find()->number);
-    fprintf(output,"\t\tI -> %i;\n", aut->root->find()->number);
+    output << "digraph DFA {\n";
+    output << "\t" << aut->root->find()->number << " [label=\"root\" shape=box];\n";
+    output << "\t\tI -> " << aut->root->find()->number << ";\n";
     for(state_set::iterator it = merger->red_states.begin(); it != merger->red_states.end(); ++it){
         apta_node* n = *it;
-        fprintf(output,"\t%i [shape=circle label=\"[%i]\"];\n", n->number, n->size);
+        output << "\t" << n->number << " [shape=circle label=\"[" << n->size << "]\"];\n";
         state_set childnodes;
         set<int> sinks;
         for(int i = 0; i < alphabet_size; ++i){
@@ -200,24 +200,24 @@ void evaluation_function::print_dot(FILE* output, state_merger* merger){
         }
         for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
             int stype = *it2;
-            fprintf(output,"\tS%it%i [label=\"sink %i\" shape=box];\n", n->number, stype, stype);
-            fprintf(output, "\t\t%i -> S%it%i [label=\"" ,n->number, n->number, stype);
+            output << "\tS" << n->number << "t" << stype << " [label=\"sink " << stype << "\" shape=box];\n";
+            output << "\t\t" << n->number << " -> S" << n->number << "t" << stype << " [label=\"";
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && sink_type(n->get_child(i)) == stype){
-                    fprintf(output, " %s [%i]", aut->alph_str(i).c_str(), n->size);
+                    output << " " << aut->alph_str(i) << " [" << n->size << "]";
                 }
             }
-            fprintf(output, "\"];\n");
+            output << "\"];\n";
         }
         for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
             apta_node* child = *it2;
-            fprintf(output, "\t\t%i -> %i [label=\"" ,n->number, child->number);
+            output << "\t\t" << n->number << " -> " << child->number << " [label=\""; 
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && n->get_child(i) == child){
-                    fprintf(output, " %s", aut->alph_str(i).c_str());
+                    output << " " << aut->alph_str(i);
                 }
             }
-            fprintf(output, "\"];\n");
+            output << "\"];\n";
         }
     }
     for(state_set::iterator it = candidates.begin(); it != candidates.end(); ++it){
@@ -225,7 +225,7 @@ void evaluation_function::print_dot(FILE* output, state_merger* merger){
         if(sink_type(n) != -1);
             //fprintf(output,"\t%i [shape=box style=dotted label=\"[%i:%i]\"];\n", n->number, n->num_accepting, n->num_rejecting);
         else
-            fprintf(output,"\t%i [shape=circle style=dotted label=\"[%i]\"];\n", n->number, n->size);
+            output << "\t" << n->number << " [shape=circle style=dotted label=\"[" << n->size << "]\"];\n";
         for(int i = 0; i < alphabet_size; ++i){
             apta_node* child = n->get_child(i);
             if(child == 0){
@@ -235,7 +235,7 @@ void evaluation_function::print_dot(FILE* output, state_merger* merger){
                 fprintf(output,"\tS%it%i [label=\"sink %i\" shape=box style=dotted];\n", n->number, stype, stype);
                 fprintf(output, "\t\t%i -> S%it%i [label=\"%i [%i:%i]\" style=dotted];\n" ,n->number, n->number, stype, i, n->num_pos[i], n->num_neg[i]);*/
             } else {
-                fprintf(output, "\t\t%i -> %i [label=\"%s [%i]\" style=dotted];\n" ,n->number, n->get_child(i)->number, aut->alph_str(i).c_str(), n->size);
+                output << "\t\t" << n->number << " -> " << n->get_child(i)->number << " [label=\"" << aut->alph_str(i) << " [" << n->size << "]\" style=dotted];\n";
             }
         }
     }
@@ -258,7 +258,6 @@ void evaluation_function::print_dot(FILE* output, state_merger* merger){
             }
         }
     }*/
-    fprintf(output,"}\n");
+    output << "}\n";
 };
-
 

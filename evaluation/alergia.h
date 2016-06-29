@@ -44,7 +44,7 @@ protected:
 
 public:
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
-  virtual void print_dot(FILE*, state_merger *);
+  virtual void print_dot(iostream&, state_merger *);
 
   virtual int sink_type(apta_node* node);
   virtual bool sink_consistent(apta_node* node, int type);

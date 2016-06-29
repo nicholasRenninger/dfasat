@@ -5,6 +5,7 @@
 #include <set>
 #include <list>
 #include <map>
+#include <sstream>
 
 class evaluation_data;
 class evaluation_function;
@@ -133,8 +134,8 @@ public:
   virtual bool sink_consistent(apta_node* node, int type);
   virtual int num_sink_types();
 
-  virtual void read_file(ifstream &input_stream, state_merger *);
-  virtual void print_dot(FILE*, state_merger *);
+  virtual void read_file(istream &input_stream, state_merger *);
+  virtual void print_dot(iostream&, state_merger *);
 };
 
 

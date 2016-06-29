@@ -20,4 +20,4 @@ int EXTRA_STATES = 0;
 bool TARGET_REJECTING = 0;
 bool SYMMETRY_BREAKING = 0;
 bool FORCING = 0;
-const char* eval_string;
+string eval_string;

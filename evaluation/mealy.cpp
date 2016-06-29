@@ -103,19 +103,19 @@ void mealy::reset(state_merger* merger){
     num_unmatched = 0;
 };
 
-void mealy::print_dot(FILE* output, state_merger* merger){
+void mealy::print_dot(iostream& output, state_merger* merger){
     apta* aut = merger->aut;
     state_set s  = merger->red_states;
     
     cerr << "size: " << s.size() << endl;
     
-    fprintf(output,"digraph DFA {\n");
-    fprintf(output,"\t%i [label=\"root\" shape=box];\n", aut->root->find()->number);
-    fprintf(output,"\t\tI -> %i;\n", aut->root->find()->number);
+    output << "digraph DFA {\n";
+    output << "\t" << aut->root->find()->number << " [label=\"root\" shape=box];\n";
+    output << "\t\tI -> " << aut->root->find()->number << ";\n";
     for(state_set::iterator it = s.begin(); it != s.end(); ++it){
         apta_node* n = *it;
         mealy_data* l = reinterpret_cast<mealy_data*>(n->data);
-        fprintf(output,"\t%i [shape=circle label=\"%i\"];\n", n->number, n->size);
+        output << "\t" << n->number << " [shape=circle label=\"" << n->size << "\"];\n";
         
         state_set childnodes;
         set<int> sinks;
@@ -129,13 +129,13 @@ void mealy::print_dot(FILE* output, state_merger* merger){
         }
         for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
             apta_node* child = *it2;
-            fprintf(output, "\t\t%i -> %i [label=\"" ,n->number, child->number);
+            output << "\t\t" << n->number << " -> " << child->number << " [label=\"";
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && n->get_child(i) == child){
-                    fprintf(output, " %s/%s", aut->alph_str(i).c_str(), mealy_data::int_output[l->outputs[i]].c_str());
+                    output << " " << aut->alph_str(i) << "/" << mealy_data::int_output[l->outputs[i]];
                 }
             }
-            fprintf(output, "\"];\n");
+            output << "\"];\n";
         }
     }
 
@@ -143,13 +143,13 @@ void mealy::print_dot(FILE* output, state_merger* merger){
     for(state_set::iterator it = s.begin(); it != s.end(); ++it){
         apta_node* n = *it;
         mealy_data* l = reinterpret_cast<mealy_data*>(n->data);
-        fprintf(output,"\t%i [shape=circle label=\"%i\"];\n", n->number, n->size);
+        output << "\t" << n->number << " [shape=circle label=\"" << n->size << "\"];\n";
         for(child_map::iterator it2 = n->children.begin(); it2 != n->children.end(); ++it2){
             apta_node* child = (*it2).second;
             int symbol = (*it2).first;
-            fprintf(output, "\t\t%i -> %i [style=dotted label=\"%s\\\\%s\"];\n", n->number, child->number, aut->alph_str(symbol).c_str(), mealy_data::int_output[l->outputs[symbol]].c_str());
+            output << "\t\t" << n->number << " -> " << child->number << " [style=dotted label=\"" << aut->alph_str(symbol) << "\\\\" << mealy_data::int_output[l->outputs[symbol]] << "\"];\n";
         }
     }
-    fprintf(output,"}\n");
+    output << "}\n";
 };
 

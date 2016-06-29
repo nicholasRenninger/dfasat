@@ -14,12 +14,17 @@
 
 #include "parameters.h"
 
-state_merger::state_merger(){
+state_merger::state_merger()
+: context(){
+    context.merger = this;
 }
 
-state_merger::state_merger(evaluation_function* e, apta* a){
+state_merger::state_merger(evaluation_function* e, apta* a)
+: context(){
+    context.merger = this;
     aut = a;
     eval = e;
+    eval->initialize(this);
     reset();
 }
 
@@ -282,12 +287,34 @@ merge_map &state_merger::get_possible_merges(){
     return *mset;
 }
 
-void state_merger::read_apta(ifstream &input_stream){
+void state_merger::read_apta(istream &input_stream){
     eval->read_file(input_stream, this);
 }
 
-void state_merger::todot(FILE* output){
-    eval->print_dot(output, this);
+void state_merger::read_apta(string dfa_file){
+    ifstream input_stream(dfa_file);
+    read_apta(input_stream);
+    input_stream.close();
+}
+
+void state_merger::read_apta(vector<string> dfa_data){
+    stringstream input_stream;
+    for (int i = 0; i < dfa_data.size(); i++) {
+        input_stream << dfa_data[i]; 
+    }
+    //eval->read_file(input_stream, this);
+    read_apta(input_stream);
+}
+
+void state_merger::todot(){
+    stringstream dot_output_buf;
+    eval->print_dot(dot_output_buf, this);
+    dot_output = dot_output_buf.str();
+}
+
+void state_merger::print_dot(FILE* output)
+{
+    fprintf(output, "%s", dot_output.c_str());
 }
 
 int state_merger::sink_type(apta_node* node){

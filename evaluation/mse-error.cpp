@@ -235,16 +235,18 @@ int mse_error::num_sink_types(){
     return 1;
 };
 
-void mse_error::print_dot(FILE* output, state_merger* merger){
+void mse_error::print_dot(iostream& output, state_merger* merger){
     apta* aut = merger->aut;
     state_set s  = merger->red_states;
     
+    char temp[10];
+
     cerr << "size: " << s.size() << endl;
     
-    fprintf(output,"digraph DFA {\n");
+    output << "digraph DFA {\n";
 
-    fprintf(output,"\t%i [label=\"root\" shape=box];\n", aut->root->find()->number);
-    fprintf(output,"\t\tI -> %i;\n", aut->root->find()->number);
+    output << "\t" << aut->root->find()->number << " [label=\"root\" shape=box];\n";
+    output << "\t\tI -> " << aut->root->find()->number << ";\n";
     for(state_set::iterator it = merger->red_states.begin(); it != merger->red_states.end(); ++it){
         apta_node* n = *it;
         mse_data* l = (mse_data*) n->data;
@@ -252,7 +254,8 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
         double mean = l->mean;
         
         //if(l->occs.size() == 0) continue;
-        fprintf(output,"\t%i [shape=circle label=\"\n%.3f\n%i\"];\n", n->number, mean, (int)l->occs.size());
+        sprintf(temp, "%.3f", l->mean);
+        output << "\t" << n->number << " [shape=circle label=\"\n" << temp << "\n" << (int)l->occs.size() << "\"];\n";
         
         state_set childnodes;
         set<int> sinks;
@@ -272,27 +275,27 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
         }
         for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
             int stype = *it2;
-            fprintf(output,"\tS%it%i [label=\"sink %i\" shape=box];\n", n->number, stype, stype);
-            fprintf(output, "\t\t%i -> S%it%i [label=\"" ,n->number, n->number, stype);
+            output << "\tS" << n->number << "t" << stype << " [label=\"sink " << stype << "\" shape=box];\n";
+            output << "\t\t" << n->number << " -> S" << n->number << "t" << stype << " [label=\"";
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && sink_type(n->get_child(i)) == stype){
-                    fprintf(output, " %s ", aut->alph_str(i).c_str());
+                    output << " " << aut->alph_str(i) << " ";
                 }
             }
-            fprintf(output, "\"];\n");
+            output << "\"];\n";
         }
         for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
             apta_node* child = *it2;
-            fprintf(output, "\t\t%i -> %i [label=\"" ,n->number, child->number);
+            output << "\t\t" << n->number <<" -> " << child->number << " [label=\"";
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && n->get_child(i) == child){
-                    fprintf(output, " %s ", aut->alph_str(i).c_str());
+                    output << " " << aut->alph_str(i) << " ";
                 }
             }
-            fprintf(output, "\"];\n");
+            output << "\"];\n";
         }
     }
-    fprintf(output,"}\n");
+    output << "}\n";
     return;
     s = merger->get_sink_states();
     for(state_set::iterator it = s.begin(); it != s.end(); ++it){
@@ -302,7 +305,8 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
         double mean = l->mean;
         
         //if(l->occs.size() == 0) continue;
-        fprintf(output,"\t%i [shape=circle label=\"\n%.3f\n%i\"];\n", n->number, mean, (int)l->occs.size());
+        sprintf(temp, "%.3f", l->mean);
+        output << "\t" << n->number << " [shape=circle label=\"\n" << temp << "\n" << (int)l->occs.size() << "\"];\n";
         
         state_set childnodes;
         set<int> sinks;
@@ -322,24 +326,24 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
         }
         for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
             int stype = *it2;
-            fprintf(output,"\tS%it%i [label=\"sink %i\" shape=box];\n", n->number, stype, stype);
-            fprintf(output, "\t\t%i -> S%it%i [label=\"" ,n->number, n->number, stype);
+            output << "\tS" << n->number << "t" << stype << " [label=\"sink " << stype << "\" shape=box];\n";
+            output << "\t\t" << n->number << " -> S" << n->number << "t" << stype << " [label=\"";
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && sink_type(n->get_child(i)) == stype){
-                    fprintf(output, " %s ", aut->alph_str(i).c_str());
+                    output << " " << aut->alph_str(i) << " ";
                 }
             }
-            fprintf(output, "\"];\n");
+            output << "\"];\n";
         }
         for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
             apta_node* child = *it2;
-            fprintf(output, "\t\t%i -> %i [label=\"" ,n->number, child->number);
+            output << "\t\t" << n->number << " -> " << child->number << " [label=\"";
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && n->get_child(i) == child){
-                    fprintf(output, " %s ", aut->alph_str(i).c_str());
+                    output << " " << aut->alph_str(i) << " ";
                 }
             }
-            fprintf(output, "\"];\n");
+            output << "\"];\n";
         }
     }
     s = merger->get_candidate_states();
@@ -348,8 +352,8 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
         mse_data* l = (mse_data*) n->data;
         
         double mean = l->mean;
-        
-        fprintf(output,"\t%i [shape=circle label=\"\n%.3f\n%i\"];\n", n->number, mean, (int)l->occs.size());
+        sprintf(temp, "%.3f", l->mean);
+        output << "\t" << n->number << " [shape=circle label=\"\n" << temp << "\n" << (int)l->occs.size() << "\"];\n";
         
         state_set childnodes;
         set<int> sinks;
@@ -369,26 +373,26 @@ void mse_error::print_dot(FILE* output, state_merger* merger){
         }
         for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
             int stype = *it2;
-            fprintf(output,"\tS%it%i [label=\"sink %i\" shape=box];\n", n->number, stype, stype);
-            fprintf(output, "\t\t%i -> S%it%i [label=\"" ,n->number, n->number, stype);
+            output << "\tS" << n->number << "t" << stype << " [label=\"sink " << stype << "\" shape=box];\n";
+            output << "\t\t" << n->number << " -> S" << n->number << "t" << stype << " [label=\"";
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && sink_type(n->get_child(i)) == stype){
-                    fprintf(output, " %s ", aut->alph_str(i).c_str());
+                    output << " " << aut->alph_str(i) << " ";
                 }
             }
-            fprintf(output, "\"];\n");
+            output << "\"];\n";
         }
         for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
             apta_node* child = *it2;
-            fprintf(output, "\t\t%i -> %i [label=\"" ,n->number, child->number);
+            output << "\t\t" << n->number <<" -> " << child->number << " [label=\"";
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && n->get_child(i) == child){
-                    fprintf(output, " %s ", aut->alph_str(i).c_str());
+                    output << " " << aut->alph_str(i) << " ";
                 }
             }
-            fprintf(output, "\"];\n");
+            output << "\"];\n";
         }
     }
-    fprintf(output,"}\n");
+    output << "}\n";
 };
 

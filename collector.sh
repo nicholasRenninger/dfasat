@@ -1,5 +1,5 @@
 HEADER=lib/evaluators.h
-rm HEADER
+rm $HEADER
 echo "#ifndef __ALL_HEADERS__" > $HEADER
 echo "#define __ALL_HEADERS__" >> $HEADER
 for file in evaluation/*.h

@@ -101,7 +101,7 @@ void kldistance::reset(state_merger *merger){
   extra_parameters = 0;
 };
 
-void kldistance::print_dot(FILE* output, state_merger* merger){
+void kldistance::print_dot(iostream& output, state_merger* merger){
     count_driven::print_dot(output, merger);
 };
 

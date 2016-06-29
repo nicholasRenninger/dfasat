@@ -7,12 +7,13 @@
 #include <vector>
 #include <set>
 #include <list>
+#include <sys/stat.h>
 #include "state_merger.h"
 
 using namespace std;
 
 int dfasat(state_merger &merger,
-           const char* sat_program,
+           string sat_program,
            const char* dot_output,
            const char* aut_output);
 

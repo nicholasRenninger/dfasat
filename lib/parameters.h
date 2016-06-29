@@ -1,6 +1,9 @@
 #ifndef __PARAMETERS_H__
 #define __PARAMETERS_H__
 
+#include <string>
+using namespace std;
+
 extern int alphabet_size;
 extern bool MERGE_SINKS;
 extern int STATE_COUNT;
@@ -21,5 +24,5 @@ extern bool TARGET_REJECTING;
 extern bool SYMMETRY_BREAKING;
 extern bool FORCING;
 extern bool MERGE_SINKS_DSOLVE;
-extern const char* eval_string;
+extern string eval_string;
 #endif

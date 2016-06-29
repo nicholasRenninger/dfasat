@@ -22,6 +22,8 @@
 // touch anything than their own files
 #include "evaluators.h"
 
+using namespace std;
+
 /*
  * Input parameters, see 'man popt'
  */
@@ -30,11 +32,12 @@
 
 class parameters{
 public:
-    const char* dfa_file;
-    const char* dot_file;
-    const char* sat_program;
-    const char* hName;
-    const char* hData;
+    string dfa_file;
+    vector<string> dfa_data;
+    string dot_file;
+    string sat_program;
+    string hName;
+    string hData;
     int tries;
     int sinkson;
     int seed;
@@ -61,6 +64,7 @@ public:
 
 parameters::parameters(){
     dot_file = "dfa";
+    sat_program = "";
     hName = "default";
     hData = "evaluation_data";
     tries = 100;
@@ -85,19 +89,114 @@ parameters::parameters(){
     forcing = 0;
 };
 
+
+
+void init_with_params(parameters* param) {
+
+    srand(param->seed);
+    
+    APTA_BOUND = param->apta_bound;
+    CLIQUE_BOUND = param->dfa_bound;
+    
+    STATE_COUNT = param->state_count;
+    SYMBOL_COUNT = param->symbol_count;
+    CHECK_PARAMETER = param->parameter;
+    CORRECTION = param->correction;
+
+    LOWER_BOUND = param->lower_bound;
+    OFFSET = param->offset;
+    USE_SINKS = param->sinkson;
+    MERGE_SINKS_PRESOLVE = param->merge_sinks_p;
+    MERGE_SINKS_DSOLVE = param->merge_sinks_d;
+    EXTEND_ANY_RED = param->extend;
+    
+    SYMMETRY_BREAKING = param->symmetry;
+    FORCING = param->forcing;
+        
+    EXTRA_STATES = param->extra_states;
+    TARGET_REJECTING = param->target_rejecting;
+ 
+    eval_string = param->hData;
+
+    try {
+       (DerivedRegister<evaluation_function>::getMap())->at(param->hName);
+       std::cout << "valid: " << param->hName << std::endl;
+       
+    } catch(const std::out_of_range& oor ) {
+       std::cout << "invalid: " << param->hName << std::endl;
+    }
+}
+
+
+void run(parameters* param) {
+
+    state_merger merger;
+
+    init_with_params(param);
+    
+    evaluation_function *eval;
+
+    cout << "getting data" << endl;
+    try {
+       eval = (DerivedRegister<evaluation_function>::getMap())->at(param->hName)();
+       std::cout << "Using heuristic " << param->hName << std::endl;
+       
+    } catch(const std::out_of_range& oor ) {
+       std::cerr << "No named heuristic found, defaulting back on -h flag" << std::endl;
+    }
+   
+    cout << "creating apta " <<  "using " << eval_string << endl; 
+    apta* the_apta = new apta();
+    merger = state_merger(eval,the_apta);
+    
+    
+    ifstream input_stream(param->dfa_file);
+    merger.read_apta(input_stream);
+
+    if(param->method == 1) GREEDY_METHOD = RANDOMG;
+    if(param->method == 2) GREEDY_METHOD = NORMALG;
+    
+    int solution = -1;
+    
+    std::ostringstream oss3;
+    oss3 << "init_" << param->dot_file << ".dot";
+    FILE* output = fopen(oss3.str().c_str(), "w");
+    merger.todot();
+    merger.print_dot(output);
+    fclose(output);
+    
+    for(int i = 0; i < param->tries; ++i){
+        std::ostringstream oss;
+        oss << param->dot_file << (i+1) << ".aut";
+        std::ostringstream oss2;
+        oss2 << param->dot_file << (i+1) << ".dot";
+        solution = dfasat(merger, param->sat_program, oss2.str().c_str(), oss.str().c_str());
+        if(solution != -1)
+            CLIQUE_BOUND = min(CLIQUE_BOUND, solution - OFFSET + EXTRA_STATES);
+    }
+    input_stream.close();
+}
+
+
 int main(int argc, const char *argv[]){
     
     char c = 0;
     parameters* param = new parameters();
+    
+    /* temporary holder for string arguments */
+    char* dot_file = NULL;
+    char* sat_program = NULL;
+    char* hName;
+    char* hData;
     
     /* below parses command-line options, see 'man popt' */
     poptContext optCon;
     struct poptOption optionsTable[] = {
         { "version", 0, POPT_ARG_NONE, NULL, 1, "Display version information", NULL },
         { "seed", 's', POPT_ARG_INT, &(param->seed), 's', "Seed for random merge heuristic; default=12345678", "integer" },
-        { "output file name", 'o', POPT_ARG_STRING, &(param->dot_file), 'o', "The filename in which to store the learned DFAs in .dot and .aut format, default: \"dfa\".", "string" },
-	{ "heuristic-name", 'q', POPT_ARG_STRING, &(param->hName), 'q', "Name of the merge heurstic to use; will default back on -p flag if not specified.", "string" },
-{ "data-name", 'z', POPT_ARG_STRING, &(param->hData), 'z', "Name of the merge data class to use.", "string" },
+        { "output file name", 'o', POPT_ARG_STRING, &dot_file, 'o', "The filename in which to store the learned DFAs in .dot and .aut format, default: \"dfa\".", "string" },
+	{ "heuristic-name", 'q', POPT_ARG_STRING, &hName, 'q', "Name of the merge heurstic to use; will default back on -p flag if not specified.", "string" },
+{ "data-name", 'z', POPT_ARG_STRING, &hData, 'z', "Name of the merge data class to use.", "string" },
         { "runs", 'n', POPT_ARG_INT, &(param->tries), 'n', "Number of DFASAT runs/iterations; default=100", "integer" },
         {"sink states", 'i', POPT_ARG_INT, &(param->sinkson), 'i', "Set to 1 to use sink states, 0 to consider all states", "integer"},
         { "apta bound", 'b', POPT_ARG_INT, &(param->apta_bound), 'b', "Maximum number of remaining states in the partially learned DFA before starting the SAT search process. The higher this value, the larger the problem sent to the SAT solver; default=2000", "integer" },
@@ -116,7 +215,8 @@ int main(int argc, const char *argv[]){
         { "state count", 't', POPT_ARG_INT, &(param->state_count), 't', "The minimum number of positive occurrences of a state for it to be included in overlap/statistical checks, default=25", "integer" },
         { "symbol count", 'y', POPT_ARG_INT, &(param->symbol_count), 'y', "The minimum number of positive occurrences of a symbol/transition for it to be included in overlap/statistical checks, symbols with less occurrences are binned together, default=10", "integer" },
         { "correction", 'c', POPT_ARG_FLOAT, &(param->correction), 'c', "Value of a Laplace correction (smoothing) added to all symbol counts when computing statistical tests (in ALERGIA, LIKELIHOODRATIO, AIC, and KULLBACK-LEIBLER), default=1.0", "float" },
-        { "extra paremeter", 'p', POPT_ARG_FLOAT, &(param->parameter), 'p', "Extra parameter used during statistical tests, the significance level for the likelihood ratio test, the alpha value for ALERGIA, default=0.5", "float" },
+        { "extra parameter", 'p', POPT_ARG_FLOAT, &(param->parameter), 'p', "Extra parameter used during statistical tests, the significance level for the likelihood ratio test, the alpha value for ALERGIA, default=0.5", "float" },
+        { "solver", 'S', POPT_ARG_STRING, &sat_program, 'S', "Path to the program used to solve the problem, default=none", "string" },
         POPT_AUTOHELP
         POPT_TABLEEND
     };
@@ -148,127 +248,20 @@ int main(int argc, const char *argv[]){
         exit( 1 );
     }
     
-    char* f2 = const_cast<char*>(poptGetArg(optCon));
-    if( f2 == 0 ){
-        cout << "A string specifying the \"sat_solver arg1 arg2 ..\" command is required." << endl << endl;
-        exit( 1 );
-    }
-    param->sat_program = f2;
-    
-    poptFreeContext( optCon );
-    
-    state_merger merger;
+    if(dot_file != NULL)
+        param->dot_file = dot_file;
 
-    srand(param->seed);
-    
-    APTA_BOUND = param->apta_bound;
-    CLIQUE_BOUND = param->dfa_bound;
-    
-    STATE_COUNT = param->state_count;
-    SYMBOL_COUNT = param->symbol_count;
-    CHECK_PARAMETER = param->parameter;
-    CORRECTION = param->correction;
+    if(sat_program != NULL)
+        param->sat_program = sat_program;
 
-    LOWER_BOUND = param->lower_bound;
-    OFFSET = param->offset;
-    USE_SINKS = param->sinkson;
-    MERGE_SINKS_PRESOLVE = param->merge_sinks_p;
-    MERGE_SINKS_DSOLVE = param->merge_sinks_d;
-    EXTEND_ANY_RED = param->extend;
-    
-    SYMMETRY_BREAKING = param->symmetry;
-    FORCING = param->forcing;
-        
-    EXTRA_STATES = param->extra_states;
-    TARGET_REJECTING = param->target_rejecting;
+    param->hName = hName;
+    param->hData = hData;
 
-    evaluation_function *eval;
-
-    cout << "getting data" << endl;
-    try {
-       eval_string = param->hData;
-       eval = (DerivedRegister<evaluation_function>::getMap())->at(param->hName)();
-       std::cout << "Using heuristic " << param->hName << std::endl;
-       
-    } catch(const std::out_of_range& oor ) {
-       std::cerr << "No named heuristic found, defaulting back on -h flag" << std::endl;
-
-   }
-    cout << "storing eval string" << endl; 
-    eval_string = param->hData;
+    //poptFreeContext( optCon );
    
-    cout << "creating apta " <<  "using " << eval_string << endl; 
-    apta* the_apta = new apta();
-    ifstream input_stream(param->dfa_file);
-    merger = state_merger(eval,the_apta);
-    merger.read_apta(input_stream);
-    eval->initialize(&merger);
-
-/*    if (param->heuristic==1){
-        evaluation_function *eval = new evaluation_function(); 
-        merger = state_merger(eval ,the_apta);
-    }
-    if (param->heuristic==2){
-        evidence_driven *eval = new evidence_driven();
-        merger = state_merger(eval,the_apta);
-    }
-    if (param->heuristic==3){
-        depth_driven *eval = new depth_driven();
-        merger = state_merger(eval,the_apta);
-    }
-    if (param->heuristic==4){
-        overlap_driven *eval = new overlap_driven();
-        merger = state_merger(eval,the_apta);
-    }
-    if (param->heuristic==5){
-        series_driven *eval = new series_driven();
-        merger = state_merger(eval,the_apta);
-    }
-    if (param->heuristic==6){
-        alergia *eval = new alergia();
-        merger = state_merger(eval,the_apta);
-    }
-    if (param->heuristic==7){
-        likelihoodratio *eval = new likelihoodratio();
-        merger = state_merger(eval,the_apta);
-    }
-    if (param->heuristic==8){
-        aic *eval = new aic();
-        merger = state_merger(eval,the_apta);
-    }
-    if (param->heuristic==9){
-        kldistance *eval = new kldistance();
-        merger = state_merger(eval,the_apta);
-    }   
-     metric driven merging - addition by chrham
-     if (param->heuristic==10){
-        metric_driven *eval = new metric_driven();
-        merger = state_merger(eval,the_apta);
-    }*/
-	
-    if(param->method == 1) GREEDY_METHOD = RANDOMG;
-    if(param->method == 2) GREEDY_METHOD = NORMALG;
-    
-    int solution = -1;
-    
-    std::ostringstream oss3;
-    oss3 << "init_" << param->dot_file << ".dot";
-    FILE* output = fopen(oss3.str().c_str(), "w");
-    merger.todot(output);
-    fclose(output);
-    
-    for(int i = 0; i < param->tries; ++i){
-        std::ostringstream oss;
-        oss << param->dot_file << (i+1) << ".aut";
-        std::ostringstream oss2;
-        oss2 << param->dot_file << (i+1) << ".dot";
-        solution = dfasat(merger, param->sat_program, oss2.str().c_str(), oss.str().c_str());
-        if(solution != -1)
-            CLIQUE_BOUND = min(CLIQUE_BOUND, solution - OFFSET + EXTRA_STATES);
-    }
+    run(param); 
     
     delete param;
-    delete merger.eval;
-    input_stream.close();
-    return 0;
+    
+    return 0;    
 }

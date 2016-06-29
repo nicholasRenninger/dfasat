@@ -4,6 +4,12 @@
 *.pdf
 # ignore all object files
 *.o
+*.so
 evaluation/*.o
 # ignore binaries
 dfasat
+# py++ temporary files
+exposed_decl.pypp.txt
+named_tuple.py
+indexing_suite/*
+generated.cpp

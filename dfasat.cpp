@@ -16,12 +16,6 @@
 
 #include "parameters.h"
 
-
-int literal_counter = 1;
-int clause_counter = 0;
-
-bool computing_header = true;
-
 // apta/input state i has color j
 int **x;
 // color i has a transition with label a to color j
@@ -39,24 +33,8 @@ int **yt;
 int **yp;
 int **ya;
 
-state_merger merger;
-state_set red_states;
-state_set non_red_states;
-state_set sink_states;
 
-FILE* sat_stream;
-
-int dfa_size;
-int sinks_size;
-int num_states;
-int new_states;
-int new_init;
-
-set<int> trueliterals;
-
-int best_solution = -1;
-
-void reset_literals(bool init){
+void merger_context::reset_literals(bool init){
     int v, i, j, a;
 
     literal_counter = 1;
@@ -93,7 +71,7 @@ void reset_literals(bool init){
             if(init || ya[a][i] > 0) ya[a][i] = literal_counter++;
 }
 
-void create_literals(){
+void merger_context::create_literals(){
     int v, a, i;
     //X(STATE,COLOR)
     x = (int**) malloc( sizeof(int*) * num_states);
@@ -141,7 +119,7 @@ void create_literals(){
     reset_literals(true);
 }
 
-void delete_literals(){
+void merger_context::delete_literals(){
     int v, a, i;
     for(v = 0; v < num_states; v++ )
         free(x[ v ]);
@@ -172,7 +150,7 @@ void delete_literals(){
 }
 
 /* Print clauses without eliminated literals, -2 = false, -1 = true */
-int print_clause(bool v1, int l1, bool v2, int l2, bool v3, int l3, bool v4, int l4){
+int merger_context::print_clause(bool v1, int l1, bool v2, int l2, bool v3, int l3, bool v4, int l4){
     if(v1 && l1 == -1) return 0;
     if(!v1 && l1 == -2) return 0;
     if(v2  && l2 == -1) return 0;
@@ -197,7 +175,7 @@ int print_clause(bool v1, int l1, bool v2, int l2, bool v3, int l3, bool v4, int
     return 1;
 }
 
-int print_clause(bool v1, int l1, bool v2, int l2, bool v3, int l3){
+int merger_context::print_clause(bool v1, int l1, bool v2, int l2, bool v3, int l3){
     if(v1 && l1 == -1) return 0;
     if(!v1 && l1 == -2) return 0;
     if(v2  && l2 == -1) return 0;
@@ -218,7 +196,7 @@ int print_clause(bool v1, int l1, bool v2, int l2, bool v3, int l3){
     return 1;
 }
 
-int print_clause(bool v1, int l1, bool v2, int l2){
+int merger_context::print_clause(bool v1, int l1, bool v2, int l2){
     if(v1 && l1 == -1) return 0;
     if(!v1 && l1 == -2) return 0;
     if(v2  && l2 == -1) return 0;
@@ -235,13 +213,13 @@ int print_clause(bool v1, int l1, bool v2, int l2){
     return 1;
 }
 
-bool always_true(int number, bool flag){
+bool merger_context::always_true(int number, bool flag){
     if(number == -1 && flag == true)  return true;
     if(number == -2 && flag == false) return true;
     return false;
 }
 
-void print_lit(int number, bool flag){
+void merger_context::print_lit(int number, bool flag){
     if(computing_header) return;
     if(number < 0) return;
     
@@ -249,13 +227,13 @@ void print_lit(int number, bool flag){
     else fprintf(sat_stream, "-%i ", number);
 }
 
-void print_clause_end(){
+void merger_context::print_clause_end(){
     if(computing_header) return;
     fprintf(sat_stream, " 0\n");
 }
 
 /* fix values for red states -2 = false, -1 = true */
-void fix_red_values(){
+void merger_context::fix_red_values(){
     for(state_set::iterator it = red_states.begin();it != red_states.end();++it){
         apta_node* node = *it;
         
@@ -272,8 +250,11 @@ void fix_red_values(){
                 y[label][source->colour][target->colour] = -1;
             } else if(MERGE_SINKS_PRESOLVE && target != 0 && sink_states.find(target) != sink_states.end()){
                 for(int i = 0; i < dfa_size; ++i) y[label][source->colour][i] = -2;
-                for(int i = 0; i < sinks_size; ++i)
-                    if(merger.sink_consistent(target, i) == false) sy[label][source->colour][i] = -2;
+                for(int i = 0; i < sinks_size; ++i) {
+                    if(merger->sink_consistent(target, i) == false) {
+                       sy[label][source->colour][i] = -2;
+                    }
+                }
             } else if(TARGET_REJECTING && target == 0){
                 for(int i = 0; i < dfa_size; ++i) y[label][source->colour][i] = -2;
                 for(int i = 0; i < sinks_size; ++i) sy[label][source->colour][i] = -2;
@@ -289,7 +270,7 @@ void fix_red_values(){
 
 /* erase possible colors due to symmetry reduction
  should be compatible with BFS symmtry breaking, unchecked */
-int set_symmetry(){
+int merger_context::set_symmetry(){
     int num = 0;
     int max_value = new_init;
     for(state_set::iterator it = red_states.begin(); it != red_states.end(); ++it){
@@ -316,7 +297,7 @@ int set_symmetry(){
     return num;
 }
 
-int print_symmetry(){
+int merger_context::print_symmetry(){
     int num = 0;
     for(int i = 0; i < dfa_size; ++i){
         for(int k = 0; k < new_states; ++k){
@@ -342,12 +323,12 @@ int print_symmetry(){
 }
 
 /* eliminate literals for merges that conflict with the red states */
-void erase_red_conflict_colours(){
+void merger_context::erase_red_conflict_colours(){
     for(state_set::iterator it = red_states.begin(); it != red_states.end(); ++it){
         apta_node* left = *it;
         for(state_set::iterator it2 = non_red_states.begin(); it2 != non_red_states.end(); ++it2){
             apta_node* right = *it2;
-            if(merger.testmerge(left,right) == -1) x[right->satnumber][left->colour] = -2;
+            if(merger->testmerge(left,right) == -1) x[right->satnumber][left->colour] = -2;
             //if(right->accepting_paths != 0 || right->num_accepting != 0) x[right->satnumber][0] = -2;
             //if(right->rejecting_paths != 0 || right->num_rejecting != 0) x[right->satnumber][1] = -2;
         }
@@ -355,7 +336,7 @@ void erase_red_conflict_colours(){
 }
 
 /* print the at least one en at most one clauses for x */
-int print_colours(){
+int merger_context::print_colours(){
     int num = 0;
     bool altr = false;
     // at least one
@@ -388,7 +369,7 @@ int print_colours(){
 
 /* print clauses restricting two unmergable states to have the same color *
  * excludes pairs of states that are covered by the z literals            */
-int print_conflicts(){
+int merger_context::print_conflicts(){
     int num = 0;
     for(state_set::iterator it = non_red_states.begin(); it != non_red_states.end(); ++it){
         apta_node* left = *it;
@@ -402,7 +383,7 @@ int print_conflicts(){
             if(left->type == 1 && right->type != 1) continue;
             if(left->type != 1 && right->type == 1) continue;
             
-            if(merger.testmerge(left, right) == -1){
+            if(merger->testmerge(left, right) == -1){
                 for(int k = 0; k < dfa_size; ++k)
                     num += print_clause(false, x[left->satnumber][k], false, x[right->satnumber][k]);
             }
@@ -412,7 +393,7 @@ int print_conflicts(){
 }
 
 /* print de clauses voor z literals */
-int print_accept(){
+int merger_context::print_accept(){
     int num = 0;
     for(state_set::iterator it = non_red_states.begin(); it != non_red_states.end(); ++it){
         apta_node* node = *it;
@@ -427,7 +408,7 @@ int print_accept(){
 }
 
 /* print de clauses voor y literals */
-int print_transitions(){
+int merger_context::print_transitions(){
     int num = 0;
     for(int a = 0; a < alphabet_size; ++a)
         for(int i = 0; i < dfa_size; ++i)
@@ -448,7 +429,7 @@ int print_transitions(){
 }
 
 /* print transitions for any label yt */
-int print_t_transitions(){
+int merger_context::print_t_transitions(){
     int num = 0;
     for(int i = 0; i < dfa_size; ++i)
         for(int j = 0; j < new_states; ++j)
@@ -477,7 +458,7 @@ int print_t_transitions(){
 }
 
 /* print BFS tree transitions */
-int print_p_transitions(){
+int merger_context::print_p_transitions(){
     int num = 0;
     for(int i = 0; i < dfa_size; ++i){
         for(int j = 0; j < new_states; ++j){
@@ -505,7 +486,7 @@ int print_p_transitions(){
 }
 
 /* print BFS tree labels */
-int print_a_transitions(){
+int merger_context::print_a_transitions(){
     int num = 0;
     for(int i = 0; i < new_states; ++i){
         for(int a = 0; a < alphabet_size; ++a){
@@ -536,7 +517,7 @@ int print_a_transitions(){
 }
 
 /* print de clauses voor y literals */
-int print_forcing_transitions(){
+int merger_context::print_forcing_transitions(){
     int num = 0;
     bool altr = false;
     for (int label = 0; label < alphabet_size; ++label) {
@@ -594,7 +575,7 @@ int print_forcing_transitions(){
 }
 
 /* print de determinization constraint */
-int print_paths(){
+int merger_context::print_paths(){
     int num = 0;
     for (state_set::iterator it = red_states.begin(); it != red_states.end(); ++it) {
         apta_node* source = *it;
@@ -622,7 +603,7 @@ int print_paths(){
 }
 
 /* print sink paths */
-int print_sink_paths(){
+int merger_context::print_sink_paths(){
     int num = 0;
     bool altr = false;
     for (state_set::iterator it = red_states.begin(); it != red_states.end(); ++it) {
@@ -632,7 +613,7 @@ int print_sink_paths(){
             if (target != 0 && sink_states.find(target) == sink_states.end()) {
                 for (int i = 0; i < dfa_size; ++i)
                     for (int j = 0; j < sinks_size; ++j)
-                        if(merger.sink_consistent(target, j) == false)
+                        if(merger->sink_consistent(target, j) == false)
                             num += print_clause(false, sy[label][i][j], false, x[source->satnumber][i]);
                 
                 for (int i = 0; i < dfa_size; ++i){
@@ -640,12 +621,12 @@ int print_sink_paths(){
                     if(!altr) altr = always_true(sp[target->satnumber], false);
                     for(int j = 0; j < sinks_size; ++j){
                         if(altr) break;
-                        if(merger.sink_consistent(target, j) == true) altr = always_true(sy[label][i][j], true);
+                        if(merger->sink_consistent(target, j) == true) altr = always_true(sy[label][i][j], true);
                     }
                     
                     if(altr == false){
                         for(int j = 0; j < sinks_size; ++j)
-                            if(merger.sink_consistent(target, j) == true) print_lit(sy[label][i][j], true);
+                            if(merger->sink_consistent(target, j) == true) print_lit(sy[label][i][j], true);
                         print_lit(x[source->satnumber][i], false);
                         print_lit(sp[target->satnumber], false);
                         print_clause_end();
@@ -663,19 +644,19 @@ int print_sink_paths(){
             if (target != 0) {
                 for (int i = 0; i < dfa_size; ++i)
                     for (int j = 0; j < sinks_size; ++j)
-                        if(merger.sink_consistent(target, j) == false)
+                        if(merger->sink_consistent(target, j) == false)
                             num += print_clause(false, sy[label][i][j], false, x[source->satnumber][i]);
                 for (int i = 0; i < dfa_size; ++i){
                     altr = always_true(x[source->satnumber][i], false);
                     if(!altr) altr = always_true(sp[target->satnumber], false);
                     for(int j = 0; j < sinks_size; ++j){
                         if(altr) break;
-                        if(merger.sink_consistent(target, j) == true) altr = always_true(sy[label][i][j], true);
+                        if(merger->sink_consistent(target, j) == true) altr = always_true(sy[label][i][j], true);
                     }
                     
                     if(altr == false){
                         for(int j = 0; j < sinks_size; ++j)
-                            if(merger.sink_consistent(target, j) == true) print_lit(sy[label][i][j], true);
+                            if(merger->sink_consistent(target, j) == true) print_lit(sy[label][i][j], true);
                         print_lit(x[source->satnumber][i], false);
                         print_lit(sp[target->satnumber], false);
                         print_clause_end();
@@ -690,9 +671,9 @@ int print_sink_paths(){
 }
 
 /* output result to dot */
-void print_dot_output(const char* dot_output){
+void merger_context::print_dot_output(const char* dot_output){
     FILE* output = fopen(dot_output, "w");
-    apta* aut = merger.aut;
+    apta* aut = merger->aut;
     int v,i,a,j;
     
     fprintf(output,"digraph DFA {\n");
@@ -757,9 +738,9 @@ void print_dot_output(const char* dot_output){
 }
 
 /* output result to aut, for later processing in i.e. ensembles */
-void print_aut_output(const char* aut_output){
+void merger_context::print_aut_output(const char* aut_output){
     FILE* output = fopen(aut_output, "w");
-    apta* aut = merger.aut;
+    apta* aut = merger->aut;
     int v,i,a,j;
     
     fprintf(output,"%i %i\n", dfa_size, alphabet_size);
@@ -826,24 +807,29 @@ void print_aut_output(const char* aut_output){
  * translate result to a DFA
  * print result
  * */
-int dfasat(state_merger &m, const char* sat_program, const char* dot_output, const char* aut_output){
+int dfasat(state_merger &merger, string sat_program, const char* dot_output_file, const char* aut_output){
     int i,j,l,v,a,h,k;
-    merger = m;
+//    merger = m;
     apta* the_apta = merger.aut;
-    
+
     merge_list merges = random_greedy_bounded_run(&merger);
     
-    std::ostringstream oss2;
-    oss2 << "pre_" << dot_output;
-    FILE* output = fopen(oss2.str().c_str(), "w");
-    merger.todot(output);
-    fclose(output);
+    merger.todot();
+
+    if (dot_output_file != NULL) {
+      std::ostringstream oss2;
+      oss2 << "pre_" << dot_output_file;
+      ofstream output(oss2.str().c_str());
+      output << merger.dot_output;
+      output.close();
+    }
+
     
-    non_red_states = merger.get_candidate_states();
-    red_states     = merger.red_states;
-    sink_states    = merger.get_sink_states();
+    merger.context.non_red_states = merger.get_candidate_states();
+    merger.context.red_states     = merger.red_states;
+    merger.context.sink_states    = merger.get_sink_states();
     
-    if(best_solution != -1 && merger.red_states.size() >= best_solution + EXTRA_STATES){
+    if(merger.context.best_solution != -1 && merger.red_states.size() >= merger.context.best_solution + EXTRA_STATES){
         cerr << "Greedy preprocessing resulted in too many red states." << endl;
         while(!merges.empty()){
             merge_pair performed_merge = merges.front();
@@ -853,189 +839,199 @@ int dfasat(state_merger &m, const char* sat_program, const char* dot_output, con
         return -1;
     }
     
-    dfa_size = merger.red_states.size() + OFFSET;
-    sinks_size = 0;
+    merger.context.dfa_size = merger.red_states.size() + OFFSET;
+    merger.context.sinks_size = 0;
     
-    if(MERGE_SINKS_PRESOLVE) sinks_size = merger.num_sink_types();
-    else non_red_states.insert(sink_states.begin(), sink_states.end());
-    num_states = red_states.size() + non_red_states.size();
+    if(MERGE_SINKS_PRESOLVE) merger.context.sinks_size = merger.num_sink_types();
+    else merger.context.non_red_states.insert(merger.context.sink_states.begin(), merger.context.sink_states.end());
+    merger.context.num_states = merger.context.red_states.size() + merger.context.non_red_states.size();
     
-    if(best_solution != -1) dfa_size = min(dfa_size, best_solution);
-    new_states = dfa_size - merger.red_states.size();
-    new_init = merger.red_states.size();
+    if(merger.context.best_solution != -1) merger.context.dfa_size = min(merger.context.dfa_size, merger.context.best_solution);
+    merger.context.new_states = merger.context.dfa_size - merger.red_states.size();
+    merger.context.new_init = merger.red_states.size();
     
     // assign a unique number to every state
     i = 0;
-    for(state_set::iterator it = red_states.begin(); it != red_states.end(); ++it){
+    for(state_set::iterator it = merger.context.red_states.begin(); it != merger.context.red_states.end(); ++it){
         apta_node* node = *it;
         node->satnumber = i;
         node->colour = i;
         i++;
     }
-    for(state_set::iterator it = non_red_states.begin(); it != non_red_states.end(); ++it){
+    for(state_set::iterator it = merger.context.non_red_states.begin(); it != merger.context.non_red_states.end(); ++it){
         apta_node* node = *it;
         node->satnumber = i;
         i++;
     }
     
-    clause_counter = 0;
-    literal_counter = 1;
+    merger.context.clause_counter = 0;
+    merger.context.literal_counter = 1;
     
     cerr << "creating literals..." << endl;
-    create_literals();
+    merger.context.create_literals();
     
     cerr << "number of states: " << the_apta->get_states().size() << endl;
-    cerr << "number of red states: " << red_states.size() << endl;
-    cerr << "number of non_red states: " << non_red_states.size() << endl;
-    cerr << "number of sink states: " << sink_states.size() << endl;
-    cerr << "dfa size: " << dfa_size << endl;
-    cerr << "sink types: " << sinks_size << endl;
-    cerr << "new states: " << new_states << endl;
-    cerr << "new init: " << new_init << endl;
+    cerr << "number of red states: " << merger.context.red_states.size() << endl;
+    cerr << "number of non_red states: " << merger.context.non_red_states.size() << endl;
+    cerr << "number of sink states: " << merger.context.sink_states.size() << endl;
+    cerr << "dfa size: " << merger.context.dfa_size << endl;
+    cerr << "sink types: " << merger.context.sinks_size << endl;
+    cerr << "new states: " << merger.context.new_states << endl;
+    cerr << "new init: " << merger.context.new_init << endl;
+    
+    merger.context.merger = &merger;
 
-    fix_red_values();
-    erase_red_conflict_colours();
-    set_symmetry();
+    merger.context.fix_red_values();
+    merger.context.erase_red_conflict_colours();
+    merger.context.set_symmetry();
     
     // renumber literals to account for eliminated ones
-    reset_literals(false);
+    merger.context.reset_literals(false);
 
-    computing_header = true;
+    merger.context.computing_header = true;
     
-    clause_counter = 0;
-    clause_counter += print_colours();
-    clause_counter += print_conflicts();
-    clause_counter += print_accept();
-    clause_counter += print_transitions();
+    merger.context.clause_counter = 0;
+    merger.context.clause_counter += merger.context.print_colours();
+    merger.context.clause_counter += merger.context.print_conflicts();
+    merger.context.clause_counter += merger.context.print_accept();
+    merger.context.clause_counter += merger.context.print_transitions();
     if(SYMMETRY_BREAKING){
-        clause_counter += print_t_transitions();
-        clause_counter += print_p_transitions();
-        clause_counter += print_a_transitions();
-        clause_counter += print_symmetry();
+        merger.context.clause_counter += merger.context.print_t_transitions();
+        merger.context.clause_counter += merger.context.print_p_transitions();
+        merger.context.clause_counter += merger.context.print_a_transitions();
+        merger.context.clause_counter += merger.context.print_symmetry();
     }
     if(FORCING){
-        clause_counter += print_forcing_transitions();
+        merger.context.clause_counter += merger.context.print_forcing_transitions();
     }
-    clause_counter += print_paths();
-    clause_counter += print_sink_paths();
+    merger.context.clause_counter += merger.context.print_paths();
+    merger.context.clause_counter += merger.context.print_sink_paths();
     
-    cerr << "header: p cnf " << literal_counter - 1 << " " << clause_counter << endl;
-    computing_header = false;
+    cerr << "header: p cnf " << merger.context.literal_counter - 1 << " " << merger.context.clause_counter << endl;
+    merger.context.computing_header = false;
     
-    int pipetosat[2];
-    int pipefromsat[2];
-    if (pipe(pipetosat) < 0 || pipe(pipefromsat) < 0){
-        cerr << "Unable to create pipe for SAT solver: " << strerror(errno) << endl;
-        exit(1);
-    }
-    pid_t pid = fork();
-    if (pid == 0){
-        close(pipetosat[1]);
-        dup2(pipetosat[0], STDIN_FILENO);
-        close(pipetosat[0]);
-        
-        close(pipefromsat[0]);
-        dup2(pipefromsat[1], STDOUT_FILENO);
-        close(pipefromsat[1]);
-        
-        cerr << "starting SAT solver " << sat_program << endl;
-        char* copy_sat = strdup(sat_program);
-        char* pch = strtok (copy_sat," ");
-        vector<char*> args;
-        while (pch != NULL){
-            args.push_back(strdup(pch));
-            pch = strtok (NULL," ");
-        }
-        free(copy_sat);
-        free(pch);
-        args.push_back((char*)NULL);
-        execvp(args[0], &args[0]);
-        cerr << "finished SAT solver" << endl;
-        for(int argi = 0; argi < args.size(); ++argi) free(args[argi]);
-        int* status;
-        WIFEXITED(status);
-        wait(status);
-    }
-    else
-    {
-        close(pipetosat[0]);
-        close(pipefromsat[1]);
-        
-        sat_stream = (FILE*) fdopen(pipetosat[1], "w");
-        //sat_stream = (FILE*) fopen("test.out", "w");
-        if (sat_stream == 0){
-            cerr << "Cannot open pipe to SAT solver: " << strerror(errno) << endl;
+    struct stat buffer;
+    bool sat_program_exists = (stat(sat_program.c_str(), &buffer) == 0);
+    if (sat_program != "" && sat_program_exists) {
+        int pipetosat[2];
+        int pipefromsat[2];
+        if (pipe(pipetosat) < 0 || pipe(pipefromsat) < 0){
+            cerr << "Unable to create pipe for SAT solver: " << strerror(errno) << endl;
             exit(1);
         }
-        fprintf(sat_stream, "p cnf %i %i\n", literal_counter - 1, clause_counter);
-
-        print_colours();
-        print_conflicts();
-        print_accept();
-        print_transitions();
-        if(SYMMETRY_BREAKING){
-            print_symmetry();
-            print_t_transitions();
-            print_p_transitions();
-            print_a_transitions();
-        }
-        if(FORCING){
-            print_forcing_transitions();
-        }
-        print_paths();
-        print_sink_paths();
-        
-        fclose(sat_stream);
-        
-        cerr << "sent problem to SAT solver" << endl;
-        
-        time_t begin_time = time(nullptr);
-        
-        trueliterals = set<int>();
-        
-        char line[500];
-        sat_stream = fdopen ( pipefromsat[0], "r" );
-        
-        bool improved = false;
-        while(fgets ( line, sizeof line, sat_stream ) != NULL){
-            char* pch = strtok (line," ");
-            if(strcmp(pch,"s") == 0){
-                pch = strtok (NULL, " ");
-                cerr << pch << endl;
-                if(strcmp(pch,"SATISFIABLE\n")==0){
-                    cerr << "new solution, size = " << dfa_size << endl;
-                    if(best_solution ==-1 || best_solution > dfa_size){
-                        cerr << "new best solution, size = " << dfa_size << endl;
-                        best_solution = dfa_size;
-                        improved = true;
+        pid_t pid = fork();
+        if (pid == 0){
+            close(pipetosat[1]);
+            dup2(pipetosat[0], STDIN_FILENO);
+            close(pipetosat[0]);
+             
+            close(pipefromsat[0]);
+            dup2(pipefromsat[1], STDOUT_FILENO);
+            close(pipefromsat[1]);
+            
+            cerr << "starting SAT solver " << sat_program << endl;
+            
+            char* copy_sat = strdup(sat_program.c_str());
+            char* pch = strtok (copy_sat," ");
+            vector<char*> args;
+            while (pch != NULL){
+                args.push_back(strdup(pch));
+                pch = strtok (NULL," ");
+            }
+            free(copy_sat);
+            free(pch);
+            args.push_back((char*)NULL);
+            execvp(args[0], &args[0]);
+            cerr << "finished SAT solver" << endl;
+            for(int argi = 0; argi < args.size(); ++argi) free(args[argi]);
+                int* status;
+                WIFEXITED(status);
+                wait(status);
+            }
+        else
+        {
+            close(pipetosat[0]);
+            close(pipefromsat[1]);
+            
+            merger.context.sat_stream = (FILE*) fdopen(pipetosat[1], "w");
+            //sat_stream = (FILE*) fopen("test.out", "w");
+            if (merger.context.sat_stream == 0){
+                cerr << "Cannot open pipe to SAT solver: " << strerror(errno) << endl;
+                exit(1);
+            }
+            fprintf(merger.context.sat_stream, "p cnf %i %i\n", merger.context.literal_counter - 1, merger.context.clause_counter);
+            
+            merger.context.print_colours();
+            merger.context.print_conflicts();
+            merger.context.print_accept();
+            merger.context.print_transitions();
+            if(SYMMETRY_BREAKING){
+                merger.context.print_symmetry();
+                merger.context.print_t_transitions();
+                merger.context.print_p_transitions();
+                merger.context.print_a_transitions();
+            }
+            if(FORCING){
+                merger.context.print_forcing_transitions();
+            }
+            merger.context.print_paths();
+            merger.context.print_sink_paths();
+            
+            fclose(merger.context.sat_stream);
+            
+            cerr << "sent problem to SAT solver" << endl;
+            
+            time_t begin_time = time(nullptr);
+            
+            merger.context.trueliterals = set<int>();
+            
+            char line[500];
+            merger.context.sat_stream = fdopen ( pipefromsat[0], "r" );
+            
+            bool improved = false;
+            while(fgets ( line, sizeof line, merger.context.sat_stream ) != NULL){
+                char* pch = strtok (line," ");
+                if(strcmp(pch,"s") == 0){
+                    pch = strtok (NULL, " ");
+                    cerr << pch << endl;
+                    if(strcmp(pch,"SATISFIABLE\n")==0){
+                        cerr << "new solution, size = " << merger.context.dfa_size << endl;
+                        if(merger.context.best_solution ==-1 || merger.context.best_solution > merger.context.dfa_size){
+                            cerr << "new best solution, size = " << merger.context.dfa_size << endl;
+                            merger.context.best_solution = merger.context.dfa_size;
+                            improved = true;
+                        }
+                    }
+                }
+                if(strcmp(pch,"v") == 0){
+                    pch = strtok (NULL, " ");
+                    while(pch != NULL){
+                        int val = atoi(pch);
+                        if(val > 0) merger.context.trueliterals.insert(val);
+                        pch = strtok (NULL, " ");
                     }
                 }
             }
-            if(strcmp(pch,"v") == 0){
-                pch = strtok (NULL, " ");
-                while(pch != NULL){
-                    int val = atoi(pch);
-                    if(val > 0) trueliterals.insert(val);
-                    pch = strtok (NULL, " ");
-                }
+            fclose(merger.context.sat_stream);
+            
+            cerr << "solving took " << (time(nullptr) - begin_time) << " seconds" << endl;
+            
+            if(improved){
+                merger.context.print_dot_output(dot_output_file);
+                merger.context.print_aut_output(aut_output);
+            }
+            
+            while(!merges.empty()){
+                merge_pair performed_merge = merges.front();
+                merges.pop_front();
+                merger.undo_merge(performed_merge.first, performed_merge.second);
             }
         }
-        fclose(sat_stream);
-        
-        cerr << "solving took " << (time(nullptr) - begin_time) << " seconds" << endl;
-
-        if(improved){
-            print_dot_output(dot_output);
-            print_aut_output(aut_output);
-        }
-        
-        while(!merges.empty()){
-            merge_pair performed_merge = merges.front();
-            merges.pop_front();
-            merger.undo_merge(performed_merge.first, performed_merge.second);
-        }
+    }
+    else {
+        cout << "No valid solver specified, skipping..." << endl;
     }
     
-    delete_literals();
-    return best_solution;
+    merger.context.delete_literals();
+    return merger.context.best_solution;
 };

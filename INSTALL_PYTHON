@@ -1,0 +1,25 @@
+# Install dependencies
+sudo apt-get install mercurial python-virtualenv
+sudo apt-get install libatlas-base-dev gfortran libblas-dev libgsl0-dev castxml libpopt-dev liblapack-dev libboost-python-dev python3-dev
+
+# (Optional) Create and activate a python3 virtualenv to contain the project
+virtualenv test -p python3
+cd test
+. bin/activate
+
+# Install py++
+hg clone https://bitbucket.org/ompl/pyplusplus
+cd pyplusplus
+python3 setup.py install
+cd ..
+rm -rf pyplusplus
+
+# Install pygccxml
+git clone https://github.com/gccxml/pygccxml.git
+cd pygccxml
+python3 setup.py install
+cd ..
+rm -rf pygccxml
+
+# Build project as Python library
+make python WITH_PYTHON=1
