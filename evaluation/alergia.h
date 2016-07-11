@@ -43,6 +43,9 @@ protected:
   REGISTER_DEC_TYPE(alergia);
 
 public:
+  static bool alergia_consistency(double right_count, double left_count, double right_total, double left_total);
+
+  virtual bool data_consistent(alergia_data* l, alergia_data* r);
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
   virtual void print_dot(FILE*, state_merger *);
 
