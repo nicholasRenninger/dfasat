@@ -124,7 +124,7 @@ bool alergia::data_consistent(alergia_data* l, alergia_data* r){
 /* ALERGIA, consistency based on Hoeffding bound, only uses positive (type=1) data, pools infrequent counts */
 bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right){
     if(count_driven::consistent(merger, left, right) == false){ inconsistency_found = true; return false; }
-    if(left->depth != right->depth) {inconsistency_found = true; return false;};
+    //if(left->depth != right->depth) {inconsistency_found = true; return false;};
     alergia_data* l = (alergia_data*) left->data;
     alergia_data* r = (alergia_data*) right->data;
     
