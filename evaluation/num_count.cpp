@@ -79,7 +79,9 @@ int count_driven::compute_score(state_merger *merger, apta_node* left, apta_node
 };
 
 void count_driven::reset(state_merger *merger){
+  num_merges = 0;
   evaluation_function::reset(merger);
+  compute_before_merge=false;
 };
 
 bool is_accepting_sink(apta_node* node){

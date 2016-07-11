@@ -67,14 +67,11 @@ bool mse_error::consistent(state_merger *merger, apta_node* left, apta_node* rig
     return true;
 };
 
-void mse_error::update_score(state_merger *merger, apta_node* left, apta_node* right){
-    mse_data* l = (mse_data*) left->data;
-    mse_data* r = (mse_data*) right->data;
-    
+void mse_error::data_update_score(mse_data* l, mse_data* r){
     if(l->occs.size() <= STATE_COUNT || r->occs.size() <= STATE_COUNT) return;
     
     bool already_merged = false;
-    if(aic_states.find(left) != aic_states.end()) already_merged = true;
+    //if(aic_states.find(left) != aic_states.end()) already_merged = true;
 
     total_merges = total_merges + 1;
 
@@ -117,6 +114,13 @@ void mse_error::update_score(state_merger *merger, apta_node* left, apta_node* r
         RSS_before += error_right+error_left;
         RSS_after  += error_total;
     }
+};
+
+void mse_error::update_score(state_merger *merger, apta_node* left, apta_node* right){
+    mse_data* l = (mse_data*) left->data;
+    mse_data* r = (mse_data*) right->data;
+    
+    data_update_score(l, r);
 };
 
 double compute_RSS(apta_node* node){

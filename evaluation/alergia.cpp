@@ -51,7 +51,7 @@ void alergia_data::undo(evaluation_data* right){
     }
 };
 
-bool alergia_consistency(double right_count, double left_count, double right_total, double left_total){
+bool alergia::alergia_consistency(double right_count, double left_count, double right_total, double left_total){
     double bound = (1.0 / sqrt(left_total) + 1.0 / sqrt(right_total));
     bound = bound * sqrt(0.5 * log(2.0 / CHECK_PARAMETER));
     
@@ -61,21 +61,16 @@ bool alergia_consistency(double right_count, double left_count, double right_tot
     if(-gamma > bound) return false;
 
     return true;
-}
+};
 
-/* ALERGIA, consistency based on Hoeffding bound, only uses positive (type=1) data, pools infrequent counts */
-bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right){
-    if(count_driven::consistent(merger, left, right) == false){ inconsistency_found = true; return false; }
-    alergia_data* l = (alergia_data*) left->data;
-    alergia_data* r = (alergia_data*) right->data;
-
+bool alergia::data_consistent(alergia_data* l, alergia_data* r){
     if(l->accepting_paths < STATE_COUNT || r->accepting_paths < STATE_COUNT) return true;
     
     double left_count = 0.0;
     double right_count = 0.0;
     
     double left_total = (double)l->accepting_paths;
-    double right_total = (double)r->accepting_paths ;
+    double right_total = (double)r->accepting_paths;
 
     double l1_pool = 0.0;
     double r1_pool = 0.0;
@@ -126,6 +121,16 @@ bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right
     return true;
 };
 
+/* ALERGIA, consistency based on Hoeffding bound, only uses positive (type=1) data, pools infrequent counts */
+bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right){
+    if(count_driven::consistent(merger, left, right) == false){ inconsistency_found = true; return false; }
+    //if(left->depth != right->depth) {inconsistency_found = true; return false;};
+    alergia_data* l = (alergia_data*) left->data;
+    alergia_data* r = (alergia_data*) right->data;
+    
+    return data_consistent(l, r);
+};
+
 
 /* When is an APTA node a sink state?
  * sink states are not considered merge candidates
@@ -168,7 +173,12 @@ void alergia::print_dot(iostream& output, state_merger* merger){
     output << "\t\tI -> " << aut->root->find()->number << ";\n";
     for(state_set::iterator it = merger->red_states.begin(); it != merger->red_states.end(); ++it){
         apta_node* n = *it;
-        output << "\t" << n->number << " [shape=circle label=\"[" << n->size << "]\"];\n";
+        alergia_data* l = (alergia_data*) n->data;
+        output << "\t" << n->number << " [shape=ellipse label=\"[" << l->accepting_paths << "]\\n[";
+        for(int i = 0; i < alphabet_size; ++i){
+            output << " " << l->pos(i);
+        }
+        output << "]\"];\n";
         state_set childnodes;
         set<int> sinks;
         for(int i = 0; i < alphabet_size; ++i){

@@ -40,6 +40,7 @@ public:
   double prev_AIC = 0;
   
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
+  virtual void data_update_score(mse_data* l, mse_data* r);
   virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
   virtual void reset(state_merger *merger);
