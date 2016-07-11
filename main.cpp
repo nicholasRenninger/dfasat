@@ -184,6 +184,10 @@ int main(int argc, const char *argv[]){
 
     evaluation_function *eval;
 
+    for(auto myit = DerivedRegister<evaluation_function>::getMap()->begin(); myit != DerivedRegister<evaluation_function>::getMap()->end(); myit++   ) {
+       cout << myit->first << " " << myit->second << endl;
+    }
+
     cout << "getting data" << endl;
     try {
        eval_string = param->hData;
