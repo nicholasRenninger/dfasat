@@ -31,21 +31,3 @@ int aic::compute_score(state_merger *merger, apta_node* left, apta_node* right){
 
   return (int)val * 100.0;
 };
-/* COMMENTED OUT, might be useful when computing distance from APTA distribution
- * as I understand it, the MDI algorithm computes it incremental from previous dist*/
-/*
-  init_perplexity = 0.0;
-  init_parameters = 0;
-  state_set states = merger->aut->get_states();
-  for(state_set::iterator it = states.begin(); it != states.end(); ++it){
-    double divider, count;
-    divider = (double)(*it)->accepting_paths;
-    for(int a = 0; a < alphabet_size; ++a){
-      count = (double)(*it)->num_pos[a];
-      if(count > 0.0){
-        init_perplexity += count * (count / divider) * log(count / divider);
-        init_parameters += 1;
-      }
-    }
-  }
-*/

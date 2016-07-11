@@ -61,9 +61,9 @@ void count_data::undo(evaluation_data* right){
 bool count_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
     if(inconsistency_found) return false;
   
-    count_data* l = reinterpret_cast<count_data*>(left->data);
-    count_data* r = reinterpret_cast<count_data*>(right->data);
-    
+    count_data* l = (count_data*)left->data;
+    count_data* r = (count_data*)right->data;
+        
     if(l->num_accepting != 0 && r->num_rejecting != 0){ inconsistency_found = true; return false; }
     if(l->num_rejecting != 0 && r->num_accepting != 0){ inconsistency_found = true; return false; }
     
@@ -79,8 +79,7 @@ int count_driven::compute_score(state_merger *merger, apta_node* left, apta_node
 };
 
 void count_driven::reset(state_merger *merger){
-  inconsistency_found = false;
-  num_merges = 0;
+  evaluation_function::reset(merger);
 };
 
 bool is_accepting_sink(apta_node* node){
@@ -122,6 +121,7 @@ int count_driven::num_sink_types(){
 };
 
 void count_driven::print_dot(FILE* output, state_merger* merger){
+    cerr << "printing" << endl;
     apta* aut = merger->aut;
     //state_set s  = aut->get_states();
     state_set s  = merger->red_states;

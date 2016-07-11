@@ -55,6 +55,7 @@ bool evaluation_function::consistent(state_merger *merger, apta_node* left, apta
 
 void evaluation_function::update_score(state_merger *merger, apta_node* left, apta_node* right){
   num_merges += 1;
+  merged_left_states.insert(left);
 };
 
 void evaluation_function::undo_update(state_merger *merger, apta_node* left, apta_node* right){
@@ -71,6 +72,7 @@ int evaluation_function::compute_score(state_merger *merger, apta_node* left, ap
 void evaluation_function::reset(state_merger *merger){
   inconsistency_found = false;
   num_merges = 0;
+  merged_left_states.clear();
 };
 
 void evaluation_function::update(state_merger *merger){
@@ -125,6 +127,8 @@ void evaluation_function::read_file(ifstream &input_stream, state_merger* merger
     int node_number = 1;
     input_stream >> num_words >> alphabet_size;
     
+    cerr << num_words << " " << alphabet_size << endl;
+    
     for(int line = 0; line < num_words; line++){
         int type;
         int length;
@@ -133,13 +137,10 @@ void evaluation_function::read_file(ifstream &input_stream, state_merger* merger
         input_stream >> type >> length;
         
         int depth = 0;
-        //cerr << "line " << line << endl;
         for(int index = 0; index < length; index++){
             depth++;
             string tuple;
             input_stream >> tuple;
-            
-            //cerr << "reading: " << tuple << " at " << index;
             
             std::stringstream lineStream;
             lineStream.str(tuple);

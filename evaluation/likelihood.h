@@ -21,10 +21,12 @@ public:
   double loglikelihood_merged;
   int extra_parameters;
 
+  virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
   virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
   virtual bool compute_consistency(state_merger *merger, apta_node* left, apta_node* right);
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
   virtual void reset(state_merger *merger);
+  virtual void print_dot(FILE*, state_merger *);
 };
 
 #endif

@@ -87,6 +87,13 @@ public:
    process for computation, this is a strong assumption. */
   bool compute_before_merge;
 
+/* A set containing the left states that have been merged already
+   some evaluation methods use it for making different calculations */
+  state_set merged_left_states;
+  inline bool already_merged(apta_node* left){
+    return merged_left_states.find(left) != merged_left_states.end();
+  };
+
 /* An evaluation function needs to implement all of these functions */
 
 /* Called when performing a merge, for every pair of merged nodes,
