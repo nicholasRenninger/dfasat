@@ -14,6 +14,14 @@ REGISTER_DEF_DATATYPE(likelihood_data);
 REGISTER_DEF_TYPE(likelihoodratio);
 
 bool likelihoodratio::consistent(state_merger *merger, apta_node* left, apta_node* right){
+    likelihood_data* l = (likelihood_data*) left->data;
+    likelihood_data* r = (likelihood_data*) right->data;
+
+    //if(left->depth != right->depth) {inconsistency_found = true; return false;};
+
+    //if(l->num_accepting != 0 && r->num_accepting == 0) {inconsistency_found = true; return false;};
+    //if(l->num_accepting == 0 && r->num_accepting != 0) {inconsistency_found = true; return false;};
+
     return count_driven::consistent(merger, left, right);
 };
 
@@ -49,8 +57,8 @@ void likelihoodratio::update_score(state_merger *merger, apta_node* left, apta_n
         }
     }
 
-    left_divider += (double)l->accepting_paths;
-    right_divider += (double)r->accepting_paths;
+    left_divider += (double)l->accepting_paths;// + (double)l->num_accepting;
+    right_divider += (double)r->accepting_paths;// + (double)r->num_accepting;
     
     int l1_pool = 0;
     int r1_pool = 0;
@@ -89,6 +97,12 @@ void likelihoodratio::update_score(state_merger *merger, apta_node* left, apta_n
     
     if(right_count >= SYMBOL_COUNT || right_count >= SYMBOL_COUNT)
         update_likelihood(left_count, right_count, left_divider, right_divider);
+
+    //left_count = (double)l->num_accepting;
+    //right_count = (double)r->num_accepting;
+    
+    //if(right_count >= SYMBOL_COUNT || right_count >= SYMBOL_COUNT)
+    //    update_likelihood(left_count, right_count, left_divider, right_divider);
 };
 
 bool likelihoodratio::compute_consistency(state_merger *merger, apta_node* left, apta_node* right){

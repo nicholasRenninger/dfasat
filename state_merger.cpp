@@ -49,9 +49,21 @@ void add_merged_states(apta_node* state, state_set& states){
     }
 }
 
+state_set &apta::get_states(apta_node* node){
+    state_set* states = new state_set();
+    add_states(node, *states);
+    return *states;
+}
+
 state_set &apta::get_states(){
     state_set* states = new state_set();
-    add_states(root->find(), *states);
+    add_states(root, *states);
+    return *states;
+}
+
+state_set &apta::get_merged_states(apta_node* node){
+    state_set* states = new state_set();
+    add_states(node->find(), *states);
     return *states;
 }
 
@@ -244,16 +256,23 @@ bool state_merger::perform_merge(apta_node* left, apta_node* right){
 int state_merger::testmerge(apta_node* left, apta_node* right){
     eval->reset(this);
     int result = -1;
-    //if(eval->compute_before_merge) result = eval->compute_score(this, left, right);
-    merge(left,right);
-    //if(!eval->compute_before_merge)
-    result = eval->compute_score(this, left, right);
-    if(eval->compute_consistency(this, left, right) == false ||  result < LOWER_BOUND) result = -1;
-    undo_merge(left,right);
+    if(eval->compute_before_merge){
+        result = eval->compute_score(this, left, right);
+        merge(left,right);
+        if(eval->compute_consistency(this, left, right) == false ||  result < LOWER_BOUND) result = -1;
+        undo_merge(left,right);
+    }
+    else {
+        merge(left,right);
+        result = eval->compute_score(this, left, right);
+        if(eval->compute_consistency(this, left, right) == false ||  result < LOWER_BOUND) result = -1;
+        undo_merge(left,right);
+    }
     return result;
 }
 
 merge_map &state_merger::get_possible_merges(){
+    eval->reset(this);
     merge_map* mset = new merge_map();
     
     apta_node* max_blue = 0;
