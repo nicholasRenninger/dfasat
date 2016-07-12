@@ -63,7 +63,7 @@ public:
 
     /* get transition target */
     apta_node* get_child(int);
-    
+
     inline apta_node* child(int i){
         child_map::iterator it = children.find(i);
         if(it == children.end()) return 0;
@@ -111,6 +111,12 @@ public:
     state_set &get_rejecting_states();
 
     string alph_str(int i);
+
+    /* iterator */
+    apta_node* get_next_node(apta_node* );
+    apta_node* get_next_merged_node(apta_node* );    
+
+
 };
 
 #endif
