@@ -75,6 +75,10 @@ public:
         if(it == det_undo.end()) return 0;
         return (*it).second;
     }
+
+
+    apta_node* get_next_forward_node();
+    apta_node* get_next_backward_node();
 };
 
 struct size_compare
@@ -111,6 +115,9 @@ public:
     state_set &get_rejecting_states();
 
     string alph_str(int i);
+
+    apta_node* get_next_node(apta_node* current);
+    apta_node* get_next_merged_node(apta_node* current);
 };
 
 #endif
