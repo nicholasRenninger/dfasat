@@ -30,6 +30,41 @@ void state_merger::reset(){
     update();
 }
 
+/* iterators for the APTA and merged APTA */
+apta_node* get_next_forward_node(apta_node* current){
+    if(children.empty()){
+        return 0;
+    } else {
+        return (children.begin()).second;
+    }
+}
+
+apta_node* get_next_backward_node(apta_node* current){
+    apta_node* parent = current->source;
+    child_map::iterator it = parent->children.find(current);
+    ++it;
+    
+    if(it == parent->children.end()){
+        if(parent == 0) return 0;
+        return get_next_backward_node(parent)
+    } else {
+        return (*it).second;
+    }
+}
+
+apta_node* apta::get_next_node(apta_node* current){
+    apta_node* next = get_next_forward_node(current);
+    if(next == 0) next = get_next_backward_node(current);
+    return next;
+}
+
+apta_node* apta::get_next_merged_node(apta_node* current){
+    apta_node* next = get_next_forward_node(current);
+    if(next == 0) next = get_next_backward_node(current);
+    while(next != 0 && next->representative != 0) next = get_next_backward_node(current);
+    return next;
+}
+
 /* GET STATE LISTS */
 void add_states(apta_node* state, state_set& states){
     if(states.find(state) != states.end()) return;
