@@ -216,7 +216,10 @@ void alergia::print_dot(FILE* output, state_merger* merger){
         }
     }
 
-    s = merger->get_candidate_states();
+    // leak workaround
+    state_set *state = &merger->get_candidate_states();
+    
+    s = *state; // merger->get_candidate_states();
     for(state_set::iterator it = s.begin(); it != s.end(); ++it){
         apta_node* n = *it;
         alergia_data* l = reinterpret_cast<alergia_data*>(n->data);
@@ -234,4 +237,6 @@ void alergia::print_dot(FILE* output, state_merger* merger){
         }
     }
     fprintf(output,"}\n");
+
+    delete state;
 };
