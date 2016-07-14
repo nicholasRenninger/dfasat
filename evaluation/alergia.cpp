@@ -175,9 +175,9 @@ void alergia::print_dot(iostream& output, state_merger* merger){
         apta_node* n = *it;
         alergia_data* l = (alergia_data*) n->data;
         output << "\t" << n->number << " [shape=ellipse label=\"[" << l->accepting_paths << "]\\n[";
-        for(int i = 0; i < alphabet_size; ++i){
+        /*for(int i = 0; i < alphabet_size; ++i){
             output << " " << l->pos(i);
-        }
+        }*/
         output << "]\"];\n";
         state_set childnodes;
         set<int> sinks;
@@ -199,7 +199,7 @@ void alergia::print_dot(iostream& output, state_merger* merger){
             output << "\t\t" << n->number << " -> S" << n->number << "t" << stype << " [label=\"";
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && sink_type(n->get_child(i)) == stype){
-                    output << " " << aut->alph_str(i).c_str();
+                    output << " " << aut->alph_str(i).c_str() << " [" << ((alergia_data*)n->data)->num_pos[i] << ":" << ((alergia_data*)n->data)->num_neg[i] << "]";
                 }
             }
             output << "\"];\n";
@@ -209,7 +209,7 @@ void alergia::print_dot(iostream& output, state_merger* merger){
             output << "\t\t" << n->number << " -> " << child->number << " [label=\"";
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && n->get_child(i) == child){
-                    output << " " << aut->alph_str(i).c_str();
+                    output << " " << aut->alph_str(i).c_str() << " [" << ((alergia_data*)n->data)->num_pos[i] << ":" << ((alergia_data*)n->data)->num_neg[i] << "]";
                 }
             }
             output << "\"];\n";
@@ -220,6 +220,8 @@ void alergia::print_dot(iostream& output, state_merger* merger){
     state_set *state = &merger->get_candidate_states();
     
     s = *state; // merger->get_candidate_states();
+    /* 
+     * we don't care about candidates
     for(state_set::iterator it = s.begin(); it != s.end(); ++it){
         apta_node* n = *it;
         alergia_data* l = reinterpret_cast<alergia_data*>(n->data);
@@ -236,6 +238,7 @@ void alergia::print_dot(iostream& output, state_merger* merger){
             output << "\t\t" << n->number << " -> " << child->number << " [style=dotted label=\"" << aut->alph_str(symbol).c_str() << " [" << l->num_pos[symbol] << ":" << l->num_neg[symbol] << "]\"];\n";
         }
     }
+    */
     output << "}\n";
 
     delete state;
