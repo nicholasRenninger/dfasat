@@ -175,9 +175,9 @@ void alergia::print_dot(FILE* output, state_merger* merger){
         apta_node* n = *it;
         alergia_data* l = (alergia_data*) n->data;
         fprintf(output,"\t%i [shape=ellipse label=\"[%i]\\n[", n->number, l->accepting_paths);
-        for(int i = 0; i < alphabet_size; ++i){
+        /*for(int i = 0; i < alphabet_size; ++i){
             fprintf(output, " %i", l->pos(i));
-        }
+        }*/
         fprintf(output,"]\"];\n");
         state_set childnodes;
         set<int> sinks;
@@ -193,23 +193,26 @@ void alergia::print_dot(FILE* output, state_merger* merger){
                  }
             }
         }
+        // should not need sinks
         for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
             int stype = *it2;
             fprintf(output,"\tS%it%i [label=\"sink %i\" shape=box];\n", n->number, stype, stype);
             fprintf(output, "\t\t%i -> S%it%i [label=\"" ,n->number, n->number, stype);
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && sink_type(n->get_child(i)) == stype){
-                    fprintf(output, " %s", aut->alph_str(i).c_str());
+                    //fprintf(output, " %s [%i:%i]", aut->alph_str(i).c_str(), n->num_pos[i], n->num_neg[i] );
                 }
             }
             fprintf(output, "\"];\n");
         }
+        // this is what i care about
         for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
             apta_node* child = *it2;
             fprintf(output, "\t\t%i -> %i [label=\"" ,n->number, child->number);
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && n->get_child(i) == child){
-                    fprintf(output, " %s", aut->alph_str(i).c_str());
+                    fprintf(output, " %s [%i:%i]", aut->alph_str(i).c_str(), ((alergia_data*)n->data)->num_pos[i], ((alergia_data*)n->data)->num_neg[i] );
+
                 }
             }
             fprintf(output, "\"];\n");
@@ -220,6 +223,8 @@ void alergia::print_dot(FILE* output, state_merger* merger){
     state_set *state = &merger->get_candidate_states();
     
     s = *state; // merger->get_candidate_states();
+    /* we should not need non-red states
+     *
     for(state_set::iterator it = s.begin(); it != s.end(); ++it){
         apta_node* n = *it;
         alergia_data* l = reinterpret_cast<alergia_data*>(n->data);
@@ -236,6 +241,7 @@ void alergia::print_dot(FILE* output, state_merger* merger){
             fprintf(output, "\t\t%i -> %i [style=dotted label=\"%s [%i:%i]\"];\n" ,n->number, child->number, aut->alph_str(symbol).c_str(), l->num_pos[symbol], l->num_neg[symbol]);
         }
     }
+    */
     fprintf(output,"}\n");
 
     delete state;
