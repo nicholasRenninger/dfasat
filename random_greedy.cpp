@@ -16,7 +16,10 @@ merge_list random_greedy_bounded_run(state_merger* merger){
         while( true ){
             cerr << " ";
             if(EXTEND_ANY_RED) while(merger->extend_red() == true) cerr << "+ ";
-            merge_map possible_merges = merger->get_possible_merges();
+	    // leak here, too
+            merge_map *m = &merger->get_possible_merges();
+            merge_map possible_merges = *m;//merger->get_possible_merges();
+            delete m;
             if(!EXTEND_ANY_RED && possible_merges.empty()){
                 if(merger->extend_red() == true) { cerr << "+"; continue; }
                 cerr << "no more possible merges" << endl;
@@ -30,6 +33,7 @@ merge_list random_greedy_bounded_run(state_merger* merger){
                cerr << "too many red states" << endl;
                break;
             }
+            // FIXME
             if(merger->get_final_apta_size() <= APTA_BOUND){
                cerr << "APTA too small" << endl;
                break;

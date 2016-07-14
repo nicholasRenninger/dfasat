@@ -135,6 +135,10 @@ void run(parameters* param) {
     init_with_params(param);
     
     evaluation_function *eval;
+    
+    for(auto myit = DerivedRegister<evaluation_function>::getMap()->begin(); myit != DerivedRegister<evaluation_function>::getMap()->end(); myit++   ) {
+       cout << myit->first << " " << myit->second << endl;
+    }
 
     cout << "getting data" << endl;
     try {
@@ -256,8 +260,6 @@ int main(int argc, const char *argv[]){
 
     param->hName = hName;
     param->hData = hData;
-
-    //poptFreeContext( optCon );
    
     run(param); 
     

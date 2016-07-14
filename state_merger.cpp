@@ -35,6 +35,41 @@ void state_merger::reset(){
     update();
 }
 
+/* iterators for the APTA and merged APTA */
+apta_node* apta_node::get_next_forward_node(){
+    if(children.empty()){
+        return 0;
+    } else {
+        return (*children.begin()).second;
+    }
+}
+
+apta_node* apta_node::get_next_backward_node(){
+    if(source == 0) return 0;
+
+    child_map::iterator it = source->children.find(label);
+    ++it;
+    
+    if(it == source->children.end()){
+        return source->get_next_backward_node();
+    } else {
+        return (*it).second;
+    }
+}
+
+apta_node* apta::get_next_node(apta_node* current){
+    apta_node* next = current->get_next_forward_node();
+    if(next == 0) next = current->get_next_backward_node();
+    return next;
+}
+
+apta_node* apta::get_next_merged_node(apta_node* current){
+    apta_node* next = current->get_next_forward_node();
+    if(next == 0) next = current->get_next_backward_node();
+    while(next != 0 && next->representative != 0) next = next->get_next_backward_node();
+    return next;
+}
+
 /* GET STATE LISTS */
 void add_states(apta_node* state, state_set& states){
     if(states.find(state) != states.end()) return;
@@ -116,8 +151,13 @@ state_set &state_merger::get_sink_states(){
     return *sink_states;
 }
 
+// leak workaround
 int state_merger::get_final_apta_size(){
-    return red_states.size() + get_candidate_states().size();
+    state_set *s = &get_candidate_states();
+    int count = s->size();
+    delete s;
+    return red_states.size() + count;
+
 }
 
 /* FIND/UNION functions */
