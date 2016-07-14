@@ -17,8 +17,8 @@ import pyplusplus
 apta_node_types = ["apta_node *", "state_set", "merge_map"]
 
 import subprocess
-clibpath = subprocess.check_output(['find /usr/lib/gcc -name stddef.h'], shell=True)[:-17].decode('utf-8')
-cincpath = subprocess.check_output(['find /usr/include/c++ -name iostream'], shell=True)[:-9].decode('utf-8')
+clibpath = subprocess.check_output(['find /usr/lib/gcc -name stddef.h | head -n 1'], shell=True)[:-17].decode('utf-8')
+cincpath = subprocess.check_output(['find /usr/include/c++ -name iostream | head -n 1'], shell=True)[:-9].decode('utf-8')
 
 generator_path, generator_name = pygccxml.utils.find_xml_generator('castxml')
 xml_generator_config = pygccxml.parser.xml_generator_configuration_t(
