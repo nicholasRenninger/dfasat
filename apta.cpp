@@ -110,9 +110,14 @@ apta_node::apta_node(){
     size = size + 1;
 }*/
 
+std::set<void*> freed;
+
 apta_node::~apta_node(){
     for(child_map::iterator it = children.begin();it != children.end(); ++it){
-        delete (*it).second;
+        if (freed.find((*it).second) != freed.end()) {
+            freed.insert((*it).second);
+            delete (*it).second;
+        }
     }
     delete data;
 }

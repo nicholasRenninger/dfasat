@@ -115,6 +115,9 @@ void init_with_params(parameters* param) {
         
     EXTRA_STATES = param->extra_states;
     TARGET_REJECTING = param->target_rejecting;
+
+    if(param->method == 1) GREEDY_METHOD = RANDOMG;
+    if(param->method == 2) GREEDY_METHOD = NORMALG;
  
     eval_string = param->hData;
 
@@ -156,9 +159,6 @@ void run(parameters* param) {
     
     ifstream input_stream(param->dfa_file);
     merger.read_apta(input_stream);
-
-    if(param->method == 1) GREEDY_METHOD = RANDOMG;
-    if(param->method == 2) GREEDY_METHOD = NORMALG;
     
     int solution = -1;
     
