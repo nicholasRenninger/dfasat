@@ -174,10 +174,14 @@ void alergia::print_dot(iostream& output, state_merger* merger){
     for(state_set::iterator it = merger->red_states.begin(); it != merger->red_states.end(); ++it){
         apta_node* n = *it;
         alergia_data* l = (alergia_data*) n->data;
-        output << "\t" << n->number << " [shape=ellipse label=\"[" << l->accepting_paths << "]\\n[";
-        /*for(int i = 0; i < alphabet_size; ++i){
-            output << " " << l->pos(i);
-        }*/
+        output << "\t" << n->number << " [shape=ellipse label=\"[" << l->num_accepting << "]\\n[";
+
+        int my_sum = 0;
+        for(int i = 0; i < alphabet_size; ++i){
+            my_sum += l->pos(i);
+        }
+        output << " " << my_sum;
+        
         output << "]\"];\n";
         state_set childnodes;
         set<int> sinks;
