@@ -7,19 +7,18 @@
 #include <stdio.h>
 #include <gsl/gsl_cdf.h>
 
-#include "overlap-driven.h"
+#include "full-overlap-driven.h"
 #include "parameters.h"
 
-REGISTER_DEF_DATATYPE(overlap_data);
-REGISTER_DEF_TYPE(overlap_driven);
-//DerivedRegister<overlap_driven> overlap_driven::reg("overlap_driven");
+REGISTER_DEF_DATATYPE(full_overlap_data);
+REGISTER_DEF_TYPE(full_overlap_driven);
 
 /* Overlap driven, count overlap in positive transitions, used in Stamina winner */
-bool overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
+bool full_overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
     if(count_driven::consistent(merger, left, right) == false){ inconsistency_found = true; return false; }
     
-    overlap_data* l = (overlap_data*) left->data;
-    overlap_data* r = (overlap_data*) right->data;
+    full_overlap_data* l = (full_overlap_data*) left->data;
+    full_overlap_data* r = (full_overlap_data*) right->data;
 
     if(l->accepting_paths >= STATE_COUNT){
         for(num_map::iterator it = r->num_pos.begin(); it != r->num_pos.end(); ++it){
@@ -53,31 +52,34 @@ bool overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node
   return true;
 };
 
-void overlap_driven::update_score(state_merger *merger, apta_node* left, apta_node* right){
-    overlap_data* l = (overlap_data*) left->data;
-    overlap_data* r = (overlap_data*) right->data;
+void full_overlap_driven::update_score(state_merger *merger, apta_node* left, apta_node* right){
+    full_overlap_data* l = (full_overlap_data*) left->data;
+    full_overlap_data* r = (full_overlap_data*) right->data;
     
     if (inconsistency_found) return;
-    if (consistent(merger, left, right) == false) return;
+    //if (consistent(merger, left, right) == false) return;
     
-    for(int i = 0; i < alphabet_size; ++i){
+    if (l->accepting_paths != 0 && r->accepting_paths != 0) overlap++;
+    
+    /*for(int i = 0; i < alphabet_size; ++i){
         if(l->pos(i) != 0 && r->pos(i) != 0){
             overlap += 1;
         }
-        /*if(l->neg(i) != 0 && r->neg(i) != 0){
+        if(l->neg(i) != 0 && r->neg(i) != 0){
             overlap += 1;
-        }*/
-    }
+        }
+    }*/
 };
 
 
-int overlap_driven::compute_score(state_merger *merger, apta_node* left, apta_node* right){
+int full_overlap_driven::compute_score(state_merger *merger, apta_node* left, apta_node* right){
   return overlap;
 };
 
-void overlap_driven::reset(state_merger *merger){
+void full_overlap_driven::reset(state_merger *merger){
   inconsistency_found = false;
   overlap = 0;
+  compute_before_merge = false;
 };
 
 

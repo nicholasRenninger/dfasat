@@ -91,6 +91,8 @@ apta_node::apta_node(){
     size = 1;
     depth = 0;
     
+    red = false;
+    
     try {
        data = (DerivedDataRegister<evaluation_data>::getMap())->at(eval_string)();
     } catch(const std::out_of_range& oor ) {

@@ -5,6 +5,7 @@
 #include "evaluation/depth-driven.h"
 #include "evaluation/evidence-driven.h"
 #include "evaluation/fixed_depth_regression.h"
+#include "evaluation/full-overlap-driven.h"
 #include "evaluation/kldistance.h"
 #include "evaluation/likelihood.h"
 #include "evaluation/mealy.h"

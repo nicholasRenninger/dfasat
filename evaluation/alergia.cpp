@@ -151,7 +151,7 @@ int alergia::sink_type(apta_node* node){
 };
 
 bool alergia::sink_consistent(apta_node* node, int type){
-    if(!USE_SINKS) return false;
+    if(!USE_SINKS) return true;
     
     if(type == 0) return is_low_count_sink_alergia(node);
     return true;

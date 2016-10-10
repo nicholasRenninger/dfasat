@@ -4,15 +4,15 @@
 #include "alergia.h"
 
 /* The data contained in every node of the prefix tree or DFA */
-class overlap_data: public alergia_data {
+class full_overlap_data: public alergia_data {
 protected:
-  REGISTER_DEC_DATATYPE(overlap_data);
+  REGISTER_DEC_DATATYPE(full_overlap_data);
 };
 
-class overlap_driven: public alergia {
+class full_overlap_driven: public alergia {
 
 protected:
-  REGISTER_DEC_TYPE(overlap_driven);
+  REGISTER_DEC_TYPE(full_overlap_driven);
 
 public:
   int overlap;
