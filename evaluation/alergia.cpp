@@ -151,7 +151,7 @@ int alergia::sink_type(apta_node* node){
 };
 
 bool alergia::sink_consistent(apta_node* node, int type){
-    if(!USE_SINKS) return false;
+    if(!USE_SINKS) return true;
     
     if(type == 0) return is_low_count_sink_alergia(node);
     return true;
@@ -174,6 +174,7 @@ void alergia::print_dot(iostream& output, state_merger* merger){
     for(state_set::iterator it = merger->red_states.begin(); it != merger->red_states.end(); ++it){
         apta_node* n = *it;
         alergia_data* l = (alergia_data*) n->data;
+
         output << "\t" << n->number << " [shape=ellipse label=\"[" << l->num_accepting << "]\\n[";
 
         int my_sum = 0;
@@ -197,6 +198,7 @@ void alergia::print_dot(iostream& output, state_merger* merger){
                  }
             }
         }
+        // should not need sinks
         for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
             int stype = *it2;
             output << "\tS" << n->number << "t" << stype << " [label=\"sink " << stype << "\" shape=box];\n";
@@ -204,10 +206,12 @@ void alergia::print_dot(iostream& output, state_merger* merger){
             for(int i = 0; i < alphabet_size; ++i){
                 if(n->get_child(i) != 0 && sink_type(n->get_child(i)) == stype){
                     output << " " << aut->alph_str(i).c_str() << " [" << ((alergia_data*)n->data)->num_pos[i] << ":" << ((alergia_data*)n->data)->num_neg[i] << "]";
+
                 }
             }
             output << "\"];\n";
         }
+        // this is what i care about
         for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
             apta_node* child = *it2;
             output << "\t\t" << n->number << " -> " << child->number << " [label=\"";
@@ -224,8 +228,13 @@ void alergia::print_dot(iostream& output, state_merger* merger){
     state_set *state = &merger->get_candidate_states();
     
     s = *state; // merger->get_candidate_states();
+
     /* 
      * we don't care about candidates
+=======
+    /* we should not need non-red states
+     *
+>>>>>>> master
     for(state_set::iterator it = s.begin(); it != s.end(); ++it){
         apta_node* n = *it;
         alergia_data* l = reinterpret_cast<alergia_data*>(n->data);
@@ -243,6 +252,7 @@ void alergia::print_dot(iostream& output, state_merger* merger){
         }
     }
     */
+
     output << "}\n";
 
     delete state;

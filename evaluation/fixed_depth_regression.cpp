@@ -265,7 +265,7 @@ void fixed_depth_mse_error::print_dot(FILE* output, state_merger* merger){
 
     fprintf(output,"digraph DFA {\n");
     
-    fprintf(output,"subgraph cluster_1 {\nstyle=filled;color=green4;");
+//    fprintf(output,"subgraph cluster_1 {\nstyle=filled;color=green4;");
     state_set* state = &merger->aut->get_merged_states();
     state_set states = *state;
     for(state_set::iterator it = states.begin(); it != states.end(); ++it){
@@ -275,11 +275,11 @@ void fixed_depth_mse_error::print_dot(FILE* output, state_merger* merger){
             fprintf(output,"%i;",node->number);
         }
     }
-    for(int i = 0; i < aut->max_depth; ++i) fprintf(output,"rg%i; ",i);
+    //for(int i = 0; i < aut->max_depth; ++i) fprintf(output,"rg%i; ",i);
     delete state;
-    fprintf(output,"\nlabel = \"good\";\n");
-    fprintf(output,"}\n");
-    fprintf(output,"subgraph cluster_2 {\nstyle=filled;color=purple4;");
+//    fprintf(output,"\nlabel = \"good\";\n");
+//    fprintf(output,"}\n");
+//    fprintf(output,"subgraph cluster_2 {\nstyle=filled;color=purple4;");
     state = &merger->aut->get_merged_states();
     states = *state;
     for(state_set::iterator it = states.begin(); it != states.end(); ++it){
@@ -290,11 +290,11 @@ void fixed_depth_mse_error::print_dot(FILE* output, state_merger* merger){
             fprintf(output,"%i;",node->number);
         }
     }
-    for(int i = 0; i < aut->max_depth; ++i) fprintf(output,"rgb%i; ",i);
+    //for(int i = 0; i < aut->max_depth; ++i) fprintf(output,"rgb%i; ",i);
     delete state;
-    fprintf(output,"\nlabel = \"good/bad\";\n");
-    fprintf(output,"}\n");
-    fprintf(output,"subgraph cluster_3 {\nstyle=filled;color=red4;");
+//    fprintf(output,"\nlabel = \"good/bad\";\n");
+//    fprintf(output,"}\n");
+//    fprintf(output,"subgraph cluster_3 {\nstyle=filled;color=red4;");
     state = &merger->aut->get_merged_states();
     states = *state;
     for(state_set::iterator it = states.begin(); it != states.end(); ++it){
@@ -304,13 +304,14 @@ void fixed_depth_mse_error::print_dot(FILE* output, state_merger* merger){
             fprintf(output,"%i; ",node->number);
         }
     }
-    for(int i = 0; i < aut->max_depth; ++i) fprintf(output,"rb%i; ",i);
+    //for(int i = 0; i < aut->max_depth; ++i) fprintf(output,"rb%i; ",i);
     delete state;
-    fprintf(output,"\nlabel = \"bad\";\n");
-    fprintf(output,"}\n");
+//    fprintf(output,"\nlabel = \"bad\";\n");
+//    fprintf(output,"}\n");
     state = &merger->aut->get_merged_states();
     states = *state;
     
+/*
     for(int i = 0; i < aut->max_depth; ++i) fprintf(output,"rg%i -> rgb%i [style=invis]; ",i,i);
     for(int i = 0; i < aut->max_depth; ++i) fprintf(output,"rgb%i -> rb%i [style=invis]; ",i,i);
 
@@ -334,6 +335,7 @@ void fixed_depth_mse_error::print_dot(FILE* output, state_merger* merger){
         fprintf(output,"rgb%i->rgb%i [style=invis];\n ",i, i+1);
         fprintf(output,"rb%i->rb%i [style=invis];\n ",i, i+1);
     }
+*/
 
     for(state_set::iterator it = merger->red_states.begin(); it != merger->red_states.end(); ++it){
         apta_node* n = *it;

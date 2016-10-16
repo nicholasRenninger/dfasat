@@ -20,4 +20,10 @@ int EXTRA_STATES = 0;
 bool TARGET_REJECTING = 0;
 bool SYMMETRY_BREAKING = 0;
 bool FORCING = 0;
+bool MERGE_MOST_VISITED = 0;
+bool MERGE_BLUE_BLUE = 0;
+bool RED_FIXED = 0;
+bool MERGE_WHEN_TESTING = 0;
+bool DEPTH_FIRST = 0;
 string eval_string;
+

@@ -228,7 +228,7 @@ int mse_error::sink_type(apta_node* node){
 };
 
 bool mse_error::sink_consistent(apta_node* node, int type){
-    if(!USE_SINKS) return false;
+    if(!USE_SINKS) return true;
     
     if(type == 0) return is_low_occ_sink(node);
     return true;

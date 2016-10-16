@@ -25,4 +25,10 @@ extern bool SYMMETRY_BREAKING;
 extern bool FORCING;
 extern bool MERGE_SINKS_DSOLVE;
 extern string eval_string;
+extern bool MERGE_MOST_VISITED;
+extern bool MERGE_BLUE_BLUE;
+extern bool RED_FIXED;
+extern bool MERGE_WHEN_TESTING;
+extern bool DEPTH_FIRST;
+
 #endif

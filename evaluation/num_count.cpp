@@ -101,16 +101,16 @@ bool is_rejecting_sink(apta_node* node){
 int count_driven::sink_type(apta_node* node){
     if(!USE_SINKS) return -1;
 
-    if (is_accepting_sink(node)) return 0;
-    if (is_rejecting_sink(node)) return 1;
+    if (is_rejecting_sink(node)) return 0;
+    if (is_accepting_sink(node)) return 1;
     return -1;
 };
 
 bool count_driven::sink_consistent(apta_node* node, int type){
-    if(!USE_SINKS) return false;
+    if(!USE_SINKS) return true;
     
-    if(type == 0) return is_accepting_sink(node);
-    if(type == 1) return is_rejecting_sink(node);
+    if(type == 0) return is_rejecting_sink(node);
+    if(type == 1) return is_accepting_sink(node);
     
     return true;
 };

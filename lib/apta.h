@@ -10,6 +10,8 @@
 #include <unordered_map>
 #include <string>
 
+#include "parameters.h"
+
 using namespace std;
 
 class apta;
@@ -51,6 +53,9 @@ public:
     /* UNION/FIND size measure */
     int size;
     
+    /* is this a red state? */
+    bool red;
+
     /* extra information for merging heursitics and consistency checks */
     evaluation_data* data;
 
@@ -85,10 +90,17 @@ struct size_compare
 {
     bool operator()(apta_node* left, apta_node* right) const
     {
-        if(left->size > right->size)
-            return 1;
-        if(left->size < right->size)
-            return 0;
+        if(DEPTH_FIRST){
+            if(left->depth > right->depth)
+                return 1;
+            if(left->depth < right->depth)
+                return 0;
+        } else {
+            if(left->size > right->size)
+                return 1;
+            if(left->size < right->size)
+                return 0;
+        }
         return left->number < right->number;
     }
 };
@@ -103,7 +115,7 @@ public:
     map<int, string> alphabet;
     int merge_count;
     int max_depth;
-
+    
     apta();
     ~apta();
 

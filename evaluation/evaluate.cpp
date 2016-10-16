@@ -102,7 +102,7 @@ int evaluation_function::sink_type(apta_node* node){
 };
 
 bool evaluation_function::sink_consistent(apta_node* node, int type){
-    if(!USE_SINKS) return false;
+    if(!USE_SINKS) return true;
     
     if(type == 0) return is_low_count_sink(node);
     //if(type == 1) return is_accepting_sink(node);

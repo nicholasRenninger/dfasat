@@ -99,7 +99,9 @@ public:
 
     void reset();
     /* state merging (recursive) */
-    void merge(apta_node* red, apta_node* blue);
+    bool merge(apta_node* red, apta_node* blue);
+    void merge_force(apta_node* red, apta_node* blue);
+    bool merge_test(apta_node* red, apta_node* blue);
     void undo_merge(apta_node* red, apta_node* blue);
 
     /* find merges */
@@ -112,6 +114,7 @@ public:
     bool extend_red();
 
     int testmerge(apta_node*,apta_node*);
+    int test_local_merge(apta_node* red, apta_node* blue);
 
     bool perform_merge(apta_node*, apta_node*);
 
