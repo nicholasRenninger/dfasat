@@ -1072,11 +1072,11 @@ int dfasat(state_merger &merger, string sat_program, const char* dot_output_file
                 merger.undo_merge(performed_merge.first, performed_merge.second);
             }
         }
-    }
+     merger.context.delete_literals();
+   }
     else {
         cout << "No valid solver specified, skipping..." << endl;
     }
-    
-    merger.context.delete_literals();
+ 
     return merger.context.best_solution;
 };
