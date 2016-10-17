@@ -53,6 +53,7 @@ public:
     void print_lit(int number, bool flag);
     void print_clause_end();
     void fix_red_values();
+    void fix_sink_values();
     int set_symmetry();
     int print_symmetry();
     void erase_red_conflict_colours();
@@ -64,6 +65,7 @@ public:
     int print_p_transitions();
     int print_a_transitions();
     int print_forcing_transitions();
+    int print_sink_transitions();
     int print_paths();
     int print_sink_paths();
     void print_dot_output(const char* dot_output);

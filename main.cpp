@@ -69,16 +69,10 @@ public:
 
 parameters::parameters(){
     dot_file = "dfa";
-<<<<<<< HEAD
     sat_program = "";
     hName = "default";
     hData = "evaluation_data";
-    tries = 100;
-=======
-    hName = "count_driven";
-    hData = "count_data";
     tries = 1;
->>>>>>> master
     sinkson = 1;
     seed = 12345678;
     apta_bound = 2000;
@@ -131,6 +125,14 @@ void init_with_params(parameters* param) {
         
     EXTRA_STATES = param->extra_states;
     TARGET_REJECTING = param->target_rejecting;
+
+    /* new since master-dev merge */
+    MERGE_MOST_VISITED = param->largestblue;
+    MERGE_BLUE_BLUE = param->blueblue;
+    RED_FIXED = param->fixedred;
+    MERGE_WHEN_TESTING = !param->testmerge;
+    DEPTH_FIRST = param->depthfirst;
+
 
     if(param->method == 1) GREEDY_METHOD = RANDOMG;
     if(param->method == 2) GREEDY_METHOD = NORMALG;
@@ -213,8 +215,7 @@ int main(int argc, const char *argv[]){
     poptContext optCon;
     struct poptOption optionsTable[] = {
         { "version", 0, POPT_ARG_NONE, NULL, 1, "Display version information", NULL },
-<<<<<<< HEAD
-        { "seed", 's', POPT_ARG_INT, &(param->seed), 's', "Seed for random merge heuristic; default=12345678", "integer" },
+/*        { "seed", 's', POPT_ARG_INT, &(param->seed), 's', "Seed for random merge heuristic; default=12345678", "integer" },
         { "output file name", 'o', POPT_ARG_STRING, &dot_file, 'o', "The filename in which to store the learned DFAs in .dot and .aut format, default: \"dfa\".", "string" },
 	{ "heuristic-name", 'q', POPT_ARG_STRING, &hName, 'q', "Name of the merge heurstic to use; will default back on -p flag if not specified.", "string" },
 { "data-name", 'z', POPT_ARG_STRING, &hData, 'z', "Name of the merge data class to use.", "string" },
@@ -238,10 +239,10 @@ int main(int argc, const char *argv[]){
         { "correction", 'c', POPT_ARG_FLOAT, &(param->correction), 'c', "Value of a Laplace correction (smoothing) added to all symbol counts when computing statistical tests (in ALERGIA, LIKELIHOODRATIO, AIC, and KULLBACK-LEIBLER), default=1.0", "float" },
         { "extra parameter", 'p', POPT_ARG_FLOAT, &(param->parameter), 'p', "Extra parameter used during statistical tests, the significance level for the likelihood ratio test, the alpha value for ALERGIA, default=0.5", "float" },
         { "solver", 'S', POPT_ARG_STRING, &sat_program, 'S', "Path to the program used to solve the problem, default=none", "string" },
-=======
-        { "output file name", 'o', POPT_ARG_STRING, &(param->dot_file), 'o', "The filename in which to store the learned DFAs in .dot and .aut format, default: \"dfa\".", "string" },
-        { "heuristic-name", 'h', POPT_ARG_STRING, &(param->hName), 'h', "Name of the merge heurstic to use; default count_driven. Use any heuristic in the evaluation directory. It is often beneficial to write your own, as heuristics are very application specific.", "string" },
-        { "data-name", 'd', POPT_ARG_STRING, &(param->hData), 'd', "Name of the merge data class to use; default count_data. Use any heuristic in the evaluation directory.", "string" },
+=======*/
+        { "output file name", 'o', POPT_ARG_STRING, &(dot_file), 'o', "The filename in which to store the learned DFAs in .dot and .aut format, default: \"dfa\".", "string" },
+        { "heuristic-name", 'h', POPT_ARG_STRING, &(hName), 'h', "Name of the merge heurstic to use; default count_driven. Use any heuristic in the evaluation directory. It is often beneficial to write your own, as heuristics are very application specific.", "string" },
+        { "data-name", 'd', POPT_ARG_STRING, &(hData), 'd', "Name of the merge data class to use; default count_data. Use any heuristic in the evaluation directory.", "string" },
         { "method", 'm', POPT_ARG_INT, &(param->method), 'm', "Method to use when merging states, default value 1 is random greedy (used in Stamina winner), 2 is one standard (non-random) greedy.", "integer" },
         { "seed", 's', POPT_ARG_INT, &(param->seed), 's', "Seed for random merge heuristic; default=12345678", "integer" },
         { "runs", 'n', POPT_ARG_INT, &(param->tries), 'n', "Number of random greedy runs/iterations; default=1. Advice: when using random greedy, a higher value is recommended (100 was used in Stamina winner).\n\nSettings that modify the red-blue state-merging framework:", "integer" },
@@ -266,7 +267,6 @@ int main(int argc, const char *argv[]){
         { "satfinalred", 'F', POPT_ARG_INT, &(param->target_rejecting), 'F', "Make all transitions from red states without any occurrences force to have 0 occurrences (similar to targeting a rejecting sink), (setting 0 or 1) before sending the problem to the SAT solver; default=0. Advice: the same as finalred but for the SAT solver. Setting it to 1 greatly improves solving speed.", "integer" },
         { "satsymmetry", 'Y', POPT_ARG_INT, &(param->symmetry), 'Y', "Add symmetry breaking predicates to the SAT encoding (setting 0 or 1), based on Ulyantsev et al. BFS symmetry breaking; default=1. Advice: in our experience this only improves solving speed.", "integer" },
         { "satonlyinputs", 'O', POPT_ARG_INT, &(param->forcing), 'O', "Add predicates to the SAT encoding that force transitions in the learned DFA to be used by input examples (setting 0 or 1); default=0. Advice: leads to non-complete models. When the data is sparse, this should be set to 1. It does make the instance larger and can have a negative effect on the solving time.", "integer" },
->>>>>>> master
         POPT_AUTOHELP
         POPT_TABLEEND
     };
@@ -303,49 +303,11 @@ int main(int argc, const char *argv[]){
 
     if(sat_program != NULL)
         param->sat_program = sat_program;
+    else
+        param->sat_program = "";
 
-<<<<<<< HEAD
     param->hName = hName;
     param->hData = hData;
-=======
-    LOWER_BOUND = param->lower_bound;
-    OFFSET = param->offset;
-    USE_SINKS = param->sinkson;
-    MERGE_SINKS_PRESOLVE = param->merge_sinks_p;
-    MERGE_SINKS_DSOLVE = param->merge_sinks_d;
-    EXTEND_ANY_RED = param->extend;
-    
-    SYMMETRY_BREAKING = param->symmetry;
-    FORCING = param->forcing;
-        
-    EXTRA_STATES = param->extra_states;
-    TARGET_REJECTING = param->target_rejecting;
-
-    MERGE_MOST_VISITED = param->largestblue;
-    MERGE_BLUE_BLUE = param->blueblue;
-    RED_FIXED = param->fixedred;
-    MERGE_WHEN_TESTING = !param->testmerge;
-    DEPTH_FIRST = param->depthfirst;
-
-    evaluation_function *eval;
-
-    for(auto myit = DerivedRegister<evaluation_function>::getMap()->begin(); myit != DerivedRegister<evaluation_function>::getMap()->end(); myit++   ) {
-       cout << myit->first << " " << myit->second << endl;
-    }
-
-    cout << "getting data" << endl;
-    try {
-       eval_string = param->hData;
-       eval = (DerivedRegister<evaluation_function>::getMap())->at(param->hName)();
-       std::cout << "Using heuristic " << param->hName << std::endl;
-       
-    } catch(const std::out_of_range& oor ) {
-       std::cerr << "No named heuristic found, defaulting back on -h flag" << std::endl;
-
-   }
-    cout << "storing eval string" << endl; 
-    eval_string = param->hData;
->>>>>>> master
    
     run(param); 
     
