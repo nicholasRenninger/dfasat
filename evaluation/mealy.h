@@ -1,5 +1,5 @@
-#ifndef __COUNT__
-#define __COUNT__
+#ifndef __MEALY__
+#define __MEALY__
 
 #include "evaluate.h"
 

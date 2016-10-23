@@ -8,6 +8,9 @@ DFASAT in C++
 
 ### How do I get set up? ###
 
+It needs the GNU scientific library (development) package. In Ubuntu, install via
+$ apt-get install libgsl-dev
+
 Have libpopt installed and run make clean all. If you want to use the SAT-solving part of it, get lingeling from http://fmv.jku.at/lingeling/ and run its build.sh, or a similar solver.
 
 ### How do I run it? ###
