@@ -14,7 +14,7 @@ merge_list random_greedy_bounded_run(state_merger* merger){
     while( true ){
         merger->reset();
         while( true ){
-            cerr << " ";
+            cout << " ";
             if(EXTEND_ANY_RED) while(merger->extend_red() == true) cout << "+ ";
 	    // leak here, too
             merge_map *m = &merger->get_possible_merges();
@@ -67,7 +67,7 @@ merge_list random_greedy_bounded_run(state_merger* merger){
         cout << endl;
         int size = merger->get_final_apta_size();
         int red_size = merger->red_states.size();
-        cout << "\nfound intermediate solution with size " << size << " and " << red_size << " red states" << endl;
+        cout << endl << "found intermediate solution with size " << size << " and " << red_size << " red states" << endl;
         return all_merges;
     }
     return all_merges;
