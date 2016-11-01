@@ -16,11 +16,11 @@ Run ./dfasat --help to get help.
 
 Example:
 
-$ ./dfasat -q alergia -z alergia_data -n 1 -b 0 -d 2000 inputfile "/bin/true"
+$ ./dfasat -h alergia -d alergia_data -n 1 -A 0 -D 2000 inputfile "/bin/true"
 
-q defines the algorithm, and z the data type. n defines the number of iterations, which is useful if you use the SAT-solver. -b and -d a used to decide when to switch from the heuristic to the SAT-solver. The parameters in the example essentially prevent the use of the solver.
+h defines the algorithm, and d the data type. n defines the number of iterations, which is useful if you use the SAT-solver. -A and -D are used to decide when to switch from the heuristic to the SAT-solver. The parameters in the example essentially prevent the use of the solver.
 
-The thresholds for relevance of states and symbols can be adjusted using -t and -y.
+The thresholds for relevance of states and symbols can be adjusted using -q and -y.
 
 ### Output files ###
 
@@ -38,7 +38,7 @@ after installing dot from graphviz.
 ### Contribution guidelines ###
 
 * Fork and implement, request pulls.
-* You can find sample evaluation files in ./evaluation. Make sure to REGISTER your own file to be able to access it via the -q flag.
+* You can find sample evaluation files in ./evaluation. Make sure to REGISTER your own file to be able to access it via the -h flag.
 
 ### Who do I talk to? ###
 
