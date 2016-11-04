@@ -1,5 +1,5 @@
-#ifndef __DEPTHDRIVEN__
-#define __DEPTHDRIVEN__
+#ifndef __FIXEDDEPTHREGRESSION__
+#define __FIXEDDEPTHREGRESSION__
 
 #include "mse-error.h"
 #include "alergia.h"

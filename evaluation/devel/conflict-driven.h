@@ -1,5 +1,5 @@
-#ifndef __OVERLAPDRIVEN__
-#define __OVERLAPDRIVEN__
+#ifndef __CONFLICTDRIVEN__
+#define __CONFLICTDRIVEN__
 
 #include "evaluate.h"
 

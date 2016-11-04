@@ -1,5 +1,5 @@
-#ifndef __OVERLAPDRIVEN__
-#define __OVERLAPDRIVEN__
+#ifndef __FULLOVERLAPDRIVEN__
+#define __FULLOVERLAPDRIVEN__
 
 #include "alergia.h"
 
