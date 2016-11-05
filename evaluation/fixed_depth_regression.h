@@ -26,8 +26,8 @@ protected:
   
   void score_left(apta_node* left, int depth);
   void score_right(apta_node* right, int depth);
-  void undo_score_left(apta_node* left, int depth);
-  void undo_score_right(apta_node* right, int depth);
+  //void undo_score_left(apta_node* left, int depth);
+  //void undo_score_right(apta_node* right, int depth);
     
 public:
   vector< state_set > l_dist;
