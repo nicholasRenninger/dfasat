@@ -14,27 +14,27 @@ merge_list random_greedy_bounded_run(state_merger* merger){
     while( true ){
         merger->reset();
         while( true ){
-            cerr << " ";
+            cout << " ";
             if(EXTEND_ANY_RED) while(merger->extend_red() != 0) cerr << "+ ";
             // leak here, too
             merge_map* possible_merges = merger->get_possible_merges();
 
             if(!EXTEND_ANY_RED && possible_merges->empty()){
                 if(merger->extend_red() != 0) { cerr << "+"; continue; }
-                cerr << "no more possible merges" << endl;
+                cout << "no more possible merges" << endl;
                 break;
             }
             if(possible_merges->empty()){
-                cerr << "no more possible merges" << endl;
+                cout << "no more possible merges" << endl;
                 break;
             }
             if(merger->red_states.size() > CLIQUE_BOUND){
-               cerr << "too many red states" << endl;
+               cout << "too many red states" << endl;
                break;
             }
             // FIXME
             if(merger->get_final_apta_size() <= APTA_BOUND){
-               cerr << "APTA too small" << endl;
+               cout << "APTA too small" << endl;
                break;
             }
             /*if((*possible_merges.rbegin()).first < LOWER_BOUND){
@@ -59,16 +59,16 @@ merge_list random_greedy_bounded_run(state_merger* merger){
                 top_score = (*randomized_merges.rbegin()).first;
                 top_pair = (*randomized_merges.rbegin()).second;
             }
-            cerr << top_score;
+            cout << top_score;
             merger->perform_merge(top_pair.first, top_pair.second);
             all_merges.push_front(top_pair);
             
             delete possible_merges;
         }
-        cerr << endl;
+        cout << endl;
         int size = merger->get_final_apta_size();
         int red_size = merger->red_states.size();
-        cerr << "\nfound intermediate solution with size " << size << " and " << red_size << " red states" << endl;
+        cout << endl << "found intermediate solution with size " << size << " and " << red_size << " red states" << endl;
         return all_merges;
     }
     return all_merges;
