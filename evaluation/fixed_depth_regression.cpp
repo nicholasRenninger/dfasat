@@ -13,7 +13,14 @@
 REGISTER_DEF_DATATYPE(fixed_depth_mse_data);
 REGISTER_DEF_TYPE(fixed_depth_mse_error);
 
+int sequence_index = 0;
+
 void fixed_depth_mse_data::read_from(int type, int index, int length, int symbol, string data){
+    if(index == 0)
+        sequence_index++;
+    
+    indexes.push_back(sequence_index);
+    
     double occ = std::stod(data);
     if(occ > 0.0) mse_data::read_from(type, index, length, symbol, data);
     ald.read_from(type, index, length, symbol, data);
@@ -30,6 +37,16 @@ void fixed_depth_mse_data::update(evaluation_data* right){
 
     mse_data::update(right);
     ald.update(&(r->ald));
+
+    if(indexes.size() != 0){
+        r->int_merge_point = indexes.end();
+        --(r->int_merge_point);
+        indexes.splice(indexes.end(), r->indexes);
+        ++(r->int_merge_point);
+    } else {
+        indexes.splice(indexes.begin(), r->indexes);
+        r->int_merge_point = indexes.begin();
+    }
 };
 
 void fixed_depth_mse_data::undo(evaluation_data* right){
@@ -37,6 +54,8 @@ void fixed_depth_mse_data::undo(evaluation_data* right){
 
     mse_data::undo(right);
     ald.undo(&(r->ald));
+
+    r->indexes.splice(r->indexes.begin(), indexes, r->int_merge_point, indexes.end());
 };
 
 void fixed_depth_mse_error::update_score(state_merger *merger, apta_node* left, apta_node* right){
@@ -116,9 +135,30 @@ void fixed_depth_mse_error::score_left(apta_node* left, int depth){
     //fixed_depth_mse_data* l = (fixed_depth_mse_data*)left->data;
     //cerr << "undo adding " << l->occs.size() << " to left." << endl;
 };*/
+bool is_all_same_sink(apta_node* node, int type){
+    node = node->find();
+    for(child_map::iterator it = node->children.begin();it != node->children.end(); ++it){
+        int i = (*it).first;
+        apta_node* child = (*it).second;
+        if(type == -1){
+            if (child != 0) type = i;
+        } else {
+            if (i == type) continue;
+            if (child != 0) return false;
+        }
+    }
+    for(child_map::iterator it = node->children.begin();it != node->children.end(); ++it){
+        int i = (*it).first;
+        apta_node* child = (*it).second;
+        if (i != type) continue;
+        if (child != 0 && is_all_same_sink(child, type) == false) return false;
+    }
+    return true;
+};
 
 int fixed_depth_mse_error::compute_score(state_merger *merger, apta_node* left, apta_node* right){
     if(left->depth != right->depth){ return -1; }
+    if(is_all_same_sink(left, -1) != is_all_same_sink(right, -1)){ return -1; }
     
     score_right(right,0);
 
@@ -149,7 +189,7 @@ int fixed_depth_mse_error::compute_score(state_merger *merger, apta_node* left, 
             }
             //cerr << count_left << "," << total_left << " " << count_right << "," << total_right << endl;
 
-            if(total_left == 0 || total_right == 0) continue;
+            if(total_left < STATE_COUNT || total_right < STATE_COUNT) continue;
             
             bool alergia_consistent = alergia::alergia_consistency(count_right, count_left, total_right, total_left);
             if(alergia_consistent) tests_passed += 1;
@@ -158,6 +198,11 @@ int fixed_depth_mse_error::compute_score(state_merger *merger, apta_node* left, 
     }
     
     if (tests_failed != 0) return -1;
+    int depth_score = 100 - left->depth;
+    //return 100*depth_score + tests_passed;
+    int num_runs = 0;
+    float total_error = 0.0;
+    
     
     for(int i = 0; i < merger->aut->max_depth; ++i){
         double mean_left = 0.0;
@@ -182,6 +227,8 @@ int fixed_depth_mse_error::compute_score(state_merger *merger, apta_node* left, 
             }
             right_size = right_size + r->occs.size();
         }
+        
+        if(right_size == 0 || left_size == 0) continue;
         
         double error_left = 0.0;
         double error_right = 0.0;
@@ -211,31 +258,20 @@ int fixed_depth_mse_error::compute_score(state_merger *merger, apta_node* left, 
         RSS_after  += error_total;
         num_points += left_size;
         num_points += right_size;
+        
+        error_total = mean_left - mean_right;
+        if(error_total < 0) error_total = -error_total;
+        total_error += error_total;
+        num_runs = num_runs + 1;
     }
-
-    if(2*total_merges + num_points*(log(RSS_before/num_points)) - num_points*log(RSS_after/num_points) < 0) return -1;
-    return 2*total_merges + num_points*(log(RSS_before/num_points)) - num_points*log(RSS_after/num_points);
-};
-
-bool is_all_same_sink(apta_node* node, int type){
-    node = node->find();
-    for(child_map::iterator it = node->children.begin();it != node->children.end(); ++it){
-        int i = (*it).first;
-        apta_node* child = (*it).second;
-        if(type == -1){
-            if (child != 0) type = i;
-        } else {
-            if (i == type) continue;
-            if (child != 0) return false;
-        }
-    }
-    for(child_map::iterator it = node->children.begin();it != node->children.end(); ++it){
-        int i = (*it).first;
-        apta_node* child = (*it).second;
-        if (i != type) continue;
-        if (child != 0 && is_all_same_sink(child, type) == false) return false;
-    }
-    return true;
+    
+    return 10000*depth_score - (total_error/((float)num_runs));
+    
+    //if(2*total_merges + num_points*(log(RSS_before/num_points)) - num_points*log(RSS_after/num_points) < 0) return -1;
+    
+    //if(left->source == right->source)
+        //return 10000*depth_score + 5*(2*total_merges + num_points*(log(RSS_before/num_points)) - num_points*log(RSS_after/num_points));
+    return 10000*depth_score + (2*total_merges + num_points*(log(RSS_before/num_points)) - num_points*log(RSS_after/num_points));
 };
 
 int fixed_depth_mse_error::sink_type(apta_node* node){
@@ -257,13 +293,13 @@ int fixed_depth_mse_error::num_sink_types(){
     return 1;
 };
 
-void fixed_depth_mse_error::print_dot(FILE* output, state_merger* merger){
+void fixed_depth_mse_error::print_dot(iostream& output, state_merger* merger){
     apta* aut = merger->aut;
     state_set candidates  = merger->get_candidate_states();
     
     //state_set sinks = get_sink_states();
 
-    fprintf(output,"digraph DFA {\n");
+    output << "digraph DFA {\n";
     
 //    fprintf(output,"subgraph cluster_1 {\nstyle=filled;color=green4;");
     state_set* state = &merger->aut->get_merged_states();
@@ -272,7 +308,7 @@ void fixed_depth_mse_error::print_dot(FILE* output, state_merger* merger){
         apta_node* node = *it;
         fixed_depth_mse_data* l = (fixed_depth_mse_data*) node->data;
         if (sink_type(node) == -1 && node->depth != aut->max_depth && l->ald.accepting_paths > 2.0 * l->ald.rejecting_paths){// || l->num_accepting != 0){
-            fprintf(output,"%i;",node->number);
+            output << node->number << ";";
         }
     }
     //for(int i = 0; i < aut->max_depth; ++i) fprintf(output,"rg%i; ",i);
@@ -287,7 +323,7 @@ void fixed_depth_mse_error::print_dot(FILE* output, state_merger* merger){
         fixed_depth_mse_data* l = (fixed_depth_mse_data*) node->data;
         if (sink_type(node) == -1 &&node->depth != aut->max_depth &&  l->ald.accepting_paths <= 2.0 * l->ald.rejecting_paths
         && l->ald.rejecting_paths <= 2.0 * l->ald.accepting_paths){// || l->num_accepting != 0){
-            fprintf(output,"%i;",node->number);
+            output << node->number << ";";
         }
     }
     //for(int i = 0; i < aut->max_depth; ++i) fprintf(output,"rgb%i; ",i);
@@ -301,7 +337,7 @@ void fixed_depth_mse_error::print_dot(FILE* output, state_merger* merger){
         apta_node* node = *it;
         fixed_depth_mse_data* l = (fixed_depth_mse_data*) node->data;
         if (sink_type(node) == -1 && node->depth != aut->max_depth && l->ald.rejecting_paths > 2.0 * l->ald.accepting_paths){// || l->num_rejecting != 0){
-            fprintf(output,"%i; ",node->number);
+            output << node->number << ";";
         }
     }
     //for(int i = 0; i < aut->max_depth; ++i) fprintf(output,"rb%i; ",i);
@@ -343,24 +379,32 @@ void fixed_depth_mse_error::print_dot(FILE* output, state_merger* merger){
 
         int node_size = 1 + (int)((float)(l->occs.size())/10.0);
 
-        if(l->ald.num_accepting != 0)
+        /*if(l->ald.num_accepting != 0)
             fprintf(output,"\t%i [shape=box style=\"filled\" color=\"green\" label=\"%i\"];\n", n->number, l->ald.num_accepting);
         else if(l->ald.num_rejecting != 0)
             fprintf(output,"\t%i [shape=box style=\"filled\" color=\"red\" label=\"%i\"];\n", n->number, l->ald.num_rejecting);
-        else {
+        else {*/
+            output << "\t" << n->number << " [shape=box nodesep=1 style=\"filled\"";
             if(l->occs.size() == 0)
-                fprintf(output,"\t%i [shape=box width=%i style=\"filled\" color=\"lightgrey\" label=\"\n%.3f\n%i\n%i:%i\"];\n", n->number, node_size, l->mean, (int)l->occs.size(), l->ald.accepting_paths, l->ald.rejecting_paths);
-            else if(l->mean < 4)
-                fprintf(output,"\t%i [shape=box width=%i style=\"filled\" color=\"red\" label=\"\n%.3f\n%i\n%i:%i\"];\n", n->number, node_size, l->mean, (int)l->occs.size(), l->ald.accepting_paths, l->ald.rejecting_paths);
+                output << "color=\"white\"";
+            else if(l->mean < 5)
+                output << "color=\"red\"";
+            else if(l->mean < 5.5)
+                output << "color=\"orange\"";
             else if(l->mean < 6)
-                fprintf(output,"\t%i [shape=box width=%i style=\"filled\" color=\"purple\" label=\"\n%.3f\n%i\n%i:%i\"];\n", n->number, node_size, l->mean, (int)l->occs.size(), l->ald.accepting_paths, l->ald.rejecting_paths);
-            else if(l->mean < 7.5)
-                fprintf(output,"\t%i [shape=box width=%i style=\"filled\" color=\"yellow\" label=\"\n%.3f\n%i\n%i:%i\"];\n", n->number, node_size, l->mean, (int)l->occs.size(), l->ald.accepting_paths, l->ald.rejecting_paths);
+                output << "color=\"yellow\"";
+            else if(l->mean < 7)
+                output << "color=\"darkgreen\"";
             else//if(l->mean <= 10.0)
-                fprintf(output,"\t%i [shape=box width=%i style=\"filled\" color=\"green\" label=\"\n%.3f\n%i\n%i:%i\"];\n", n->number, node_size, l->mean, (int)l->occs.size(),  l->ald.accepting_paths, l->ald.rejecting_paths);
+                output << "color=\"green\"";
+            output << "label=\"(";
+            for(int_list::iterator it2 = l->indexes.begin(); it2 != l->indexes.end(); it2++){
+                output << *it2 << ",";
+            }
+            output << ")\n" << (float)((int)(100*l->mean))/100.0 << "\n" << (int)l->occs.size() << "\n" << l->ald.accepting_paths << ":" << l->ald.rejecting_paths << "\"];\n";
             //else
             //    fprintf(output,"\t%i [shape=ellipse width=%i penlabel=\"\"];\n", n->number, node_size);
-        }
+        //}
         state_set childnodes;
         set<int> sinks;
         for(int i = 0; i < aut->alphabet.size(); ++i){
@@ -372,41 +416,32 @@ void fixed_depth_mse_error::print_dot(FILE* output, state_merger* merger){
                      sinks.insert(sink_type(child));
                  } else {
             int node_size = int((float)(l->ald.pos(i) + l->ald.neg(i))/3.0) + 2;
-            if (aut->alph_str(i) == "0")
-                fprintf(output, "\t\t%i -> %i [minlen=1 penwidth=%i color=\"lightgrey\" label=\"%i:%i\"];\n" ,n->number, child->number, node_size, l->ald.pos(i),l->ald.neg(i));
-            if (aut->alph_str(i) == "1")
-                fprintf(output, "\t\t%i -> %i [minlen=1 penwidth=%i color=\"lightgrey\" label=\"%i:%i\"];\n" ,n->number, child->number, node_size, l->ald.pos(i),l->ald.neg(i));
-            if (aut->alph_str(i) == "2")
-                fprintf(output, "\t\t%i -> %i [minlen=1 penwidth=%i color=\"red\" label=\"%i:%i\"];\n" ,n->number, child->number, node_size, l->ald.pos(i),l->ald.neg(i));
-            if (aut->alph_str(i) == "3")
-                fprintf(output, "\t\t%i -> %i [minlen=1 penwidth=%i color=\"green\" label=\"%i:%i\"];\n" ,n->number, child->number, node_size, l->ald.pos(i),l->ald.neg(i));
-            if (aut->alph_str(i) == "4")
-                fprintf(output, "\t\t%i -> %i [minlen=1 penwidth=%i color=\"red\" label=\"%i:%i\"];\n" ,n->number, child->number, node_size, l->ald.pos(i),l->ald.neg(i));
-            if (aut->alph_str(i) == "5")
-                fprintf(output, "\t\t%i -> %i [minlen=1 penwidth=%i color=\"red\" label=\"%i:%i\"];\n" ,n->number, child->number, node_size, l->ald.pos(i),l->ald.neg(i));
-            if (aut->alph_str(i) == "6")
-                fprintf(output, "\t\t%i -> %i [minlen=1 penwidth=%i color=\"red\" label=\"%i:%i\"];\n" ,n->number, child->number, node_size, l->ald.pos(i),l->ald.neg(i));
-            if (aut->alph_str(i) == "7")
-                fprintf(output, "\t\t%i -> %i [minlen=1 penwidth=%i color=\"green\" label=\"%i:%i\"];\n" ,n->number, child->number, node_size, l->ald.pos(i),l->ald.neg(i));
-            if (aut->alph_str(i) == "8")
-                fprintf(output, "\t\t%i -> %i [minlen=1 penwidth=%i color=\"green\" label=\"%i:%i\"];\n" ,n->number, child->number, node_size, l->ald.pos(i),l->ald.neg(i));
-
+            if (aut->alph_str(i) == "fail")
+                output << "\t\t" << n->number << " -> " << child->number << " [minlen=1 penwidth=" << node_size << " color=\"red\" label=\"" << l->ald.pos(i) << ":" << l->ald.neg(i) << "\"];\n";
+            else if (aut->alph_str(i) == "pass")
+                output << "\t\t" << n->number << " -> " << child->number << " [minlen=1 penwidth=" << node_size << " color=\"green\" label=\"" << l->ald.pos(i) << ":" << l->ald.neg(i) << "\"];\n";
+            else if (aut->alph_str(i) == "none")
+                output << "\t\t" << n->number << " -> " << child->number << " [minlen=1 penwidth=" << node_size << " color=\"grey\" label=\"" << l->ald.pos(i) << ":" << l->ald.neg(i) << "\"];\n";
+            else if (aut->alph_str(i) == "already")
+                output << "\t\t" << n->number << " -> " << child->number << " [minlen=1 penwidth=" << node_size << " color=\"blue\" label=\"" << l->ald.pos(i) << ":" << l->ald.neg(i) << "\"];\n";
+            else
+                output << "\t\t" << n->number << " -> " << child->number << " [minlen=1 penwidth=" << node_size << " color=\"black\" label=\"" << l->ald.pos(i) << ":" << l->ald.neg(i) << "\"];\n";
                      //childnodes.insert(child);
                  }
             }
         }
         for(set<int>::iterator it2 = sinks.begin(); it2 != sinks.end(); ++it2){
             int stype = *it2;
-            fprintf(output,"\tS%it%i [label=\"sink %i\" shape=box];\n", n->number, stype, stype);
-            fprintf(output, "\t\t%i -> S%it%i [label=\"" ,n->number, n->number, stype);
+            output << "\tS" << n->number << "t" << stype << " [label=\"sink " << stype << "\" shape=box];\n";
+            output << "\t\t" << n->number << " -> S" << n->number << "t" << stype << " [label=\"";
             for(int i = 0; i < aut->alphabet.size(); ++i){
                 if(n->get_child(i) != 0 && sink_type(n->get_child(i)) == stype){
-                    fprintf(output, " %s [%i:%i]", aut->alph_str(i).c_str(), l->ald.num_pos[i], l->ald.num_neg[i]);
+                    output << " " << aut->alph_str(i).c_str() << " [" << l->ald.num_pos[i] << ":" << l->ald.num_neg[i] << "]";
                 }
             }
-            fprintf(output, "\"];\n");
+            output << "\"];\n";
         }
 
     }
-    fprintf(output,"}\n");
+    output << "}\n";
 };

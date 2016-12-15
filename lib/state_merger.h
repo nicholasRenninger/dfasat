@@ -106,19 +106,24 @@ public:
     bool merge_test(apta_node* red, apta_node* blue);
     void undo_merge(apta_node* red, apta_node* blue);
 
+    void extend(apta_node* blue);
+    void undo_extend(apta_node* blue);
+    
     /* find merges */
-    merge_map &get_possible_merges();
+    merge_map*  get_possible_merges();
+    merge_pair* get_best_merge();
+    
+    /* find unmergable states */
+    apta_node* extend_red();
 
     /* update the blue and red states */
     void update();
-
-    /* find unmergable states */
-    bool extend_red();
 
     int testmerge(apta_node*,apta_node*);
     int test_local_merge(apta_node* red, apta_node* blue);
 
     bool perform_merge(apta_node*, apta_node*);
+    bool undo_perform_merge(apta_node*, apta_node*);
 
     state_set &get_candidate_states();
     state_set &get_sink_states();
@@ -136,6 +141,8 @@ public:
     int sink_type(apta_node* node);
     bool sink_consistent(apta_node* node, int type);
     int num_sink_types();
+    
+    int compute_global_score();
 
     string dot_output;
 };

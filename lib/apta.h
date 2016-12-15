@@ -81,7 +81,6 @@ public:
         return (*it).second;
     }
 
-
     apta_node* get_next_forward_node();
     apta_node* get_next_backward_node();
 };

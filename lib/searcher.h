@@ -33,7 +33,7 @@ using namespace std;
 #include <queue>
 #include <map>
 
-#include "timed_automaton.h"
+#include "state_merger.h"
 
 extern int NODES;
 
@@ -42,29 +42,30 @@ class refinement;
 typedef list<refinement> refinement_list;
 typedef multimap<double, refinement, greater<double> > refinement_set;
 
-timed_automaton* TA;
+void bestfirst(state_merger* merger);
 
 class refinement{
 	apta_node* left;
 	apta_node* right;
 	
 public:
-	int ref_count;
-	
 	refinement(apta_node* l, apta_node* r);
 
 	inline void print() const{
-        cerr << "merge( " << l->number << " " << r->number << " )" << endl;
+        if(left == 0) cerr << "extend( " << right->number << " )" << endl;
+        else cerr << "merge( " << left->number << " " << right->number << " )" << endl;
 	};
 	
-	void doref(state_merger* m){
+	inline void doref(state_merger* m){
 		//cerr << "do : "; print();
-        m->merge(left, right)
+        if(left == 0) m->extend(right);
+        else m->perform_merge(left, right);
 	};
 	
-	void undo(state_merger* m){
+	inline void undo(state_merger* m){
 		//cerr << "undo : "; print();
-        m->undo_merge(left, right)
+        if(left == 0) m->undo_extend(right);
+        else m->undo_perform_merge(left, right);
 	};
 };
 

@@ -4,6 +4,8 @@
 #include "mse-error.h"
 #include "alergia.h"
 
+typedef list<int> int_list;
+
 /* The data contained in every node of the prefix tree or DFA */
 class fixed_depth_mse_data: public mse_data {
 
@@ -12,6 +14,9 @@ protected:
 
 public:
     alergia_data ald;
+    
+    int_list indexes;
+    int_list::iterator int_merge_point;
     
     virtual void read_from(int type, int index, int length, int symbol, string data);
     virtual void read_to(int type, int index, int length, int symbol, string data);
@@ -39,7 +44,7 @@ public:
   virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
   virtual void reset(state_merger *merger);
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
-  virtual void print_dot(FILE*, state_merger *);
+  virtual void print_dot(iostream&, state_merger *);
   virtual int sink_type(apta_node* node);
   virtual bool sink_consistent(apta_node* node, int type);
   virtual int num_sink_types();
