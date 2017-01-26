@@ -118,6 +118,43 @@ int evaluation_function::num_sink_types(){
     return 1;
 };
 
+/*  read functions*/ 
+
+void evaluation_function::init(string data, state_merger* merger) {
+// we need to write alphabet_size
+    cout << data << endl;
+}
+
+void evaluation_function::add_sample(string data, state_merger* merger) { 
+            
+    // set up segmentation of sample line
+    std::stringstream lineStream;
+    lineStream.str(data);
+           
+    // header of line
+    int label;
+    int length;
+
+    lineStream >> label >> length;
+
+    cout << label;
+    cout << " ";
+    cout << length;
+    
+
+    // run over symbol/data of sample
+    for (int index=0; index < length; index++) {
+        string symbol;
+        std::getline(lineStream,symbol,'/');
+        string dat;
+        std::getline(lineStream,data);
+        cout << symbol  << dat; 
+    }
+    cout << endl;
+}
+
+/* for batch mode */
+// i want tis to map back to the sample by sample read functions from streaming
 void evaluation_function::read_file(istream &input_stream, state_merger* merger){
     apta* aut = merger->aut;
     

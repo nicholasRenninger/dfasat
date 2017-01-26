@@ -525,6 +525,20 @@ merge_pair* state_merger::get_best_merge(){
     return best;
 }
 
+
+/* input function 	        *
+ * pass along to  eval fct      */
+
+// streaming mode methods
+void state_merger::init_apta(string data) {
+   eval->init(data, this);
+}
+
+void state_merger::advance_apta(string data) {
+   eval->add_sample(data, this);
+}
+
+// batch mode methods
 void state_merger::read_apta(istream &input_stream){
     eval->read_file(input_stream, this);
 }
@@ -544,6 +558,8 @@ void state_merger::read_apta(vector<string> dfa_data){
     read_apta(input_stream);
 }
 
+
+/* output functions */
 void state_merger::todot(){
     stringstream dot_output_buf;
     eval->print_dot(dot_output_buf, this);

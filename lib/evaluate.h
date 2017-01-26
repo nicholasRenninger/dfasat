@@ -135,6 +135,8 @@ public:
   virtual int num_sink_types();
 
   virtual void read_file(istream &input_stream, state_merger *);
+  virtual void init(string data, state_merger* merger);
+  virtual void add_sample(string data, state_merger* merger);
   virtual void print_dot(iostream&, state_merger *);
 };
 

@@ -137,6 +137,9 @@ public:
 //    void read_apta(FILE* dfa_file);
 //    void read_apta(boost::python::list dfa_data);
     void read_apta(vector<string> dfa_data);
+ // streaming mode methods
+    void init_apta(string data);
+    void advance_apta(string data);
 
     int sink_type(apta_node* node);
     bool sink_consistent(apta_node* node, int type);
