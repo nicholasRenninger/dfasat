@@ -476,7 +476,8 @@ int state_merger::test_local_merge(apta_node* left, apta_node* right){
 }
 
 merge_map* state_merger::get_possible_merges(){
-    states = aut->get_merged_states();
+    // sicco: I added state_set to make it compile
+    state_set states = aut->get_merged_states();
     for(merged_APTA_iterator Ait = merged_APTA_iterator(aut->root); *Ait != 0; ++Ait){
         if(states.find(*Ait) == states.end()) cerr << "mAit element not found " << (*Ait)->source->number << " " << (*Ait)->label << " " << (*Ait)->number << endl;
         else states.erase(*Ait);
