@@ -6,6 +6,8 @@
 
 using namespace std;
 
+bool SEARCH_DEEP = true;
+
 /* queue used for searching */
 struct refinement_list_compare{ bool operator()(const pair<double, refinement_list*> &a, const pair<double, refinement_list*> &b) const{ return a.first > b.first; } };
 priority_queue< pair<double, refinement_list*>, vector< pair<double, refinement_list*> >, refinement_list_compare> Q;
@@ -23,7 +25,7 @@ int greedy(state_merger* merger){
     if(EXTEND_ANY_RED){
         apta_node* node = merger->extend_red();
         if(node != 0){
-            cerr << "+ ";
+            //cerr << "+ ";
             result = greedy(merger);
             merger->undo_extend(node);
             return result;
@@ -31,14 +33,14 @@ int greedy(state_merger* merger){
     }
     merge_pair* top_pair = merger->get_best_merge();
     if(top_pair->first != 0){
-        cerr << merger->testmerge(top_pair->first, top_pair->second) << " ";
+        //cerr << merger->testmerge(top_pair->first, top_pair->second) << " ";
         merger->perform_merge(top_pair->first, top_pair->second);
         result = greedy(merger);
         merger->undo_perform_merge(top_pair->first, top_pair->second);
     } else {
         apta_node* node = merger->extend_red();
         if(node != 0){
-            cerr << "+ ";
+            //cerr << "+ ";
             result = greedy(merger);
             merger->undo_extend(node);
         } else {
@@ -50,6 +52,12 @@ int greedy(state_merger* merger){
 	return result;
 }
 
+int compute_score(state_merger* merger){
+    if(SEARCH_DEEP) return greedy(merger);
+    merge_pair* top_pair = merger->get_best_merge();
+    return merger->testmerge(top_pair->first, top_pair->second);
+}
+
 void add_to_q(state_merger* merger){
     merge_map* possible_merges = merger->get_possible_merges();
 
@@ -57,7 +65,7 @@ void add_to_q(state_merger* merger){
         apta_node* node = merger->extend_red();
         if(node != 0){
             refinement ref = refinement(0, node);
-            double score = greedy(merger);
+            double score = compute_score(merger);
             refinement_list::iterator it2 = current_refinements->insert(current_refinements->end(), ref);
             Q.push(pair<double, refinement_list*>(score, new refinement_list(*current_refinements)));
             current_refinements->erase(it2);
@@ -69,7 +77,7 @@ void add_to_q(state_merger* merger){
         refinement ref = refinement((*it).second.first, (*it).second.second);
 
         ref.doref(merger);
-		double score = greedy(merger);
+		double score = compute_score(merger);
         ref.undo(merger);
 
 		refinement_list::iterator it2 = current_refinements->insert(current_refinements->end(), ref);
@@ -110,8 +118,8 @@ void bestfirst(state_merger* merger){
 		
 		double result = next_refinements.first;
 		
-        cerr << endl;
-        cerr << "solution " << result << endl;
+        //cerr << endl;
+        //cerr << "solution " << result << endl;
         
 		if(best_solution == -1.0 || result < best_solution){
             cerr << "*** current best *** " << result << endl;
