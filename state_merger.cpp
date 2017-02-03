@@ -36,39 +36,75 @@ void state_merger::reset(){
 }
 
 /* iterators for the APTA and merged APTA */
-apta_node* apta_node::get_next_forward_node(){
-    if(children.empty()){
-        return 0;
-    } else {
-        return (*children.begin()).second;
-    }
-}
-
-apta_node* apta_node::get_next_backward_node(){
-    if(source == 0) return 0;
-
-    child_map::iterator it = source->children.find(label);
-    ++it;
+class APTA_iterator {
+public:
+    apta_node* base;
+    apta_node* current;
     
-    if(it == source->children.end()){
-        return source->get_next_backward_node();
-    } else {
-        return (*it).second;
+    APTA_iterator(apta_node* start){
+        base = start;
+        current = start;
     }
-}
+    
+    void increment() {
+        child_map::iterator it;
+        if(!current->children.empty()){ current = (*current->children.begin()).second; return; }
+        
+        it = current->source->children.find(current->label);
+        ++it;
+        if(it != current->source->children.end()){ current = (*it).second; return; }
+        
+        while(current->source != base){
+            current = current->source;
+            it = current->source->children.find(current->label);
+            ++it;
+            if(it != current->source->children.end()){ current = (*it).second; return; }
+        }
+        current = 0;
+    }
+    
+    apta_node* operator*() const { return current; }
+    APTA_iterator& operator++() { increment(); return *this; }
+};
 
-apta_node* apta::get_next_node(apta_node* current){
-    apta_node* next = current->get_next_forward_node();
-    if(next == 0) next = current->get_next_backward_node();
-    return next;
-}
+class merged_APTA_iterator {
+public:
+    apta_node* base;
+    apta_node* current;
+    
+    merged_APTA_iterator(apta_node* start){
+        base = start;
+        current = start;
+    }
+    
+    void increment() {
+        child_map::iterator it;
+        for(it = current->children.begin();it != current->children.end(); ++it){
+            if((*it).second->representative == 0){
+                current = (*it).second;
+                return;
+            }
+        }
 
-apta_node* apta::get_next_merged_node(apta_node* current){
-    apta_node* next = current->get_next_forward_node();
-    if(next == 0) next = current->get_next_backward_node();
-    while(next != 0 && next->representative != 0) next = next->get_next_backward_node();
-    return next;
-}
+        apta_node* source = current;
+        while(source != base){
+            current = source;
+            source = source->source->find();
+            it = source->children.find(current->label);
+            ++it;
+            for(; it != source->children.end(); ++it){
+                if((*it).second->representative == 0){
+                    current = (*it).second;
+                    return;
+                }
+            }
+        }
+        current = 0;
+    }
+    
+    apta_node* operator*() const { return current; }
+    merged_APTA_iterator& operator++() { increment(); return *this; }
+};
 
 /* GET STATE LISTS */
 void add_states(apta_node* state, state_set& states){
@@ -440,6 +476,13 @@ int state_merger::test_local_merge(apta_node* left, apta_node* right){
 }
 
 merge_map* state_merger::get_possible_merges(){
+    states = aut->get_merged_states();
+    for(merged_APTA_iterator Ait = merged_APTA_iterator(aut->root); *Ait != 0; ++Ait){
+        if(states.find(*Ait) == states.end()) cerr << "mAit element not found " << (*Ait)->source->number << " " << (*Ait)->label << " " << (*Ait)->number << endl;
+        else states.erase(*Ait);
+    }
+    if(!states.empty()) cerr << "mAit set not empty" << endl;
+
     eval->reset(this);
     merge_map* mset = new merge_map();
     
