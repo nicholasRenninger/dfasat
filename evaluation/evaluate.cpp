@@ -122,7 +122,11 @@ int evaluation_function::num_sink_types(){
 
 void evaluation_function::init(string data, state_merger* merger) {
 // we need to write alphabet_size
-    cout << data << endl;
+   apta* aut = merger->aut;
+   apta_node* node = aut->root;
+   aut->root->depth = 0;
+ 
+   cout << data << endl;
 }
 
 void evaluation_function::add_sample(string data, state_merger* merger) { 
@@ -137,21 +141,66 @@ void evaluation_function::add_sample(string data, state_merger* merger) {
 
     lineStream >> label >> length;
 
-    cout << label;
-    cout << " ";
-    cout << length;
-    
+    apta* aut = merger->aut;
+    aut->root->depth=0;
+    apta_node* node = aut->root;
+ 
 
     // run over symbol/data of sample
-    for (int index=0; index < length; index++) {
+    int depth=0;
+    int num_alph=merger->seen.size();
+
+    // init with current length of seen
+    for (int index=0; index < length+1; index++) {
+        depth++;
         string symbol;
-        std::getline(lineStream,symbol,'/');
+        string tuple;
+        std::getline(lineStream,tuple,' ');
+        if(tuple=="") continue;
         string dat;
-        std::getline(lineStream,data);
-        cout << symbol  << dat; 
+
+        std::stringstream elements;
+        elements.str(tuple);
+
+        std::getline(elements,symbol,'/');
+        std::getline(elements,dat);
+
+         if(merger->seen.find(symbol) == merger->seen.end()){
+             aut->alphabet[num_alph] = symbol;
+             merger->seen[symbol] = num_alph;
+             num_alph++;
+             //cout << "adding new symbol:" << symbol << ": ";
+         }
+         int c = merger->seen[symbol];
+         
+         if(node->child(c) == 0){
+             // cout << "adding child" << endl;
+             apta_node* next_node = new apta_node();
+             node->children[c] = next_node;
+             next_node->source = node;
+             next_node->label  = c;
+             next_node->number = merger->node_number++;
+             next_node->depth = depth;
+             
+         }
+         node->size = node->size + 1;
+         node->data->read_from(label, index, length-1, c, dat);
+         node = node->child(c);
+         node->data->read_to(label, index, length-1, c, dat);
+ 
     }
+
+    if(depth-1 > aut->max_depth) aut->max_depth = depth-1;
+    node->type = label;
+
+    //merger->todot(); 
+    //merger->todot();
+    //cout << merger->dot_output;
+    cout << merger->seen.size();
+    cout << " ";
+    cout << merger->node_number;
     cout << endl;
-}
+};
 
 /* for batch mode */
 // i want tis to map back to the sample by sample read functions from streaming
@@ -160,7 +209,6 @@ void evaluation_function::read_file(istream &input_stream, state_merger* merger)
     
     int num_words;
     int num_alph = 0;
-    map<string, int> seen;
     int node_number = 1;
     input_stream >> num_words >> alphabet_size;
     
@@ -187,13 +235,14 @@ void evaluation_function::read_file(istream &input_stream, state_merger* merger)
             string data;
             std::getline(lineStream,data);
             
-            if(seen.find(symbol) == seen.end()){
+            if(merger->seen.find(symbol) == merger->seen.end()){
                 aut->alphabet[num_alph] = symbol;
-                seen[symbol] = num_alph;
+                merger->seen[symbol] = num_alph;
                 num_alph++;
             }
-            int c = seen[symbol];
+            int c = merger->seen[symbol];
             if(node->child(c) == 0){
+                // cout << "child added" << endl;
                 apta_node* next_node = new apta_node();
                 node->children[c] = next_node;
                 next_node->source = node;
@@ -208,12 +257,17 @@ void evaluation_function::read_file(istream &input_stream, state_merger* merger)
         }
         if(depth > aut->max_depth) aut->max_depth = depth;
         node->type = type;
+
+    cout << num_alph;
+    cout << " ";
+    cout << node_number;
+    cout << endl;
     }
 };
 
 void evaluation_function::print_dot(iostream& output, state_merger* merger){
     apta* aut = merger->aut;
-    state_set candidates  = merger->get_candidate_states();
+    state_set candidates  = aut->get_states();
     
     output << "digraph DFA {\n";
     output << "\t" << aut->root->find()->number << " [label=\"root\" shape=box];\n";

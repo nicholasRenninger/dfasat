@@ -578,8 +578,8 @@ void state_merger::init_apta(string data) {
    eval->init(data, this);
 }
 
-void state_merger::advance_apta(string data) {
-   eval->add_sample(data, this);
+void state_merger::advance_apta(string data, state_merger* merger) {
+   eval->add_sample(data, merger);
 }
 
 // batch mode methods
@@ -606,6 +606,7 @@ void state_merger::read_apta(vector<string> dfa_data){
 /* output functions */
 void state_merger::todot(){
     stringstream dot_output_buf;
+    cout << this;
     eval->print_dot(dot_output_buf, this);
     dot_output = dot_output_buf.str();
 }

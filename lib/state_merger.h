@@ -87,6 +87,10 @@ typedef map<int, int> num_map;
 
 class state_merger{
 public:
+    /* for building the apta  */
+    map<string, int> seen;
+    int node_number = 1; 
+
     merger_context context;
     apta* aut;
     /* core of merge targets */
@@ -139,7 +143,7 @@ public:
     void read_apta(vector<string> dfa_data);
  // streaming mode methods
     void init_apta(string data);
-    void advance_apta(string data);
+    void advance_apta(string data, state_merger* merger);
 
     int sink_type(apta_node* node);
     bool sink_consistent(apta_node* node, int type);
