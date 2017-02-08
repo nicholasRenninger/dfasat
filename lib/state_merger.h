@@ -143,7 +143,7 @@ public:
     void read_apta(vector<string> dfa_data);
  // streaming mode methods
     void init_apta(string data);
-    void advance_apta(string data, state_merger* merger);
+    void advance_apta(string data);
 
     int sink_type(apta_node* node);
     bool sink_consistent(apta_node* node, int type);

@@ -130,7 +130,8 @@ void evaluation_function::init(string data, state_merger* merger) {
 }
 
 void evaluation_function::add_sample(string data, state_merger* merger) { 
-            
+
+    cout << data <<endl; 
     // set up segmentation of sample line
     std::stringstream lineStream;
     lineStream.str(data);
@@ -142,7 +143,7 @@ void evaluation_function::add_sample(string data, state_merger* merger) {
     lineStream >> label >> length;
 
     apta* aut = merger->aut;
-    aut->root->depth=0;
+
     apta_node* node = aut->root;
  
 
@@ -150,13 +151,21 @@ void evaluation_function::add_sample(string data, state_merger* merger) {
     int depth=0;
     int num_alph=merger->seen.size();
 
+    // leading BLANK between string and label length 
+    string adv;
+    std::getline(lineStream, adv, ' '); 
+
     // init with current length of seen
-    for (int index=0; index < length+1; index++) {
+    for (int index=0; index < length; index++) {
         depth++;
         string symbol;
         string tuple;
         std::getline(lineStream,tuple,' ');
-        if(tuple=="") continue;
+        /* if(tuple=="") {
+         cout << index << "as index and length: " << length << endl;
+        cout << "processing " << data << endl;
+        break;
+        }*/
         string dat;
 
         std::stringstream elements;
@@ -164,6 +173,8 @@ void evaluation_function::add_sample(string data, state_merger* merger) {
 
         std::getline(elements,symbol,'/');
         std::getline(elements,dat);
+
+        cout << "length: " << length << ". label: " << label << ". index" << index << ". symbol: " << symbol << ". data: " << dat << "." << endl;
 
          if(merger->seen.find(symbol) == merger->seen.end()){
              aut->alphabet[num_alph] = symbol;
@@ -184,13 +195,16 @@ void evaluation_function::add_sample(string data, state_merger* merger) {
              
          }
          node->size = node->size + 1;
-         node->data->read_from(label, index, length-1, c, dat);
+         node->data->read_from(label, index, length, c, dat);
          node = node->child(c);
-         node->data->read_to(label, index, length-1, c, dat);
+         node->data->read_to(label, index, length, c, dat);
  
     }
 
-    if(depth-1 > aut->max_depth) aut->max_depth = depth-1;
+    if(depth > aut->max_depth) {
+         aut->max_depth = depth;
+        cout << "max depth increased " << depth << endl;
+    }
     node->type = label;
 
     //merger->todot(); 
@@ -220,7 +234,7 @@ void evaluation_function::read_file(istream &input_stream, state_merger* merger)
         apta_node* node = aut->root;
         aut->root->depth = 0;
         input_stream >> type >> length;
-        
+   
         int depth = 0;
         for(int index = 0; index < length; index++){
             depth++;
@@ -255,9 +269,12 @@ void evaluation_function::read_file(istream &input_stream, state_merger* merger)
             node = node->child(c);
             node->data->read_to(type, index, length, c, data);
         }
-        if(depth > aut->max_depth) aut->max_depth = depth;
+        if(depth > aut->max_depth) {
+             aut->max_depth = depth;
+           cout << "depth " << depth << endl;
+        }
         node->type = type;
-
+  
     cout << num_alph;
     cout << " ";
     cout << node_number;

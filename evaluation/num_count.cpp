@@ -123,7 +123,7 @@ int count_driven::num_sink_types(){
 };
 
 void count_driven::print_dot(iostream& output, state_merger* merger){
-    cerr << "printing" << endl;
+    cout << "printing count-data" << endl;
     apta* aut = merger->aut;
     //state_set s  = aut->get_states();
     state_set s  = merger->red_states;

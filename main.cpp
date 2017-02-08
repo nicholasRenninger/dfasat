@@ -197,14 +197,18 @@ void run(parameters* param) {
        // line by line processing 
        // add items       
        while (std::getline(input_stream, line)) {
-          merger.advance_apta(line, &merger);
-          // cout << merger.todot();
-	  // cout << merger.dot_output;
+          merger.advance_apta(line);
+
           // do work 
        }
+       
     }
 
-    /* sanity check: stream and batch produce same output? */
+       // debug: look at initial segment of the data structure:
+       cout << "root children: " << merger.aut->root->children.size() << " with site " << merger.aut->root->size << endl;
+       cout << "0 " << merger.aut->root->children[0] << " with size " << merger.aut->root->children[0]->size << endl;
+       cout << "1 " << merger.aut->root->children[1] << " with size " << merger.aut->root->children[1]->size << endl; 
+  
     cout << "Read data finished, processing:" << endl;
     // run the state merger
     int solution = -1;
@@ -221,7 +225,7 @@ void run(parameters* param) {
        oss << param->dot_file << (i+1) << ".aut";
        std::ostringstream oss2;
        oss2 << param->dot_file << (i+1) << ".dot";
-       cout << merger.seen.size() << endl;
+ 
        solution = dfasat(merger, param->sat_program, oss2.str().c_str(), oss.str().c_str());
        //bestfirst(&merger);
        if(solution != -1)
