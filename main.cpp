@@ -179,10 +179,35 @@ void run(parameters* param) {
     
     if(param->mode == "batch") {
        cout << "batch mode selected" << endl;  
+
        ifstream input_stream(param->dfa_file);
        merger.read_apta(input_stream);
    
        input_stream.close();
+
+       cout << "Read data finished, processing:" << endl;
+       // run the state merger
+       int solution = -1;
+    
+       std::ostringstream oss3;
+       oss3 << "init_" << param->dot_file << ".dot";
+       FILE* output = fopen(oss3.str().c_str(), "w");
+       merger.todot();
+       merger.print_dot(output);
+       fclose(output);
+    
+       for(int i = 0; i < param->runs; ++i){
+          std::ostringstream oss;
+          oss << param->dot_file << (i+1) << ".aut";
+          std::ostringstream oss2;
+          oss2 << param->dot_file << (i+1) << ".dot";
+
+          solution = dfasat(merger, param->sat_program, oss2.str().c_str(), oss.str().c_str());
+          //bestfirst(&merger);
+          if(solution != -1)
+             CLIQUE_BOUND = min(CLIQUE_BOUND, solution - OFFSET + EXTRA_STATES);
+         }
+
      } else {
        /* this is the outline for streaming mode  */ 
        cout << "stream mode selected" << endl;
@@ -204,33 +229,6 @@ void run(parameters* param) {
        
     }
 
-       // debug: look at initial segment of the data structure:
-       cout << "root children: " << merger.aut->root->children.size() << " with site " << merger.aut->root->size << endl;
-       cout << "0 " << merger.aut->root->children[0] << " with size " << merger.aut->root->children[0]->size << endl;
-       cout << "1 " << merger.aut->root->children[1] << " with size " << merger.aut->root->children[1]->size << endl; 
-  
-    cout << "Read data finished, processing:" << endl;
-    // run the state merger
-    int solution = -1;
-    
-    std::ostringstream oss3;
-    oss3 << "init_" << param->dot_file << ".dot";
-    FILE* output = fopen(oss3.str().c_str(), "w");
-    merger.todot();
-    merger.print_dot(output);
-    fclose(output);
-    
-    for(int i = 0; i < param->runs; ++i){
-       std::ostringstream oss;
-       oss << param->dot_file << (i+1) << ".aut";
-       std::ostringstream oss2;
-       oss2 << param->dot_file << (i+1) << ".dot";
- 
-       solution = dfasat(merger, param->sat_program, oss2.str().c_str(), oss.str().c_str());
-       //bestfirst(&merger);
-       if(solution != -1)
-          CLIQUE_BOUND = min(CLIQUE_BOUND, solution - OFFSET + EXTRA_STATES);
-      }
 }
 
 int main(int argc, const char *argv[]){
