@@ -162,7 +162,7 @@ int alergia::num_sink_types(){
     return 1;
 };
 
-void alergia::print_dot(iostream& output, state_merger* merger){
+/*void alergia::print_dot(iostream& output, state_merger* merger){
     apta* aut = merger->aut;
     state_set s  = merger->red_states;
     
@@ -229,12 +229,6 @@ void alergia::print_dot(iostream& output, state_merger* merger){
     
     s = *state; // merger->get_candidate_states();
 
-    /* 
-     * we don't care about candidates
-=======
-    /* we should not need non-red states
-     *
->>>>>>> master
     for(state_set::iterator it = s.begin(); it != s.end(); ++it){
         apta_node* n = *it;
         alergia_data* l = reinterpret_cast<alergia_data*>(n->data);
@@ -251,9 +245,8 @@ void alergia::print_dot(iostream& output, state_merger* merger){
             output << "\t\t" << n->number << " -> " << child->number << " [style=dotted label=\"" << aut->alph_str(symbol).c_str() << " [" << l->num_pos[symbol] << ":" << l->num_neg[symbol] << "]\"];\n";
         }
     }
-    */
 
     output << "}\n";
 
     delete state;
-};
+};*/

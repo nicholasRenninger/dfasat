@@ -11,6 +11,7 @@ extern int SYMBOL_COUNT;
 extern float CORRECTION;
 extern float CHECK_PARAMETER;
 extern bool USE_SINKS;
+extern bool USE_LOWER_BOUND;
 extern float LOWER_BOUND;
 extern int alphabet_size;
 extern int GREEDY_METHOD;

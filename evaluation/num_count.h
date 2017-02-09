@@ -40,7 +40,7 @@ public:
   virtual bool sink_consistent(apta_node* node, int type);
   virtual int num_sink_types();
 
-  virtual void print_dot(iostream&, state_merger *);
+  //virtual void print_dot(iostream&, state_merger *);
 };
 
 #endif

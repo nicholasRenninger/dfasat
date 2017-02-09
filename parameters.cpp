@@ -8,6 +8,7 @@ float CORRECTION = 0.0;
 float CHECK_PARAMETER = 0.0;
 bool USE_SINKS = 0;
 float MINIMUM_SCORE = 0;
+bool USE_LOWER_BOUND = 0;
 float LOWER_BOUND = 0;
 int GREEDY_METHOD = 0;
 int APTA_BOUND = 0;

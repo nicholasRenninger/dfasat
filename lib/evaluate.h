@@ -66,6 +66,19 @@ public:
     virtual void update(evaluation_data* other);
 /* Undo updates when undoing merge */
     virtual void undo(evaluation_data* other);
+
+/* Printing of nodes and transitions in dor output */
+    virtual void print_state_label(iostream& output);
+    virtual void print_state_style(iostream& output);
+    virtual void print_transition_label(iostream& output, apta_node* child);
+    virtual void print_transition_style(iostream& output, apta_node* child);
+    virtual void print_sink_label(iostream& output, int type);
+    virtual void print_sink_style(iostream& output, int type);
+    virtual void print_sink_transition_label(iostream& output, int type);
+    virtual void print_sink_transition_style(iostream& output, int type);
+
+    virtual int sink_type();
+    virtual bool sink_consistent(int type);
 };
 
 class evaluation_function  {
@@ -134,10 +147,10 @@ public:
   virtual bool sink_consistent(apta_node* node, int type);
   virtual int num_sink_types();
 
-  virtual void read_file(istream &input_stream, state_merger *);
+  //virtual void read_file(istream &input_stream, state_merger *);
   virtual void init(string data, state_merger* merger);
   virtual void add_sample(string data, state_merger* merger);
-  virtual void print_dot(iostream&, state_merger *);
+  //virtual void print_dot(iostream&, state_merger *);
 };
 
 

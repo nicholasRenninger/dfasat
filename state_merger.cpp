@@ -32,197 +32,48 @@ void state_merger::reset(){
     red_states.clear();
     blue_states.clear();
     red_states.insert(aut->root);
-    update();
+    update_red_blue();
 }
 
-/* iterators for the APTA and merged APTA */
-class APTA_iterator {
-public:
-    apta_node* base;
-    apta_node* current;
-    
-    APTA_iterator(apta_node* start){
-        base = start;
-        current = start;
-    }
-    
-    void increment() {
-        child_map::iterator it;
-        if(!current->children.empty()){ current = (*current->children.begin()).second; return; }
-        
-        it = current->source->children.find(current->label);
-        ++it;
-        if(it != current->source->children.end()){ current = (*it).second; return; }
-        
-        while(current->source != base){
-            current = current->source;
-            it = current->source->children.find(current->label);
-            ++it;
-            if(it != current->source->children.end()){ current = (*it).second; return; }
-        }
-        current = 0;
-    }
-    
-    apta_node* operator*() const { return current; }
-    APTA_iterator& operator++() { increment(); return *this; }
-};
 
-class merged_APTA_iterator {
-public:
-    apta_node* base;
-    apta_node* current;
-    
-    merged_APTA_iterator(apta_node* start){
-        base = start;
-        current = start;
-    }
-    
-    void increment() {
-        child_map::iterator it;
-        for(it = current->children.begin();it != current->children.end(); ++it){
-            if((*it).second->representative == 0){
-                current = (*it).second;
-                return;
-            }
-        }
-
-        apta_node* source = current;
-        while(source != base){
-            current = source;
-            source = source->source->find();
-            it = source->children.find(current->label);
-            ++it;
-            for(; it != source->children.end(); ++it){
-                if((*it).second->representative == 0){
-                    current = (*it).second;
-                    return;
-                }
-            }
-        }
-        current = 0;
-    }
-    
-    apta_node* operator*() const { return current; }
-    merged_APTA_iterator& operator++() { increment(); return *this; }
-};
-
-/* GET STATE LISTS */
-void add_states(apta_node* state, state_set& states){
-    if(states.find(state) != states.end()) return;
-    states.insert(state);
-    for(child_map::iterator it = state->children.begin();it != state->children.end(); ++it){
-        apta_node* child = (*it).second;
-        if(child != 0) add_states(child, states);
-    }
-}
-
-void add_merged_states(apta_node* state, state_set& states){
-    if(states.find(state) != states.end()) return;
-    states.insert(state);
-    for(child_map::iterator it = state->children.begin();it != state->children.end(); ++it){
-        apta_node* child = (*it).second;
-        add_merged_states(child->find(), states);
-    }
-}
-
-state_set &apta::get_states(apta_node* node){
-    state_set* states = new state_set();
-    add_states(node, *states);
-    return *states;
-}
-
-state_set &apta::get_states(){
-    state_set* states = new state_set();
-    add_states(root, *states);
-    return *states;
-}
-
-state_set &apta::get_merged_states(apta_node* node){
-    state_set* states = new state_set();
-    add_states(node->find(), *states);
-    return *states;
-}
-
-state_set &apta::get_merged_states(){
-    state_set* states = new state_set();
-    add_merged_states(root->find(), *states);
-    return *states;
-}
-
-state_set &apta::get_accepting_states(){
-    state_set states = get_states();
-    state_set* accepting_states = new state_set();
-    for(state_set::iterator it = states.begin();it != states.end();++it){
-        if((*it)->type == 1) accepting_states->insert(*it);
-    }
-    return *accepting_states;
-}
-
-state_set &apta::get_rejecting_states(){
-    state_set states = get_states();
-    state_set* rejecting_states = new state_set();
-    for(state_set::iterator it = states.begin();it != states.end();++it){
-        if((*it)->type != 1) rejecting_states->insert(*it);
-    }
-    return *rejecting_states;
-}
-
-state_set &state_merger::get_candidate_states(){
+/* BEGIN get special state sets, these are used by the SAT encoding
+ * red and blue sets can be accessed directly
+ */
+state_set& state_merger::get_candidate_states(){
     state_set states = blue_states;
     state_set* candidate_states = new state_set();
     for(state_set::iterator it = blue_states.begin();it != blue_states.end();++it){
-        if(sink_type(*it) == -1)
-            add_merged_states((*it)->find(),*candidate_states);
+        for(merged_APTA_iterator Ait = merged_APTA_iterator(*it); *Ait != 0; ++Ait){
+            candidate_states->insert(*Ait);
+        }
     }
     return *candidate_states;
 }
 
-state_set &state_merger::get_sink_states(){
+state_set& state_merger::get_sink_states(){
     state_set states = blue_states;
     state_set* sink_states = new state_set();
     for(state_set::iterator it = blue_states.begin();it != blue_states.end();++it){
-        if(sink_type(*it) != -1)
-            add_merged_states((*it)->find(),*sink_states);
+        if(sink_type(*it) != -1){
+            for(merged_APTA_iterator Ait = merged_APTA_iterator(*it); *Ait != 0; ++Ait){
+                sink_states->insert(*Ait);
+            }
+        }
     }
     return *sink_states;
 }
 
-// leak workaround
 int state_merger::get_final_apta_size(){
-    state_set *s = &get_candidate_states();
-    int count = s->size();
-    delete s;
-    return red_states.size() + count;
-
-}
-
-/* FIND/UNION functions */
-apta_node* apta_node::get_child(int c){
-    apta_node* rep = find();
-    if(rep->child(c) != 0){
-      return rep->child(c)->find();
+    int result;
+    for(merged_APTA_iterator Ait = merged_APTA_iterator(aut->root); *Ait != 0; ++Ait){
+        result++;
     }
-    return 0;
+    return result;
 }
+/* END get special state sets, these are used by the SAT encoding */
 
-apta_node* apta_node::find(){
-    if(representative == 0)
-        return this;
-
-    return representative->find();
-}
-
-apta_node* apta_node::find_until(apta_node* node, int i){
-    if(undo(i) == node)
-        return this;
-
-    if(representative == 0)
-        return 0;
-
-    return representative->find_until(node, i);
-}
-
-/* recursive state merging routines */
+/* BEGIN basic state merging routines, these can be accessed directly, for instance to compute a conflict graph
+ * the search routines do not access these methods directly, but use the perform and test merge routines below */
 
 /* standard merge, the process is interupted when an inconsistency is found */
 bool state_merger::merge(apta_node* left, apta_node* right){
@@ -284,7 +135,7 @@ void state_merger::merge_force(apta_node* left, apta_node* right){
     }
 }
 
-/* testing merge, no actual merge is performed, only consistency and heuristic are computed */
+/* testing merge, no actual merge is performed, only consistency and score are computed */
 bool state_merger::merge_test(apta_node* left, apta_node* right){
     bool result = true;
     if(left == 0 || right == 0) return true;
@@ -311,9 +162,8 @@ bool state_merger::merge_test(apta_node* left, apta_node* right){
     return result;
 }
 
-/* undo merge, works for both forcing and standard merging */
+/* undo merge, works for both forcing and standard merging, not needed for testing merge */
 void state_merger::undo_merge(apta_node* left, apta_node* right){
-    //cerr << "undo merge: " << left << " " << right << endl;
     if(left == 0 || right == 0) return;
     if(right->representative != left) return;
 
@@ -337,8 +187,10 @@ void state_merger::undo_merge(apta_node* left, apta_node* right){
     eval->undo_update(this, left, right);
 }
 
-/* update red blue sets after performing a merge */
-void state_merger::update(){
+/* END basic state merging routines */
+
+/* update red blue sets after performing a merge, we keep these in memory instead of recomputing them */
+void state_merger::update_red_blue(){
     state_set new_red;
     state_set new_blue;
     for(state_set::iterator it = red_states.begin(); it != red_states.end(); ++it){
@@ -358,35 +210,9 @@ void state_merger::update(){
     eval->update(this);
 }
 
-/* functions called by state merging algorithms */
-apta_node* state_merger::extend_red(){
-    for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
-        apta_node* blue = *it;
-        bool found = false;
-        if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
+/* BEGIN merge functions called by state merging algorithms */
 
-        for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
-            apta_node* red = *it2;
-            
-            int score = testmerge(red, blue);
-            if(score != -1) found = true;
-        }
-        
-        if(found == false){
-            blue_states.erase(blue);
-            red_states.insert(blue);
-            blue->red = true;
-
-            for(int i = 0; i < alphabet_size; ++i){
-                apta_node* child = blue->get_child(i);
-                if(child != 0) blue_states.insert(child);
-            }
-            return blue;
-        }
-    }
-    return 0;
-}
-
+/* make a given blue state red, and its children blue */
 void state_merger::extend(apta_node* blue){
     blue_states.erase(blue);
     red_states.insert(blue);
@@ -398,6 +224,7 @@ void state_merger::extend(apta_node* blue){
     }
 }
 
+/* undo making a given blue state red */
 void state_merger::undo_extend(apta_node* blue){
     blue_states.insert(blue);
     red_states.erase(blue);
@@ -409,40 +236,51 @@ void state_merger::undo_extend(apta_node* blue){
     }
 }
 
-bool state_merger::perform_merge(apta_node* left, apta_node* right){
-    /*
-    eval->reset(this);
-    bool result = merge(left->find(), right->find());
-    if(result == false || eval->compute_consistency(this, left, right) == false){
-        undo_merge(left->find(),right->find());
-        return false;
+/* make the first blue state (ordered by size) red, and its children blue */
+apta_node* state_merger::extend_red(){
+    for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
+        apta_node* blue = *it;
+        bool found = false;
+        
+        if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
+
+        for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
+            apta_node* red = *it2;
+            
+            score_pair score = test_merge(red, blue);
+            if(score.first == true) found = true;
+        }
+        
+        if(found == false){
+            extend(blue);
+            return blue;
+        }
     }
-    */
+    return 0;
+}
+
+/* perform a merge, assumed to succeed, no testing for consistency or score computation */
+void state_merger::perform_merge(apta_node* left, apta_node* right){
     merge_force(left, right);
-    update();
-    return true;
+    update_red_blue();
 }
 
-bool state_merger::undo_perform_merge(apta_node* left, apta_node* right){
-    /*
-    eval->reset(this);
-    bool result = merge(left->find(), right->find());
-    if(result == false || eval->compute_consistency(this, left, right) == false){
-        undo_merge(left->find(),right->find());
-        return false;
-    }
-    */
+/* undo a merge, assumed to succeed, no testing for consistency or score computation */
+void state_merger::undo_perform_merge(apta_node* left, apta_node* right){
     undo_merge(left, right);
-    update();
-    return true;
+    update_red_blue();
 }
 
-int state_merger::testmerge(apta_node* left, apta_node* right){
+/* test a merge, behavior depending on input parameters
+ * it performs a merge, computes its consistency and score, and undos the merge
+ * returns a <consistency,score> pair */
+score_pair state_merger::test_merge(apta_node* left, apta_node* right){
     eval->reset(this);
-    int result = -1;
-    bool merge_result = false;
     
-    if(eval->compute_before_merge) result = eval->compute_score(this, left, right);
+    double score_result = -1;
+    bool   merge_result = false;
+    
+    if(eval->compute_before_merge) score_result = eval->compute_score(this, left, right);
     
     if(MERGE_WHEN_TESTING){
         merge_result = merge(left,right);
@@ -450,63 +288,33 @@ int state_merger::testmerge(apta_node* left, apta_node* right){
         merge_result = merge_test(left,right);
     }
     
-    if(merge_result && !eval->compute_before_merge) result = eval->compute_score(this, left, right);
+    if(merge_result && !eval->compute_before_merge) score_result = eval->compute_score(this, left, right);
 
-    if((merge_result && eval->compute_consistency(this, left, right) == false) ||  result < LOWER_BOUND) result = -1;
+    if((merge_result && eval->compute_consistency(this, left, right) == false)) merge_result = false;
+    if(USE_LOWER_BOUND && score_result < LOWER_BOUND) merge_result = -1;
     
     if(MERGE_WHEN_TESTING) undo_merge(left,right);
     
-    if(merge_result == false) return -1;
-    return result;
+    return score_pair(merge_result, score_result);
 }
 
-int state_merger::test_local_merge(apta_node* left, apta_node* right){
-    if(left == 0 || right == 0) return -1;
-    eval->reset(this);
-    if(eval->consistent(this, left, right) == false) return -1;
-    
-    if(left->red && RED_FIXED){
-        for(child_map::iterator it = right->children.begin(); it != right->children.end(); ++it)
-            if(left->child((*it).first) == 0 && !eval->sink_consistent((*it).second, 0)) return -1;
-    }
-    
-    if(!eval->compute_before_merge)
-        eval->update_score(this, left, right);
-    return eval->compute_score(this, left, right);
-}
-
+/* returns all possible merges given the current sets of red and blue states
+ * behavior depends on input parameters
+ * note that state sets are ordered on size
+ * the merge score is used as key in the returned merge_map */
 merge_map* state_merger::get_possible_merges(){
-    states = aut->get_merged_states();
-    for(merged_APTA_iterator Ait = merged_APTA_iterator(aut->root); *Ait != 0; ++Ait){
-        if(states.find(*Ait) == states.end()) cerr << "mAit element not found " << (*Ait)->source->number << " " << (*Ait)->label << " " << (*Ait)->number << endl;
-        else states.erase(*Ait);
-    }
-    if(!states.empty()) cerr << "mAit set not empty" << endl;
-
-    eval->reset(this);
     merge_map* mset = new merge_map();
     
-    /*apta_node* max_blue = 0;
-    for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
-        if(!MERGE_SINKS_DSOLVE && (sink_type(*it) != -1)) continue;
-        if(max_blue == 0 || max_blue->size < (*it)->size)
-            max_blue = *it;
-    }*/
-    
-
     for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
         apta_node* blue = *(it);
         if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
         
-        //if(*it != max_blue) continue;
-
-
         for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;
 
-            int score = testmerge(red,blue);
-            if(score > -1){
-                mset->insert(pair<int, pair<apta_node*, apta_node*> >(score, pair<apta_node*, apta_node*>(red, blue)));
+            score_pair score = test_merge(red,blue);
+            if(score.first == true){
+                mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(red, blue)));
             }
         }
         
@@ -516,9 +324,9 @@ merge_map* state_merger::get_possible_merges(){
                 
                 if(blue == blue2) continue;
 
-                int score = testmerge(blue2,blue);
-                if(score > -1){
-                    mset->insert(pair<int, pair<apta_node*, apta_node*> >(score, pair<apta_node*, apta_node*>(blue2, blue)));
+                score_pair score = test_merge(blue2,blue);
+                if(score.first == true){
+                    mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(blue2, blue)));
                 }
             }
         }
@@ -528,10 +336,13 @@ merge_map* state_merger::get_possible_merges(){
     return mset;
 }
 
+/* returns the highest scoring merge given the current sets of red and blue states
+ * behavior depends on input parameters
+ * note that state sets are ordered on size
+ * returns (0,0) if none exists (given the input parameters) */
 merge_pair* state_merger::get_best_merge(){
-    eval->reset(this);
     merge_pair* best = new merge_pair(0,0);
-    int result = -1;
+    double result = -1;
 
     for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
         apta_node* blue = *(it);
@@ -540,11 +351,11 @@ merge_pair* state_merger::get_best_merge(){
         for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;
             
-            int score = testmerge(red,blue);
-            if(score > -1 && score > result){
+            score_pair score = test_merge(red,blue);
+            if(score.first == true && score.second > result){
                 best->first = red;
                 best->second = blue;
-                result = score;
+                result = score.second;
             }
         }
         
@@ -554,11 +365,11 @@ merge_pair* state_merger::get_best_merge(){
                 
                 if(blue == blue2) continue;
 
-                int score = testmerge(blue2,blue);
-                if(score > -1 && score > result){
+                score_pair score = test_merge(blue2,blue);
+                if(score.first == true && score.second > result){
                     best->first = blue2;
                     best->second = blue;
-                    result = score;
+                    result = score.second;
                 }
             }
         }
@@ -567,7 +378,7 @@ merge_pair* state_merger::get_best_merge(){
     }
     return best;
 }
-
+/* END merge functions called by state merging algorithms */
 
 /* input function 	        *
  * pass along to  eval fct      */
@@ -583,7 +394,7 @@ void state_merger::advance_apta(string data) {
 
 // batch mode methods
 void state_merger::read_apta(istream &input_stream){
-    eval->read_file(input_stream, this);
+    aut->read_file(input_stream);
 }
 
 void state_merger::read_apta(string dfa_file){
@@ -605,7 +416,7 @@ void state_merger::read_apta(vector<string> dfa_data){
 /* output functions */
 void state_merger::todot(){
     stringstream dot_output_buf;
-    eval->print_dot(dot_output_buf, this);
+    aut->print_dot(dot_output_buf);
     dot_output = dot_output_buf.str();
 }
 

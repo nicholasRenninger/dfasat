@@ -349,7 +349,7 @@ void erase_red_conflict_colours(){
         apta_node* left = *it;
         for(state_set::iterator it2 = non_red_states.begin(); it2 != non_red_states.end(); ++it2){
             apta_node* right = *it2;
-            if(merger.testmerge(left,right) == -1) x[right->satnumber][left->colour] = -2;
+            if(merger.test_merge(left,right) == -1) x[right->satnumber][left->colour] = -2;
             if(right->accepting_paths != 0 || right->num_accepting != 0) x[right->satnumber][0] = -2;
             if(right->rejecting_paths != 0 || right->num_rejecting != 0) x[right->satnumber][1] = -2;
         }
@@ -402,7 +402,7 @@ int print_conflicts(){
             if(left->num_accepting != 0 && right->num_rejecting != 0) continue;
             if(left->num_rejecting != 0 && right->num_accepting != 0) continue;
             
-            if(merger.testmerge(left, right) == -1){
+            if(merger.test_merge(left, right) == -1){
                 for(int k = 0; k < dfa_size; ++k)
                     num += print_clause(false, x[left->satnumber][k], false, x[right->satnumber][k]);
             }

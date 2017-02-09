@@ -194,11 +194,8 @@ void mse_error::reset(state_merger *merger ){
     
     return;
    
-    // leak workaround 
-    state_set *state = &merger->aut->get_merged_states();
-    state_set  states = *state;
-    for(state_set::iterator it = states.begin(); it != states.end(); ++it){
-        apta_node* node = *it;
+    for(merged_APTA_iterator Ait = merged_APTA_iterator(merger->aut->root); *Ait != 0; ++Ait){
+        apta_node* node = *Ait;
         mse_data* l = (mse_data*) node->data;
 
         if (l->occs.size() >= STATE_COUNT){
@@ -208,7 +205,6 @@ void mse_error::reset(state_merger *merger ){
             aic_states.insert(node);
         }
     }
-    delete state; 
     //prev_AIC = 2.0*num_parameters + (num_data_points * log(RSS_total / num_data_points));
     prev_AIC = 2.0*num_parameters + (num_data_points * log(RSS_total/num_data_points));// + (2.0*num_parameters * (num_parameters + 1.0))/(num_data_points - num_parameters - 1);
     //cerr << " next " << " num_par: " << num_parameters << " num_dat: " << num_data_points << " RSS: " << RSS_total << " AIC: " << 2.0*num_parameters + (num_data_points * log(RSS_total / num_data_points)) << endl;
@@ -239,7 +235,7 @@ int mse_error::num_sink_types(){
     return 1;
 };
 
-void mse_error::print_dot(iostream& output, state_merger* merger){
+/*void mse_error::print_dot(iostream& output, state_merger* merger){
     apta* aut = merger->aut;
     state_set s  = merger->red_states;
     
@@ -398,5 +394,5 @@ void mse_error::print_dot(iostream& output, state_merger* merger){
         }
     }
     output << "}\n";
-};
+};*/
 

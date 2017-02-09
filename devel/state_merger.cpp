@@ -387,7 +387,7 @@ bool state_merger::extend_red(){
         for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;
 
-            int score = testmerge(red, blue);
+            int score = test_merge(red, blue);
             if(score != -1) found = true;
         }
         
@@ -416,7 +416,7 @@ bool state_merger::perform_merge(apta_node* left, apta_node* right){
     return true;
 }
 
-int state_merger::testmerge(apta_node* left, apta_node* right){
+int state_merger::test_merge(apta_node* left, apta_node* right){
     eval->reset(this);
     int result = -1;
     if(eval->compute_before_merge) result = eval->compute_score(this, left, right);
@@ -437,7 +437,7 @@ merge_map &state_merger::get_possible_merges(){
         for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;
             
-            int score = testmerge(red,blue);
+            int score = test_merge(red,blue);
             if(score > -1){
                 mset->insert(pair<int, pair<apta_node*, apta_node*> >(score, pair<apta_node*, apta_node*>(red, blue)));
             }

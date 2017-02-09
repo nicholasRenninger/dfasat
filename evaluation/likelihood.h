@@ -26,7 +26,7 @@ public:
   virtual bool compute_consistency(state_merger *merger, apta_node* left, apta_node* right);
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
   virtual void reset(state_merger *merger);
-  virtual void print_dot(iostream&, state_merger *);
+  //virtual void print_dot(iostream&, state_merger *);
 };
 
 #endif

@@ -75,8 +75,9 @@ public:
 
 //typedef set<apta_node*, total_weight_compare> state_set;
 typedef list< pair<apta_node*, apta_node*> > merge_list;
-typedef multimap<int, pair<apta_node*, apta_node*> > merge_map;
+typedef multimap<double, pair<apta_node*, apta_node*> > merge_map;
 typedef pair<apta_node*, apta_node*> merge_pair;
+typedef pair<bool, double> score_pair;
 
 typedef list<apta_node*> node_list;
 typedef list<int> int_list;
@@ -117,16 +118,16 @@ public:
     apta_node* extend_red();
 
     /* update the blue and red states */
-    void update();
+    void update_red_blue();
 
-    int testmerge(apta_node*,apta_node*);
-    int test_local_merge(apta_node* red, apta_node* blue);
+    score_pair test_merge(apta_node*,apta_node*);
+    score_pair test_local_merge(apta_node* red, apta_node* blue);
 
-    bool perform_merge(apta_node*, apta_node*);
-    bool undo_perform_merge(apta_node*, apta_node*);
+    void perform_merge(apta_node*, apta_node*);
+    void undo_perform_merge(apta_node*, apta_node*);
 
-    state_set &get_candidate_states();
-    state_set &get_sink_states();
+    state_set& get_candidate_states();
+    state_set& get_sink_states();
 
     int get_final_apta_size();
 

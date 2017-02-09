@@ -159,7 +159,7 @@ public:
     /* find unmergable states */
     bool extend_red();
     
-    int testmerge(apta_node*,apta_node*);
+    int test_merge(apta_node*,apta_node*);
     
     bool perform_merge(apta_node*, apta_node*);
     

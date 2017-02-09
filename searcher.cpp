@@ -33,7 +33,6 @@ int greedy(state_merger* merger){
     }
     merge_pair* top_pair = merger->get_best_merge();
     if(top_pair->first != 0){
-        //cerr << merger->testmerge(top_pair->first, top_pair->second) << " ";
         merger->perform_merge(top_pair->first, top_pair->second);
         result = greedy(merger);
         merger->undo_perform_merge(top_pair->first, top_pair->second);
@@ -52,10 +51,10 @@ int greedy(state_merger* merger){
 	return result;
 }
 
-int compute_score(state_merger* merger){
+double compute_score(state_merger* merger){
     if(SEARCH_DEEP) return greedy(merger);
     merge_pair* top_pair = merger->get_best_merge();
-    return merger->testmerge(top_pair->first, top_pair->second);
+    return merger->test_merge(top_pair->first, top_pair->second).second;
 }
 
 void add_to_q(state_merger* merger){

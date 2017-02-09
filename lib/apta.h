@@ -16,6 +16,7 @@ using namespace std;
 
 class apta;
 class apta_node;
+class APTA_iterator;
 struct size_compare;
 class evaluation_data;
 
@@ -80,9 +81,37 @@ public:
         if(it == det_undo.end()) return 0;
         return (*it).second;
     }
+};
 
-    apta_node* get_next_forward_node();
-    apta_node* get_next_backward_node();
+/* iterators for the APTA and merged APTA */
+class APTA_iterator {
+public:
+    apta_node* base;
+    apta_node* current;
+    
+    APTA_iterator(apta_node* start);
+    
+    apta_node* next_forward();
+    apta_node* next_backward();
+    void increment();
+    
+    apta_node* operator*() const { return current; }
+    APTA_iterator& operator++() { increment(); return *this; }
+};
+
+class merged_APTA_iterator {
+public:
+    apta_node* base;
+    apta_node* current;
+    
+    merged_APTA_iterator(apta_node* start);
+
+    apta_node* next_forward();
+    apta_node* next_backward();
+    void increment();
+    
+    apta_node* operator*() const { return current; }
+    merged_APTA_iterator& operator++() { increment(); return *this; }
 };
 
 struct size_compare
@@ -118,19 +147,9 @@ public:
     apta();
     ~apta();
 
-    state_set &get_states();
-    state_set &get_states(apta_node*);
-    state_set &get_merged_states();
-    state_set &get_merged_states(apta_node*);
-    state_set &get_accepting_states();
-    state_set &get_rejecting_states();
-
     string alph_str(int i);
-
-    /* iterator */
-    apta_node* get_next_node(apta_node* current);
-    apta_node* get_next_merged_node(apta_node* current);
-
+    void read_file(istream &input_stream);
+    void print_dot(iostream& output);
 };
 
 #endif

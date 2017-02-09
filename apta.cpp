@@ -27,7 +27,9 @@ apta::~apta(){
     delete root;
 }
 
-/*void apta::read_file(ifstream &input_stream){
+/* for batch mode */
+// i want tis to map back to the sample by sample read functions from streaming
+void apta::read_file(istream &input_stream){
     int num_words;
     int num_alph = 0;
     map<string, int> seen;
@@ -37,11 +39,10 @@ apta::~apta(){
     for(int line = 0; line < num_words; line++){
         int type;
         int length;
-        apta_node* node = root;
-        root->depth = 0;
         input_stream >> type >> length;
         
         int depth = 0;
+        apta_node* node = root;
         for(int index = 0; index < length; index++){
             depth++;
             string tuple;
@@ -61,17 +62,72 @@ apta::~apta(){
                 num_alph++;
             }
             int c = seen[symbol];
-            
-            node->add_target(c);
+            if(node->child(c) == 0){
+                apta_node* next_node = new apta_node();
+                node->children[c] = next_node;
+                next_node->source = node;
+                next_node->label  = c;
+                next_node->number = node_number++;
+                next_node->depth = depth;
+            }
+            node->size = node->size + 1;
             node->data->read_from(type, index, length, c, data);
-            
             node = node->child(c);
             node->data->read_to(type, index, length, c, data);
         }
         if(depth > max_depth) max_depth = depth;
         node->type = type;
     }
-};*/
+};
+
+void apta::print_dot(iostream& output){
+    output << "digraph DFA {\n";
+    output << "\t" << root->find()->number << " [label=\"root\" shape=box];\n";
+    output << "\t\tI -> " << root->find()->number << ";\n";
+    for(merged_APTA_iterator Ait = merged_APTA_iterator(root); *Ait != 0; ++Ait){
+        apta_node* n = *Ait;
+        output << "\t" << n->number << " [ label=\"";
+        n->data->print_state_label(output);
+        output << "\" ";
+        n->data->print_state_style(output);
+        if(n->red == false) output << " style=dotted";
+        output << " ];\n";
+
+        state_set childnodes;
+        set<int> sinks;
+        for(child_map::iterator it = n->children.begin(); it != n->children.end(); ++it){
+            apta_node* child = (*it).second;
+            if(child->data->sink_type() != -1){
+                sinks.insert(child->data->sink_type());
+            } else {
+                childnodes.insert(child);
+            }
+        }
+        for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
+            apta_node* child = *it2;
+            output << "\t\t" << n->number << " -> " << child->number << " [label=\"";
+            n->data->print_transition_label(output, child);
+            output << "\" ";
+            n->data->print_transition_style(output, child);
+            output << " ];\n";
+        }
+        for(set<int>::iterator it = sinks.begin(); it != sinks.end(); ++it){
+            int stype = *it;
+            output << "\tS" << n->number << "t" << stype << " [ label=\"";
+            n->data->print_sink_label(output, stype);
+            output << "\" ";
+            n->data->print_sink_style(output, stype);
+            output << " ];\n";
+            
+            output << "\t\t" << n->number << " -> S" << n->number << "t" << stype << " [ label=\"";
+            n->data->print_sink_transition_label(output, stype);
+            output << "\" ";
+            n->data->print_sink_transition_style(output, stype);
+            output << " ];\n";
+        }
+    }
+    output << "}\n";
+};
 
 string apta::alph_str(int i){
     return alphabet[i];
@@ -98,6 +154,113 @@ apta_node::apta_node(){
     } catch(const std::out_of_range& oor ) {
        std::cerr << "No data type found..." << std::endl;
     }
+}
+
+/* FIND/UNION functions */
+apta_node* apta_node::get_child(int c){
+    apta_node* rep = find();
+    if(rep->child(c) != 0){
+      return rep->child(c)->find();
+    }
+    return 0;
+}
+
+apta_node* apta_node::find(){
+    if(representative == 0)
+        return this;
+
+    return representative->find();
+}
+
+apta_node* apta_node::find_until(apta_node* node, int i){
+    if(undo(i) == node)
+        return this;
+
+    if(representative == 0)
+        return 0;
+
+    return representative->find_until(node, i);
+}
+
+/* iterators for the APTA and merged APTA */
+APTA_iterator::APTA_iterator(apta_node* start){
+    base = start;
+    current = start;
+}
+    
+apta_node* APTA_iterator::next_forward() {
+    child_map::iterator it;
+    for(it = current->children.begin();it != current->children.end(); ++it){
+        if((*it).second->source == current){
+            return (*it).second;
+        }
+    }
+    return 0;
+}
+    
+apta_node* APTA_iterator::next_backward() {
+    child_map::iterator it;
+    apta_node* source = current;
+    while(source != base){
+        current = source;
+        source = source->source->find();
+        it = source->children.find(current->label);
+        ++it;
+        for(; it != source->children.end(); ++it){
+            if((*it).second->source == current){
+                return (*it).second;
+            }
+        }
+    }
+    return 0;
+}
+
+void APTA_iterator::increment() {
+    apta_node* next = next_forward();
+    if(next != 0){ current = next; return; }
+    next = next_backward();
+    if(next != 0){ current = next; return; }
+    current = 0;
+}
+
+merged_APTA_iterator::merged_APTA_iterator(apta_node* start){
+    base = start;
+    current = start;
+}
+    
+apta_node* merged_APTA_iterator::next_forward() {
+    child_map::iterator it;
+    for(it = current->children.begin();it != current->children.end(); ++it){
+        if((*it).second->representative == 0){
+            return (*it).second;
+        }
+    }
+    return 0;
+}
+
+apta_node* merged_APTA_iterator::next_backward() {
+    child_map::iterator it;
+    apta_node* source = current;
+    while(source != base){
+        current = source;
+        source = source->source->find();
+        it = source->children.find(current->label);
+        ++it;
+        for(; it != source->children.end(); ++it){
+            if((*it).second->representative == 0){
+                return (*it).second;
+            }
+        }
+    }
+    return 0;
+}
+
+void merged_APTA_iterator::increment() {
+    apta_node* next = next_forward();
+    if(next != 0){ current = next; return; }
+    next = next_backward();
+    if(next != 0){ current = next; return; }
+    current = 0;
 }
 
 /*apta_node::add_target(int symbol){

@@ -133,6 +133,6 @@ void likelihoodratio::reset(state_merger *merger){
 };
 
 
-void likelihoodratio::print_dot(iostream& output, state_merger* merger){
+/*void likelihoodratio::print_dot(iostream& output, state_merger* merger){
     alergia::print_dot(output, merger);
-};
+};*/

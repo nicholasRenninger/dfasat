@@ -101,15 +101,13 @@ void kldistance::reset(state_merger *merger){
   extra_parameters = 0;
 };
 
-void kldistance::print_dot(iostream& output, state_merger* merger){
+/*void kldistance::print_dot(iostream& output, state_merger* merger){
     count_driven::print_dot(output, merger);
-};
+};*/
 
 void kldistance::initialize(state_merger* merger){
-    state_set *state = &merger->aut->get_merged_states();
-    state_set  states = *state;
-    for(state_set::iterator it = states.begin(); it != states.end(); ++it){
-        apta_node* node = *it;
+    for(merged_APTA_iterator Ait = merged_APTA_iterator(merger->aut->root); *Ait != 0; ++Ait){
+        apta_node* node = *Ait;
         kl_data* l = (kl_data*) node->data;
         
         if(l->accepting_paths < STATE_COUNT) continue;
@@ -120,6 +118,5 @@ void kldistance::initialize(state_merger* merger){
             l->original_probability_count[symbol] = count * (count / (double)l->accepting_paths);
         }
     }
-    delete state;
 };
 

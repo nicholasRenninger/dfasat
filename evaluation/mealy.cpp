@@ -103,7 +103,7 @@ void mealy::reset(state_merger* merger){
     num_unmatched = 0;
 };
 
-void mealy::print_dot(iostream& output, state_merger* merger){
+/*void mealy::print_dot(iostream& output, state_merger* merger){
     apta* aut = merger->aut;
     state_set s  = merger->red_states;
     
@@ -151,5 +151,5 @@ void mealy::print_dot(iostream& output, state_merger* merger){
         }
     }
     output << "}\n";
-};
+};*/
 

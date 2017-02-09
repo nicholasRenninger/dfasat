@@ -293,7 +293,7 @@ int fixed_depth_mse_error::num_sink_types(){
     return 1;
 };
 
-void fixed_depth_mse_error::print_dot(iostream& output, state_merger* merger){
+/*void fixed_depth_mse_error::print_dot(iostream& output, state_merger* merger){
     apta* aut = merger->aut;
     state_set candidates  = merger->get_candidate_states();
     
@@ -347,7 +347,6 @@ void fixed_depth_mse_error::print_dot(iostream& output, state_merger* merger){
     state = &merger->aut->get_merged_states();
     states = *state;
     
-/*
     for(int i = 0; i < aut->max_depth; ++i) fprintf(output,"rg%i -> rgb%i [style=invis]; ",i,i);
     for(int i = 0; i < aut->max_depth; ++i) fprintf(output,"rgb%i -> rb%i [style=invis]; ",i,i);
 
@@ -371,7 +370,7 @@ void fixed_depth_mse_error::print_dot(iostream& output, state_merger* merger){
         fprintf(output,"rgb%i->rgb%i [style=invis];\n ",i, i+1);
         fprintf(output,"rb%i->rb%i [style=invis];\n ",i, i+1);
     }
-*/
+
 
     for(state_set::iterator it = merger->red_states.begin(); it != merger->red_states.end(); ++it){
         apta_node* n = *it;
@@ -379,11 +378,11 @@ void fixed_depth_mse_error::print_dot(iostream& output, state_merger* merger){
 
         int node_size = 1 + (int)((float)(l->occs.size())/10.0);
 
-        /*if(l->ald.num_accepting != 0)
+        if(l->ald.num_accepting != 0)
             fprintf(output,"\t%i [shape=box style=\"filled\" color=\"green\" label=\"%i\"];\n", n->number, l->ald.num_accepting);
         else if(l->ald.num_rejecting != 0)
             fprintf(output,"\t%i [shape=box style=\"filled\" color=\"red\" label=\"%i\"];\n", n->number, l->ald.num_rejecting);
-        else {*/
+        else {
             output << "\t" << n->number << " [shape=box nodesep=1 style=\"filled\"";
             if(l->occs.size() == 0)
                 output << "color=\"white\"";
@@ -444,4 +443,4 @@ void fixed_depth_mse_error::print_dot(iostream& output, state_merger* merger){
 
     }
     output << "}\n";
-};
+};*/
