@@ -248,7 +248,7 @@ apta_node* state_merger::extend_red(){
             apta_node* red = *it2;
             
             score_pair score = test_merge(red, blue);
-            if(score.first == true) found = true;
+            if(score.first == true){ found = true; break; }
         }
         
         if(found == false){
