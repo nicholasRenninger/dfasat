@@ -63,8 +63,9 @@ state_set& state_merger::get_sink_states(){
     return *sink_states;
 }
 
+
 int state_merger::get_final_apta_size(){
-    int result;
+    int result = 0;
     for(merged_APTA_iterator Ait = merged_APTA_iterator(aut->root); *Ait != 0; ++Ait){
         result++;
     }
