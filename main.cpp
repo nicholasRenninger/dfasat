@@ -171,16 +171,22 @@ void run(parameters* param) {
     } catch(const std::out_of_range& oor ) {
        std::cerr << "No named heuristic found, defaulting back on -h flag" << std::endl;
     }
+
+    apta* the_apta = new apta();
+    merger = state_merger(eval,the_apta);
+
+    cout << "creating apta " <<  "using " << eval_string << endl; 
     
     if(param->mode == "batch") {
-       cout << "creating apta " <<  "using " << eval_string << endl; 
-       apta* the_apta = new apta();
-       merger = state_merger(eval,the_apta);
-    
-    
+       cout << "batch mode selected" << endl;  
+
        ifstream input_stream(param->dfa_file);
        merger.read_apta(input_stream);
    
+       input_stream.close();
+
+       cout << "Read data finished, processing:" << endl;
+       // run the state merger
        int solution = -1;
     
        std::ostringstream oss3;
@@ -191,26 +197,22 @@ void run(parameters* param) {
        fclose(output);
     
        for(int i = 0; i < param->runs; ++i){
-           std::ostringstream oss;
-           oss << param->dot_file << (i+1) << ".aut";
-           std::ostringstream oss2;
-           oss2 << param->dot_file << (i+1) << ".dot";
-           solution = dfasat(merger, param->sat_program, oss2.str().c_str(), oss.str().c_str());
-           //bestfirst(&merger);
-           if(solution != -1)
-              CLIQUE_BOUND = min(CLIQUE_BOUND, solution - OFFSET + EXTRA_STATES);
-          }
-      input_stream.close();
+          std::ostringstream oss;
+          oss << param->dot_file << (i+1) << ".aut";
+          std::ostringstream oss2;
+          oss2 << param->dot_file << (i+1) << ".dot";
+
+          solution = dfasat(merger, param->sat_program, oss2.str().c_str(), oss.str().c_str());
+          //bestfirst(&merger);
+          if(solution != -1)
+             CLIQUE_BOUND = min(CLIQUE_BOUND, solution - OFFSET + EXTRA_STATES);
+         }
+
      } else {
        /* this is the outline for streaming mode  */ 
        cout << "stream mode selected" << endl;
-
-       apta* the_apta = new apta();
-       merger = state_merger(eval,the_apta);
-    
     
        ifstream input_stream(param->dfa_file);
-       //merger.read_apta(input_stream);
 
        // first line has alphabet size and 
        std::string line;
@@ -219,16 +221,15 @@ void run(parameters* param) {
 
        // line by line processing 
        // add items       
-         while (std::getline(input_stream, line)) {
-     
-             merger.advance_apta(line);
+       while (std::getline(input_stream, line)) {
+          merger.advance_apta(line);
 
-             // do work
-             
-         }
+          // do work 
+       }
+       
     }
-}
 
+}
 
 int main(int argc, const char *argv[]){
     

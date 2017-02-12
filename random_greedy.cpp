@@ -23,7 +23,7 @@ merge_list random_greedy_bounded_run(state_merger* merger){
 
             if(!EXTEND_ANY_RED && possible_merges->empty()){
                 if(merger->extend_red() != 0) { cerr << "+"; continue; }
-                cout << "no more possible merges" << endl;
+                cout << "no more possible merges with extend any red" << endl;
                 break;
             }
             if(possible_merges->empty()){

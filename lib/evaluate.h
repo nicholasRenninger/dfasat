@@ -91,9 +91,9 @@ public:
 /* Global data */
   bool inconsistency_found;
   int num_merges;
-  
+    
 /* Boolean indicating the evaluation function type;
-   there are two kinds: computed before or after/during a merge.
+   are are two kinds: computed before or after/during a merge.
    When computed before a merge, a merge is only tried for consistency.
    Functions computed before merging (typically) do not take loops that
    the merge creates into account.

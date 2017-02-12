@@ -88,6 +88,10 @@ typedef map<int, int> num_map;
 
 class state_merger{
 public:
+    /* for building the apta  */
+    map<string, int> seen;
+    int node_number = 1; 
+
     merger_context context;
     apta* aut;
     /* core of merge targets */
