@@ -23,7 +23,7 @@ merge_list random_greedy_bounded_run(state_merger* merger){
 
             if(!EXTEND_ANY_RED && possible_merges->empty()){
                 if(merger->extend_red() != 0) { cerr << "+"; continue; }
-                cout << "no more possible merges" << endl;
+                cout << "no more possible merges with extend any red" << endl;
                 break;
             }
             if(possible_merges->empty()){
@@ -68,9 +68,9 @@ merge_list random_greedy_bounded_run(state_merger* merger){
             delete possible_merges;
         }
         cout << endl;
-        int size = merger->get_final_apta_size();
+        int size =  merger->get_final_apta_size();
         int red_size = merger->red_states.size();
-        cout << endl << "found intermediate solution with size " << size << " and " << red_size << " red states" << endl;
+        cout << endl << "found intermediate solution with " << size << " and " << red_size << " red states" << endl;
         return all_merges;
     }
     return all_merges;
