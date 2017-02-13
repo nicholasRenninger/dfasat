@@ -220,11 +220,27 @@ void run(parameters* param) {
        merger.init_apta(line);
 
        // line by line processing 
-       // add items       
+       // add items 
+       int i = 0;   
+       int solution = 0;
        while (std::getline(input_stream, line)) {
           merger.advance_apta(line);
+ 
+          //merge_list merges = random_greedy_bounded_run(&merger);
+         std::ostringstream oss;
+         oss << param->dot_file << (i+1) << ".aut";
+         std::ostringstream oss2;
+         oss2 << param->dot_file << (i+1) << ".dot";
 
-          // do work 
+          solution = dfasat(merger, param->sat_program, oss2.str().c_str(), oss.str().c_str());
+          // output step
+          std::ostringstream os;
+          os << param->dot_file << (i++) << "_intermediate.dot";
+          FILE* output = fopen(os.str().c_str(), "w");
+          merger.todot();
+          merger.print_dot(output);
+          fclose(output);
+  // do work 
        }
        
     }
@@ -307,7 +323,11 @@ int main(int argc, const char *argv[]){
     
     while ((c = poptGetNextOpt(optCon)) >= 0){
         if(c == 1){
-            cout << endl << "DFASAT with random greedy preprocessing" << endl;
+            cout << endl << "flexFringe" << endl;
+            cout << "Copyright 2017 Sicco Verwer, Delft University of Technology" << endl;
+            cout << "with contributions from Christian Hammerschmidt, University of Luxembourg" << endl;
+            cout << "based on " << endl; 
+            cout << "DFASAT with random greedy preprocessing" << endl;
             cout << "Copyright 2015 Sicco Verwer and Marijn Heule, Delft University of Technology." << endl;
             exit( 1 );
         }

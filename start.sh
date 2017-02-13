@@ -15,4 +15,4 @@ param=$(grep -v '^#' $1 |{
 })
 #echo $param
 
-./dfasat $param $2
+./flexfringe $param $2
