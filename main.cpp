@@ -174,6 +174,7 @@ void run(parameters* param) {
 
     apta* the_apta = new apta();
     merger = state_merger(eval,the_apta);
+    the_apta->context = &merger;
 
     cout << "creating apta " <<  "using " << eval_string << endl; 
     
@@ -223,23 +224,98 @@ void run(parameters* param) {
        // add items 
        int i = 0;   
        int solution = 0;
+       merge_list all_merges;
+
+       merger.reset();
+
+       std::getline(input_stream, line);
+       merger.advance_apta(line); 
+       merger.update_red_blue();
+ 
        while (std::getline(input_stream, line)) {
           merger.advance_apta(line);
  
-          //merge_list merges = random_greedy_bounded_run(&merger);
+         
          std::ostringstream oss;
          oss << param->dot_file << (i+1) << ".aut";
          std::ostringstream oss2;
          oss2 << param->dot_file << (i+1) << ".dot";
 
-          solution = dfasat(merger, param->sat_program, oss2.str().c_str(), oss.str().c_str());
+         //from: random_greedy_bounded_run(&merger);
+
+    merge_list all_merges; 
+
+       
+        while( true ) { 
+            cout << " ";
+            if(EXTEND_ANY_RED) while(merger.extend_red() != 0) cerr << "+ ";
+            // leak here, too
+            merge_map* possible_merges = merger.get_possible_merges();
+
+            if(!EXTEND_ANY_RED && possible_merges->empty()){
+                if(merger.extend_red() != 0) { cerr << "+"; continue; }
+                cout << "no more possible merges with extend any red" << endl;
+                break;
+            }
+            if(possible_merges->empty()){
+                cout << "no more possible merges " << merger.blue_states.size() << endl;
+                merger.update_red_blue();
+                break;
+            }
+            if(merger.red_states.size() > CLIQUE_BOUND){
+               cout << "too many red states " << merger.red_states.size() << endl;
+               break;
+            }
+            // FIXME
+            //if(merger.get_final_apta_size() <= APTA_BOUND){
+            //   cout << "APTA too small" << endl;
+            //   break;
+           // }
+            /*if((*possible_merges.rbegin()).first < LOWER_BOUND){
+                cerr << "merge score below lower bound" << endl;
+                break;
+            }*/
+
+            /*cerr << "possible merges: ";
+            for(merge_map::reverse_iterator it = possible_merges.rbegin(); it != possible_merges.rend(); it++){
+                cerr << (*it).first << " ";
+            }
+            cerr << endl;*/
+
+            merge_pair top_pair = (*possible_merges->rbegin()).second;
+            float top_score = (*possible_merges->rbegin()).first;
+            if(GREEDY_METHOD == RANDOMG){
+                merge_map randomized_merges;
+                for(merge_map::reverse_iterator it = possible_merges->rbegin(); it != possible_merges->rend(); it++){
+                    //if((*it).first < LOWER_BOUND) break;
+                    randomized_merges.insert(pair<int, merge_pair>((*it).first * (rand() / (double)RAND_MAX), (*it).second));
+                }
+                top_score = (*randomized_merges.rbegin()).first;
+                top_pair = (*randomized_merges.rbegin()).second;
+            }
+            cout << top_score;
+            if(top_score > 0) {
+              merger.perform_merge(top_pair.first, top_pair.second);
+              all_merges.push_front(top_pair);
+            } else {
+              break;
+           } 
+            
+            delete possible_merges;
+        }
+        cout << endl;
+        int size =  merger.get_final_apta_size();
+        int red_size = merger.red_states.size();
+        cout << endl << "found intermediate solution with " << size << " and " << red_size << " red states" << endl;
+     
+    
           // output step
-          std::ostringstream os;
-          os << param->dot_file << (i++) << "_intermediate.dot";
-          FILE* output = fopen(os.str().c_str(), "w");
-          merger.todot();
-          merger.print_dot(output);
-          fclose(output);
+          //std::ostringstream os;
+          // os << param->dot_file << (i++) << "_intermediate.dot";
+          //FILE* output = fopen(os.str().c_str(), "w");
+          //merger.todot();
+          //merger.print_dot(output);
+          //fclose(output);
   // do work 
        }
        

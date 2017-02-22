@@ -227,7 +227,7 @@ void evaluation_function::add_sample(string data, state_merger* merger) {
          int c = merger->seen[symbol];
          
          if(node->child(c) == 0){
-             apta_node* next_node = new apta_node();
+             apta_node* next_node = new apta_node(aut);
              node->children[c] = next_node;
              next_node->source = node;
              next_node->label  = c;

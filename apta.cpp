@@ -18,7 +18,7 @@ using namespace std;
 
 /* constructors and destructors */
 apta::apta(){
-    root = new apta_node();
+    root = new apta_node(this);
     max_depth = 0;
     merge_count = 0;
 }
@@ -63,7 +63,7 @@ void apta::read_file(istream &input_stream){
             }
             int c = seen[symbol];
             if(node->child(c) == 0){
-                apta_node* next_node = new apta_node();
+                apta_node* next_node = new apta_node(this);
                 node->children[c] = next_node;
                 next_node->source = node;
                 next_node->label  = c;
@@ -131,6 +131,32 @@ void apta::print_dot(iostream& output){
 
 string apta::alph_str(int i){
     return alphabet[i];
+}
+
+apta_node::apta_node(apta *context) {
+    this->context = context;
+    source = 0;
+    representative = 0;
+
+    children = child_map();
+    det_undo = child_map();
+
+    label = 0;
+    number = 0;
+    satnumber = 0;
+    colour = 0;
+    size = 1;
+    depth = 0;
+    type = -1;
+    
+    red = false;
+    
+    try {
+       data = (DerivedDataRegister<evaluation_data>::getMap())->at(eval_string)();
+    } catch(const std::out_of_range& oor ) {
+       std::cerr << "No data type found..." << std::endl;
+    }
+
 }
 
 apta_node::apta_node(){
