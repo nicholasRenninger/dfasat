@@ -1,5 +1,5 @@
 CC	=	g++
-CFLAGS	=	-O2
+CFLAGS	=	-O2 -g
 SOURCES = 	*.cpp
 SOURCESPYTHON =	apta.cpp dfasat.cpp  evaluation_factory.cpp random_greedy.cpp  state_merger.cpp parameters.cpp 
 LFLAGS 	= 	-std=c++11 -L/opt/local/lib -I/opt/local/include -I./lib -I. -lm -lpopt -lgsl -lgslcblas
@@ -23,26 +23,26 @@ OUTDIR ?= .
 
 .PHONY: all clean
 
-all: regen dfasat
+all: regen flexfringe
 
 regen:
 	sh collector.sh
 
 debug:
-	$(CC) -g $(SOURCES) -o dfasat $(LFLAGS) $(LIBS)
+	$(CC) -g $(SOURCES) -o flexfringe $(LFLAGS) $(LIBS)
 
-dfasat: $(EVALOBJS)
+flexfringe: $(EVALOBJS)
 	$(CC) $(CFLAGS) -o $@ $(SOURCES) $^ -I./ $(LFLAGS) $(LIBS)
 
 evaluation/%.o: evaluation/%.cpp
 	$(CC) -fPIC -c -o $@ $< -I./lib $(LFLAGS) $(LIBS) $(PYTHON_INC) $(PYTHON_LIBS) $(BOOST_LIBS) 
 
 clean:
-	rm -f dfasat ./evaluation/*.o generated.cpp named_tuple.py *.dot exposed_decl.pypp.txt dfasat*.so
+	rm -f flexfringe ./evaluation/*.o generated.cpp named_tuple.py *.dot exposed_decl.pypp.txt flexfringe*.so
 	
 
 python: $(EVALOBJS)
-	$(CC) -fPIC -shared $(CFLAGS)  -o dfasat.lib.so $(SOURCESPYTHON) $^ -I./ $(LFLAGS) $(LIBS) $(PYTHON_LIBS) $(PYTHON_INC) 
+	$(CC) -fPIC -shared $(CFLAGS)  -o flexfringe.lib.so $(SOURCESPYTHON) $^ -I./ $(LFLAGS) $(LIBS) $(PYTHON_LIBS) $(PYTHON_INC) 
 	python3 generate.py
-	g++ -W  -g -Wall -fPIC -shared generated.cpp dfasat.lib.so -o dfasat.so $(PYTHON_LIBS) $(PYTHON_INC) $(BOOST_LIBS) $(LFLAGS) -Wl,-rpath,'$$ORIGIN' -L. -l:dfasat.lib.so
-	mv dfasat.lib.so dfasat.so $(OUTDIR)
+	g++ -W  -g -Wall -fPIC -shared generated.cpp flexfringe.lib.so -o flexfringe.so $(PYTHON_LIBS) $(PYTHON_INC) $(BOOST_LIBS) $(LFLAGS) -Wl,-rpath,'$$ORIGIN' -L. -l:flexfringe.lib.so
+	mv flexfringe.lib.so flexfringe.so $(OUTDIR)

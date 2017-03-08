@@ -88,6 +88,10 @@ typedef map<int, int> num_map;
 
 class state_merger{
 public:
+    /* for building the apta  */
+    map<string, int> seen;
+    int node_number = 1; 
+
     merger_context context;
     apta* aut;
     /* core of merge targets */
@@ -106,6 +110,8 @@ public:
     void merge_force(apta_node* red, apta_node* blue);
     bool merge_test(apta_node* red, apta_node* blue);
     void undo_merge(apta_node* red, apta_node* blue);
+
+    int intersect();
 
     void extend(apta_node* blue);
     void undo_extend(apta_node* blue);

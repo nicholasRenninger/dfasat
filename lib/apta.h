@@ -28,6 +28,8 @@ typedef map<int, apta_node*> child_map;
 
 class apta_node{
 public:
+
+    apta* context;
     /* parent state in the prefix tree */
     apta_node* source;
     /* UNION/FIND datastructure */
@@ -61,6 +63,7 @@ public:
     evaluation_data* data;
 
     apta_node();
+    apta_node(apta* context);
     ~apta_node();
 
     /* UNION/FIND */
@@ -139,6 +142,7 @@ typedef set<apta_node*, size_compare> state_set;
 
 class apta{
 public:
+    state_merger *context;
     apta_node* root;
     map<int, string> alphabet;
     int merge_count;
