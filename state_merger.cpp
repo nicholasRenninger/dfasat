@@ -250,16 +250,21 @@ apta_node* state_merger::extend_red(){
         apta_node* blue = *it;
         bool found = false;
         
+        if(blue_states.find(blue) == blue_states.end()) cout << "HUH?" << endl;
+
         if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
 
         for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;
  
+            if(blue_states.find(blue) == blue_states.end()) cout << "HUH? " << red << endl;
+
             score_pair score = test_merge(red, blue);
             if(score.first == true){ found = true; break; }
         }
         
         if(found == false){
+            if(blue_states.find(blue) == blue_states.end()) cout << "HUH?" << endl;
             if(intersect() > 0) cout << "FOUND BEOFE" << endl;
             if(intersect() == 0) cout << "NOT FOUND BEFORE" << endl;
             extend(blue);
