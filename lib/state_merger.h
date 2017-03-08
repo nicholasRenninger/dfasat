@@ -111,6 +111,8 @@ public:
     bool merge_test(apta_node* red, apta_node* blue);
     void undo_merge(apta_node* red, apta_node* blue);
 
+    int intersect();
+
     void extend(apta_node* blue);
     void undo_extend(apta_node* blue);
     

@@ -165,6 +165,7 @@ bool state_merger::merge_test(apta_node* left, apta_node* right){
 
 /* undo merge, works for both forcing and standard merging, not needed for testing merge */
 void state_merger::undo_merge(apta_node* left, apta_node* right){
+    
     if(left == 0 || right == 0) return;
     if(right->representative != left) return;
 
@@ -215,12 +216,18 @@ void state_merger::update_red_blue(){
 
 /* make a given blue state red, and its children blue */
 void state_merger::extend(apta_node* blue){
-    blue_states.erase(blue);
+    
+    if(blue_states.find(blue)==blue_states.end()) cout << "FOUND: no element " << blue << endl;
+
+    if(this->blue_states.erase(blue)==0) cout << "FOUND erase step failed " << blue  << endl;
     red_states.insert(blue);
     blue->red = true;
 
+    if(intersect()) cout << "FOUND: erase-insert did not work" << endl;
+
     for(child_map::iterator it = blue->children.begin(); it != blue->children.end(); ++it){
         apta_node* child = (*it).second;
+        if(child == blue) cout << "FOUND should not happen" << endl;
         blue_states.insert(child);
     }
 }
@@ -247,17 +254,36 @@ apta_node* state_merger::extend_red(){
 
         for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;
-            
+ 
             score_pair score = test_merge(red, blue);
             if(score.first == true){ found = true; break; }
         }
         
         if(found == false){
+            if(intersect() > 0) cout << "FOUND BEOFE" << endl;
+            if(intersect() == 0) cout << "NOT FOUND BEFORE" << endl;
             extend(blue);
+            if(intersect() > 0) cout << "FOUND AFTER" << endl;
             return blue;
         }
     }
     return 0;
+}
+
+int state_merger::intersect() {
+
+    int count = 0;
+
+    for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
+        apta_node* blue = *it; 
+
+        for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
+            apta_node* red = *it2;
+            if(red == blue) { count++; cout << "FOUND red " << red << endl; }
+        } 
+    }
+
+    return count;
 }
 
 /* perform a merge, assumed to succeed, no testing for consistency or score computation */
@@ -277,6 +303,9 @@ void state_merger::undo_perform_merge(apta_node* left, apta_node* right){
  * returns a <consistency,score> pair */
 score_pair state_merger::test_merge(apta_node* left, apta_node* right){
     eval->reset(this);
+
+    // TODO: when does this happen and why?
+    //if(left==right) return score_pair(false, -1);
     
     double score_result = -1;
     bool   merge_result = false;

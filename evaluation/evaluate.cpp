@@ -226,6 +226,8 @@ void evaluation_function::add_sample(string data, state_merger* merger) {
          }
          int c = merger->seen[symbol];
          
+ 
+         // if root is red, mark child blue
          if(node->child(c) == 0){
              apta_node* next_node = new apta_node(aut);
              node->children[c] = next_node;
@@ -233,12 +235,17 @@ void evaluation_function::add_sample(string data, state_merger* merger) {
              next_node->label  = c;
              next_node->number = merger->node_number++;
              next_node->depth = depth;
+  
+             // move this down
+             if(node->red) { merger->blue_states.insert(node->child(c)); cout << "FOUND: add " << next_node << endl; }
          }
          node->size = node->size + 1;
          node->data->read_from(label, index, length, c, dat);
          node = node->child(c);
          node->data->read_to(label, index, length, c, dat);
- 
+
+         // update union-find structure
+         // next_node->find() 
     }
 
     if(depth > aut->max_depth)  aut->max_depth = depth;
