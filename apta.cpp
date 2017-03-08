@@ -146,6 +146,7 @@ apta_node::apta_node(){
     colour = 0;
     size = 1;
     depth = 0;
+    type = -1;
     
     red = false;
     
