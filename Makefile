@@ -1,7 +1,7 @@
 CC	=	g++
 CFLAGS	=	-O2 -g 
 SOURCES = 	*.cpp
-SOURCESPYTHON =	apta.cpp dfasat.cpp  evaluation_factory.cpp random_greedy.cpp  state_merger.cpp parameters.cpp 
+SOURCESPYTHON =	apta.cpp dfasat.cpp  evaluation_factory.cpp random_greedy.cpp  state_merger.cpp parameters.cpp stream.cpp
 LFLAGS 	= 	-std=c++11 -L/opt/local/lib -I/opt/local/include -I./lib -I. -lm -lpopt -lgsl -lgslcblas
 PYTHON_EVAL = evaluation/python.cpp
 

@@ -19,9 +19,8 @@
 #include "evaluation_factory.h"
 #include <string>
 #include "searcher.h"
-
-// temp
-#include <cmath>
+#include "stream.h"
+#include <vector>
 
 #include "parameters.h"
 
@@ -32,7 +31,6 @@
 
 using namespace std;
 
-int RANGE = 25;
 
 bool debugging_enabled = false;
 
@@ -42,93 +40,15 @@ bool debugging_enabled = false;
 
 // map_type* BaseFactory::map = NULL;
 
-class parameters{
-public:
-    string dfa_file;
-    vector<string> dfa_data;
-    string dot_file;
-    string sat_program;
-    string hName;
-    string hData;
-    int runs;
-    int sinkson;
-    int seed;
-    int sataptabound;
-    int satdfabound;
-    float lower_bound;
-    int satextra;
-    int mergesinks;
-    int satmergesinks;
-    int method;
-    int extend;
-    int heuristic;
-    int symbol_count;
-    int state_count;
-    float correction;
-    float extrapar;
-    int satplus;
-    int satfinalred;
-    int symmetry;
-    int forcing;
-    int blueblue;
-    int finalred;
-    int largestblue;
-    int testmerge;
-    int shallowfirst;
-    string mode;    
-    int batchsize;
-    float delta;
-    float epsilon;
-    int debugging;
-    parameters();
-};
-
-parameters::parameters(){
-    batchsize=1000;
-    epsilon=0.3;
-    delta=0.95;
-    mode = "batch";
-    dot_file = "dfa";
-    sat_program = "";
-    hName = "default";
-    hData = "evaluation_data";
-    runs = 1;
-    sinkson = 1;
-    seed = 12345678;
-    sataptabound = 0;
-    satdfabound = 50;
-    mergesinks = 1;
-    satmergesinks = 0;
-    lower_bound = -1.0;
-    satextra = 5;
-    method=1;
-    heuristic=1;
-    extend=1;
-    symbol_count = 10;
-    state_count = 25;
-    correction = 0.0;
-    extrapar = 0.5;
-    satplus = 0;
-    satfinalred = 0;
-    symmetry = 1;
-    forcing = 0;
-    blueblue = 0;
-    finalred = 0;
-    largestblue = 0;
-    testmerge = 0;
-    shallowfirst =0;
-    debugging = 0;
-};
-
 
 
 void init_with_params(parameters* param) {
 
     srand(param->seed);
-    
+
     APTA_BOUND = param->sataptabound;
     CLIQUE_BOUND = param->satdfabound;
-    
+
     STATE_COUNT = param->state_count;
     SYMBOL_COUNT = param->symbol_count;
     CHECK_PARAMETER = param->extrapar;
@@ -140,10 +60,10 @@ void init_with_params(parameters* param) {
     MERGE_SINKS_PRESOLVE = param->mergesinks;
     MERGE_SINKS_DSOLVE = param->satmergesinks;
     EXTEND_ANY_RED = param->extend;
-    
+
     SYMMETRY_BREAKING = param->symmetry;
     FORCING = param->forcing;
-        
+
     EXTRA_STATES = param->satplus;
     TARGET_REJECTING = param->satfinalred;
 
@@ -158,13 +78,13 @@ void init_with_params(parameters* param) {
 
     if(param->method == 1) GREEDY_METHOD = RANDOMG;
     if(param->method == 2) GREEDY_METHOD = NORMALG;
- 
+
     eval_string = param->hData;
 
     try {
        (DerivedRegister<evaluation_function>::getMap())->at(param->hName);
        std::cout << "valid: " << param->hName << std::endl;
-       
+
     } catch(const std::out_of_range& oor ) {
        std::cout << "invalid: " << param->hName << std::endl;
     }
@@ -176,17 +96,17 @@ void run(parameters* param) {
     state_merger merger;
 
     init_with_params(param);
-    
+
     evaluation_function *eval;
-    
+
     for(auto myit = DerivedRegister<evaluation_function>::getMap()->begin(); myit != DerivedRegister<evaluation_function>::getMap()->end(); myit++   ) {
        cout << myit->first << " " << myit->second << endl;
     }
- 
+
     try {
        eval = (DerivedRegister<evaluation_function>::getMap())->at(param->hName)();
        std::cout << "Using heuristic " << param->hName << std::endl;
-       
+
     } catch(const std::out_of_range& oor ) {
        std::cerr << "No named heuristic found, defaulting back on -h flag" << std::endl;
     }
@@ -195,27 +115,28 @@ void run(parameters* param) {
     merger = state_merger(eval,the_apta);
     the_apta->context = &merger;
 
-    cout << "Creating apta " <<  "using evaluation class " << eval_string << endl; 
-    
-    if(param->mode == "batch") {
-       cout << "batch mode selected" << endl;  
+    cout << "Creating apta " <<  "using evaluation class " << eval_string << endl;
 
-       ifstream input_stream(param->dfa_file);
+    ifstream input_stream(param->dfa_file);
+
+    if(param->mode == "batch") {
+       cout << "batch mode selected" << endl;
+
        merger.read_apta(input_stream);
-   
+
        input_stream.close();
 
        cout << "reading data finished, processing:" << endl;
        // run the state merger
        int solution = -1;
-    
+
        std::ostringstream oss3;
        oss3 << "init_" << param->dot_file << ".dot";
        FILE* output = fopen(oss3.str().c_str(), "w");
        merger.todot();
        merger.print_dot(output);
        fclose(output);
-    
+
        for(int i = 0; i < param->runs; ++i){
           std::ostringstream oss;
           oss << param->dot_file << (i+1) << ".aut";
@@ -228,135 +149,33 @@ void run(parameters* param) {
              CLIQUE_BOUND = min(CLIQUE_BOUND, solution - OFFSET + EXTRA_STATES);
          }
 
-     } else {
-       /* this is the outline for streaming mode  */ 
+    } else {
        cout << "stream mode selected" << endl;
-    
-       ifstream input_stream(param->dfa_file);
-
-       // first line has alphabet size and 
-       std::string line;
-       std::getline(input_stream, line);
-       merger.init_apta(line);
-
-       // line by line processing 
-       // add items 
-       int i = 0;   
-       int solution = 0;
-       merge_list all_merges;
-
-       merger.reset();
-
-       std::getline(input_stream, line);
-       merger.advance_apta(line); 
-       
-       int samplecount = 1;
-
-       // hoeffding countfor sufficient stats
-       int hoeffding_count = (RANGE*RANGE*log2(1/param->delta)) / (2*param->epsilon*param->epsilon);
-       cout << "Relevant Hoeffding count for " << (double) param->delta << " and " << (float)  param->epsilon << " delta/epsilon is " << hoeffding_count << endl;
-
-       while (std::getline(input_stream, line)) {
-        merger.advance_apta(line);
-        samplecount++;
-        //merger.update_red_blue();
-
-        merge_list all_merges; 
-
-        if(samplecount % param->batchsize*hoeffding_count == 0) {       
-           while( true ) { 
-               cout << " ";
-               if(EXTEND_ANY_RED) while(merger.extend_red() != 0) {
-                   cerr << "+ ";
-               }
-
-               merge_map* possible_merges = merger.get_possible_merges(hoeffding_count);
-
-               if(!EXTEND_ANY_RED && possible_merges->empty()){
-                   if(merger.extend_red() != 0) { cerr << "+"; continue; }
-                   cout << "no more possible merges with extend any red" << endl;
-                   break;
-               }
-               if(possible_merges->empty()){
-                   cout << "no more possible merges " << merger.blue_states.size() << endl;
-                   break;
-               }
-               if(merger.red_states.size() > CLIQUE_BOUND){
-                   cout << "too many red states " << merger.red_states.size() << endl;
-                  break;
-               }
-
-               merge_pair top_pair = (*possible_merges->rbegin()).second;
-               float top_score = (*possible_merges->rbegin()).first;
-
-               merge_pair runnerup_pair;
-               float runnerup_score = -1;
-
-               if(possible_merges->size() > 1) {
-                   runnerup_score = (*(++(possible_merges->rbegin()))).first;
-               } else {
-	       
-               }
-
-	   // random-greedy scales all scores by random number
-            /*if(GREEDY_METHOD == RANDOMG){
-                merge_map randomized_merges;
-                for(merge_map::reverse_iterator it = possible_merges->rbegin(); it != possible_merges->rend(); it++){
-                    //if((*it).first < LOWER_BOUND) break;
-                    randomized_merges.insert(pair<int, merge_pair>((*it).first * (rand() / (double)RAND_MAX), (*it).second));
-                }
-                top_score = (*randomized_merges.rbegin()).first;
-                top_pair = (*randomized_merges.rbegin()).second;
-            }*/
-
-	    // if heuristic requirement basedo n Hoeffding bound is true, i.e.
-	    // if difference between top and second-to-top 
-               if(top_score - runnerup_score > param->epsilon) {
-                 merger.perform_merge(top_pair.first, top_pair.second);
-                 all_merges.push_front(top_pair);
-               } else {
-                 cout << "no large enough top score" << endl;
-                 break;
-               } 
-            
-	       cout << "( "  << top_score << " " << runnerup_score << " )  ";
-               delete possible_merges;
-
-           } // while true
-
-        int size =  merger.get_final_apta_size();
-        int red_size = merger.red_states.size();
-        cout << " X " ;
-        // cout << endl << "found intermediate solution with " << size << " and " << red_size << " red states" << endl;
-
-
-     } // if batchsize
-  }
- 
-  std::ostringstream oss2;
-  oss2 << param->dot_file << "final"  << ".dot";
-
-  FILE* output = fopen(oss2.str().c_str(), "w");
-  merger.todot();
-  merger.print_dot(output);
-  fclose(output);
-   
-       
+       stream_mode(merger, param, input_stream);
     }
 
-}
+    std::ostringstream oss2;
+    oss2 << param->dot_file << "final"  << ".dot";
+
+    FILE* output = fopen(oss2.str().c_str(), "w");
+    merger.todot();
+    merger.print_dot(output);
+    fclose(output);
+
+} // end run
+
 
 int main(int argc, const char *argv[]){
-    
+
     char c = 0;
     parameters* param = new parameters();
-    
+
     /* temporary holder for string arguments */
     char* dot_file = NULL;
     char* sat_program = NULL;
     char* hName;
     char* hData;
-    
+
     /* below parses command-line options, see 'man popt' */
     poptContext optCon;
     struct poptOption optionsTable[] = {
@@ -398,13 +217,13 @@ int main(int argc, const char *argv[]){
     };
     optCon = poptGetContext(NULL, argc, (const char**)argv, optionsTable, 0);
     poptSetOtherOptionHelp(optCon, "[OPTIONS]* [input dfa file]");
-    
+
     while ((c = poptGetNextOpt(optCon)) >= 0){
         if(c == 1){
             cout << endl << "flexFringe" << endl;
             cout << "Copyright 2017 Sicco Verwer, Delft University of Technology" << endl;
             cout << "with contributions from Christian Hammerschmidt, University of Luxembourg" << endl;
-            cout << "based on " << endl; 
+            cout << "based on " << endl;
             cout << "DFASAT with random greedy preprocessing" << endl;
             cout << "Copyright 2015 Sicco Verwer and Marijn Heule, Delft University of Technology." << endl;
             exit( 1 );
@@ -414,20 +233,20 @@ int main(int argc, const char *argv[]){
         cerr << poptBadOption( optCon, POPT_BADOPTION_NOALIAS ) << ": " << poptStrerror(c) << endl;
         exit( 1 );
     }
-    
+
     char* f = const_cast<char*>(poptGetArg(optCon));
     if( f == 0 ){
         cout << "A DFA learning input file in Abbadingo format is required." << endl << endl;
         exit( 1 );
     }
     param->dfa_file = f;
-    
+
     while ((c = poptGetNextOpt(optCon)) >= 0);
     if( c < -1 ){
         cerr << poptBadOption( optCon, POPT_BADOPTION_NOALIAS ) << ": " << poptStrerror(c) << endl;
         exit( 1 );
     }
-    
+
     if(dot_file != NULL)
         param->dot_file = dot_file;
 
@@ -438,10 +257,10 @@ int main(int argc, const char *argv[]){
 
     param->hName = hName;
     param->hData = hData;
-   
-    run(param); 
-    
+
+    run(param);
+
     delete param;
-    
-    return 0;    
+
+    return 0;
 }

@@ -249,7 +249,7 @@ void evaluation_function::add_sample(string data, state_merger* merger) {
              next_node->depth = depth;
   
              // move this down
-             if(merger->red_states.find(node) != merger->red_states.end()) { merger->blue_states.insert(node->child(c)); cout << "FOUND: add " << next_node << endl; }
+             if(merger->red_states.find(node) != merger->red_states.end()) { merger->blue_states.insert(node->child(c));  }
          }
          node->size = node->size + 1;
          node->data->read_from(label, index, length, c, dat);
