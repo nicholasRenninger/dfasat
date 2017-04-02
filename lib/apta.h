@@ -53,6 +53,9 @@ public:
     int satnumber;
     int colour;
 
+    /* for streaming mode */ 
+    int age;
+
     /* UNION/FIND size measure */
     int size;
     

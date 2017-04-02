@@ -88,29 +88,51 @@ void apta::print_dot(iostream& output){
         apta_node* n = *Ait;
         output << "\t" << n->number << " [ label=\"";
         n->data->print_state_label(output);
+        output << n->size;
         output << "\" ";
         n->data->print_state_style(output);
         if(n->red == false) output << " style=dotted";
         output << " ];\n";
 
+        // items to reach
         state_set childnodes;
         set<int> sinks;
+        // transition labels for item
+        map<apta_node*, set<int>> labels;
+        map<apta_node*, set<int>> sinklabels;
+
         for(child_map::iterator it = n->children.begin(); it != n->children.end(); ++it){
             apta_node* child = (*it).second;
             if(child->data->sink_type() != -1){
                 sinks.insert(child->data->sink_type());
+                if(sinklabels.find(child) == sinklabels.end()) {
+
+                } else { 
+                    sinklabels[child].insert( it->first );
+                }
+
             } else {
                 childnodes.insert(child);
+                if(labels.find(child) == labels.end()) {
+
+                    labels[child].insert( it->first );
+                } else {
+
+                    labels[child].insert( it->first );
+                }
             }
         }
         for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
             apta_node* child = *it2;
-            output << "\t\t" << n->number << " -> " << child->number << " [label=\"";
-            n->data->print_transition_label(output, child);
+            output << "\t\t" << n->number << " -> " << child->number << " [label=\""; 
+
+            n->data->print_transition_label(output, n, labels[child], child);
+
             output << "\" ";
             n->data->print_transition_style(output, child);
             output << " ];\n";
         }
+
         for(set<int>::iterator it = sinks.begin(); it != sinks.end(); ++it){
             int stype = *it;
             output << "\tS" << n->number << "t" << stype << " [ label=\"";
@@ -120,7 +142,8 @@ void apta::print_dot(iostream& output){
             output << " ];\n";
             
             output << "\t\t" << n->number << " -> S" << n->number << "t" << stype << " [ label=\"";
-            n->data->print_sink_transition_label(output, stype);
+
+            n->data->print_sink_transition_label(output, stype, sinklabels[n], n);
             output << "\" ";
             n->data->print_sink_transition_style(output, stype);
             output << " ];\n";
@@ -148,7 +171,9 @@ apta_node::apta_node(apta *context) {
     size = 1;
     depth = 0;
     type = -1;
-    
+
+    age = 0;
+
     red = false;
     
     try {
