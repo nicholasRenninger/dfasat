@@ -32,7 +32,7 @@ typedef pair< pair<int, int>, score_pair > ts_pair;
 typedef map< apta_node*, ts_pair > score_map;
 typedef list< pair< int, int > > size_list;
 
-typedef set<apta_node*, total_weight_compare> state_set;
+typedef set<apta_node*, size_compare> state_set;
 typedef pair<apta_node*, apta_node*> merge_pair;
 typedef list< merge_pair > merge_list;
 typedef multimap<double, merge_pair > merge_map;

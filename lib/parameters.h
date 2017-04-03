@@ -34,6 +34,10 @@ extern bool RED_FIXED;
 extern bool MERGE_WHEN_TESTING;
 extern bool DEPTH_FIRST;
 extern int RANGE;
+extern int STORE_MERGES;
+extern int STORE_MERGES_KEEP_CONFLICT;
+extern int STORE_MERGES_SIZE_THRESHOLD;
+extern double STORE_MERGES_RATIO_THRESHOLD;
 
 class parameters{
 public:
