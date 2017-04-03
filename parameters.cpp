@@ -29,6 +29,11 @@ bool DEPTH_FIRST = 0;
 int RANGE = 10;
 string eval_string;
 
+int STORE_MERGES = 1;
+int STORE_MERGES_KEEP_CONFLICT = 1;
+double STORE_MERGES_RATIO_THRESHOLD = 0.3;
+int STORE_MERGES_SIZE_THRESHOLD = 100;
+
 parameters::parameters(){
     batchsize=1000;
     epsilon=0.3;
