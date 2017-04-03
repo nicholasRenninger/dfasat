@@ -138,23 +138,21 @@ bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right
  * accepting sink = only accept, accept now, accept afterwards
  * rejecting sink = only reject, reject now, reject afterwards 
  * low count sink = frequency smaller than STATE_COUNT */
-bool is_low_count_sink_alergia(apta_node* node){
-    node = node->find();
-    cerr << node->size << " " << STATE_COUNT << endl;
-    return node->size < STATE_COUNT;
+bool alergia_data::is_low_count_sink(){
+    return accepting_paths + rejecting_paths < STATE_COUNT;
 }
 
-int alergia::sink_type(apta_node* node){
+int alergia_data::sink_type(){
     if(!USE_SINKS) return -1;
 
-    if (is_low_count_sink_alergia(node)) return 0;
+    if (is_low_count_sink()) return 0;
     return -1;
 };
 
-bool alergia::sink_consistent(apta_node* node, int type){
+bool alergia_data::sink_consistent(int type){
     if(!USE_SINKS) return true;
     
-    if(type == 0) return is_low_count_sink_alergia(node);
+    if(type == 0) return is_low_count_sink();
     return true;
 };
 

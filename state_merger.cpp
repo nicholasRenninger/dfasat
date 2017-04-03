@@ -571,11 +571,11 @@ void state_merger::print_dot(FILE* output)
 }
 
 int state_merger::sink_type(apta_node* node){
-    return eval->sink_type(node);
+    return node->data->sink_type();
 };
 
 bool state_merger::sink_consistent(apta_node* node, int type){
-    return eval->sink_consistent(node, type);
+    return node->data->sink_consistent(type);
 };
 
 int state_merger::num_sink_types(){
