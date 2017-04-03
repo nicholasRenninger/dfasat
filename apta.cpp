@@ -35,27 +35,27 @@ void apta::read_file(istream &input_stream){
     map<string, int> seen;
     int node_number = 1;
     input_stream >> num_words >> alphabet_size;
-    
+
     for(int line = 0; line < num_words; line++){
         int type;
         int length;
         input_stream >> type >> length;
-        
+
         int depth = 0;
         apta_node* node = root;
         for(int index = 0; index < length; index++){
             depth++;
             string tuple;
             input_stream >> tuple;
-            
+
             std::stringstream lineStream;
             lineStream.str(tuple);
-            
+
             string symbol;
             std::getline(lineStream,symbol,'/');
             string data;
             std::getline(lineStream,data);
-            
+
             if(seen.find(symbol) == seen.end()){
                 alphabet[num_alph] = symbol;
                 seen[symbol] = num_alph;
@@ -88,43 +88,66 @@ void apta::print_dot(iostream& output){
         apta_node* n = *Ait;
         output << "\t" << n->number << " [ label=\"";
         n->data->print_state_label(output);
+        output << n->size;
         output << "\" ";
         n->data->print_state_style(output);
         if(n->red == false) output << " style=dotted";
         output << " ];\n";
 
+        // items to reach
         state_set childnodes;
         set<int> sinks;
+        // transition labels for item
+        map<apta_node*, set<int>> labels;
+        map<apta_node*, set<int>> sinklabels;
+
         for(child_map::iterator it = n->children.begin(); it != n->children.end(); ++it){
             apta_node* child = (*it).second;
             if(child->data->sink_type() != -1){
                 sinks.insert(child->data->sink_type());
+                if(sinklabels.find(child) == sinklabels.end()) {
+
+                } else {
+                    sinklabels[child].insert( it->first );
+                }
+
             } else {
                 childnodes.insert(child);
+                if(labels.find(child) == labels.end()) {
+
+                    labels[child].insert( it->first );
+                } else {
+
+                    labels[child].insert( it->first );
+                }
             }
         }
         for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
             apta_node* child = *it2;
             output << "\t\t" << n->number << " -> " << child->number << " [label=\"";
-            n->data->print_transition_label(output, child);
+
+            n->data->print_transition_label(output, n, labels[child], child);
+
             output << "\" ";
             n->data->print_transition_style(output, child);
             output << " ];\n";
         }
-        for(set<int>::iterator it = sinks.begin(); it != sinks.end(); ++it){
+
+        /*for(set<int>::iterator it = sinks.begin(); it != sinks.end(); ++it){
             int stype = *it;
             output << "\tS" << n->number << "t" << stype << " [ label=\"";
             n->data->print_sink_label(output, stype);
             output << "\" ";
             n->data->print_sink_style(output, stype);
             output << " ];\n";
-            
+
             output << "\t\t" << n->number << " -> S" << n->number << "t" << stype << " [ label=\"";
-            n->data->print_sink_transition_label(output, stype);
+
+            n->data->print_sink_transition_label(output, stype, sinklabels[n], n);
             output << "\" ";
             n->data->print_sink_transition_style(output, stype);
             output << " ];\n";
-        }
+        }*/
     }
     output << "}\n";
 };
@@ -148,9 +171,11 @@ apta_node::apta_node(apta *context) {
     size = 1;
     depth = 0;
     type = -1;
-    
+
+    age = 0;
+
     red = false;
-    
+
     try {
        data = (DerivedDataRegister<evaluation_data>::getMap())->at(eval_string)();
     } catch(const std::out_of_range& oor ) {
@@ -173,9 +198,9 @@ apta_node::apta_node(){
     size = 1;
     depth = 0;
     type = -1;
-    
+
     red = false;
-    
+
     try {
        data = (DerivedDataRegister<evaluation_data>::getMap())->at(eval_string)();
     } catch(const std::out_of_range& oor ) {
@@ -214,7 +239,7 @@ APTA_iterator::APTA_iterator(apta_node* start){
     base = start;
     current = start;
 }
-    
+
 apta_node* APTA_iterator::next_forward() {
     child_map::iterator it;
     for(it = current->children.begin();it != current->children.end(); ++it){
@@ -224,7 +249,7 @@ apta_node* APTA_iterator::next_forward() {
     }
     return 0;
 }
-    
+
 apta_node* APTA_iterator::next_backward() {
     child_map::iterator it;
     apta_node* source = current;
@@ -254,7 +279,7 @@ merged_APTA_iterator::merged_APTA_iterator(apta_node* start){
     base = start;
     current = start;
 }
-    
+
 apta_node* merged_APTA_iterator::next_forward() {
     child_map::iterator it;
     for(it = current->children.begin();it != current->children.end(); ++it){
@@ -313,5 +338,3 @@ apta_node::~apta_node(){
     }
     delete data;
 }
-
-

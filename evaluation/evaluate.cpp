@@ -52,8 +52,13 @@ void evaluation_data::print_state_style(iostream& output){
 
 };
 
-void evaluation_data::print_transition_label(iostream& output, apta_node* child){
+void evaluation_data::print_transition_label(iostream& output, apta_node* source, set<int> labels, apta_node* target){
+   std::string labelstring = "";
+   for(set<int>::iterator labels_it = labels.begin(); labels_it != labels.end(); labels_it++) {
+       labelstring += target->context->alph_str(*labels_it) + " ";
+   }
 
+   output << labelstring; 
 };
 
 void evaluation_data::print_transition_style(iostream& output, apta_node* child){
@@ -68,8 +73,13 @@ void evaluation_data::print_sink_style(iostream& output, int type){
 
 };
 
-void evaluation_data::print_sink_transition_label(iostream& output, int type){
+void evaluation_data::print_sink_transition_label(iostream& output, int type, set<int> labels, apta_node* target){
+   std::string labelstring = "";
+   for(set<int>::iterator labels_it = labels.begin(); labels_it != labels.end(); labels_it++) {
+       labelstring += target->context->alph_str(*labels_it) + " ";
+   }
 
+   output << labelstring; 
 };
 
 void evaluation_data::print_sink_transition_style(iostream& output, int type){
@@ -225,7 +235,9 @@ void evaluation_function::add_sample(string data, state_merger* merger) {
              num_alph++;
          }
          int c = merger->seen[symbol];
-         
+        
+         // set node age
+         node->age = merger->node_number; 
  
          // if root is red, mark child blue
          if(node->child(c) == 0){
@@ -237,13 +249,15 @@ void evaluation_function::add_sample(string data, state_merger* merger) {
              next_node->depth = depth;
   
              // move this down
-             if(merger->red_states.find(node) != merger->red_states.end()) { merger->blue_states.insert(node->child(c)); cout << "FOUND: add " << next_node << endl; }
+             if(merger->red_states.find(node) != merger->red_states.end()) { merger->blue_states.insert(node->child(c));  }
          }
          node->size = node->size + 1;
          node->data->read_from(label, index, length, c, dat);
          node = node->child(c);
          node->data->read_to(label, index, length, c, dat);
 
+
+         node->age= merger->node_number;
          // update union-find structure
          // next_node->find() 
     }

@@ -106,8 +106,10 @@ public:
     
     /* find merges */
     merge_map*  get_possible_merges();
+    merge_map*  get_possible_merges(int);
     merge_pair* get_best_merge();
-    
+    merge_pair* get_best_merge(int);
+ 
     /* find unmergable states */
     apta_node* extend_red();
 

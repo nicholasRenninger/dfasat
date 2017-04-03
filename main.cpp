@@ -3,6 +3,10 @@
  */
 
 
+#define DEBUG(x) do { \
+  if (debugging_enabled) { std::cerr << x << std::endl; } \
+} while (0)
+
 #include <stdlib.h>
 //#include <malloc.h>
 #include <popt.h>
@@ -15,6 +19,8 @@
 #include "evaluation_factory.h"
 #include <string>
 #include "searcher.h"
+#include "stream.h"
+#include <vector>
 
 #include "parameters.h"
 
@@ -25,91 +31,24 @@
 
 using namespace std;
 
+
+bool debugging_enabled = false;
+
 /*
  * Input parameters, see 'man popt'
  */
 
 // map_type* BaseFactory::map = NULL;
 
-class parameters{
-public:
-    string dfa_file;
-    vector<string> dfa_data;
-    string dot_file;
-    string sat_program;
-    string hName;
-    string hData;
-    int runs;
-    int sinkson;
-    int seed;
-    int sataptabound;
-    int satdfabound;
-    float lower_bound;
-    int satextra;
-    int mergesinks;
-    int satmergesinks;
-    int method;
-    int extend;
-    int heuristic;
-    int symbol_count;
-    int state_count;
-    float correction;
-    float extrapar;
-    int satplus;
-    int satfinalred;
-    int symmetry;
-    int forcing;
-    int blueblue;
-    int finalred;
-    int largestblue;
-    int testmerge;
-    int shallowfirst;
-    string mode;    
-    parameters();
-};
-
-parameters::parameters(){
-    mode = "batch";
-    dot_file = "dfa";
-    sat_program = "";
-    hName = "default";
-    hData = "evaluation_data";
-    runs = 1;
-    sinkson = 1;
-    seed = 12345678;
-    sataptabound = 0;
-    satdfabound = 50;
-    mergesinks = 1;
-    satmergesinks = 0;
-    lower_bound = -1.0;
-    satextra = 5;
-    method=1;
-    heuristic=1;
-    extend=1;
-    symbol_count = 10;
-    state_count = 25;
-    correction = 0.0;
-    extrapar = 0.5;
-    satplus = 0;
-    satfinalred = 0;
-    symmetry = 1;
-    forcing = 0;
-    blueblue = 0;
-    finalred = 0;
-    largestblue = 0;
-    testmerge = 0;
-    shallowfirst =0;
-};
-
 
 
 void init_with_params(parameters* param) {
 
     srand(param->seed);
-    
+
     APTA_BOUND = param->sataptabound;
     CLIQUE_BOUND = param->satdfabound;
-    
+
     STATE_COUNT = param->state_count;
     SYMBOL_COUNT = param->symbol_count;
     CHECK_PARAMETER = param->extrapar;
@@ -121,10 +60,10 @@ void init_with_params(parameters* param) {
     MERGE_SINKS_PRESOLVE = param->mergesinks;
     MERGE_SINKS_DSOLVE = param->satmergesinks;
     EXTEND_ANY_RED = param->extend;
-    
+
     SYMMETRY_BREAKING = param->symmetry;
     FORCING = param->forcing;
-        
+
     EXTRA_STATES = param->satplus;
     TARGET_REJECTING = param->satfinalred;
 
@@ -135,16 +74,17 @@ void init_with_params(parameters* param) {
     MERGE_WHEN_TESTING = !param->testmerge;
     DEPTH_FIRST = param->shallowfirst;
 
+    if(param->debugging > 0) debugging_enabled = true;
 
     if(param->method == 1) GREEDY_METHOD = RANDOMG;
     if(param->method == 2) GREEDY_METHOD = NORMALG;
- 
+
     eval_string = param->hData;
 
     try {
        (DerivedRegister<evaluation_function>::getMap())->at(param->hName);
        std::cout << "valid: " << param->hName << std::endl;
-       
+
     } catch(const std::out_of_range& oor ) {
        std::cout << "invalid: " << param->hName << std::endl;
     }
@@ -156,18 +96,17 @@ void run(parameters* param) {
     state_merger merger;
 
     init_with_params(param);
-    
+
     evaluation_function *eval;
-    
+
     for(auto myit = DerivedRegister<evaluation_function>::getMap()->begin(); myit != DerivedRegister<evaluation_function>::getMap()->end(); myit++   ) {
        cout << myit->first << " " << myit->second << endl;
     }
 
-    cout << "getting data" << endl;
     try {
        eval = (DerivedRegister<evaluation_function>::getMap())->at(param->hName)();
        std::cout << "Using heuristic " << param->hName << std::endl;
-       
+
     } catch(const std::out_of_range& oor ) {
        std::cerr << "No named heuristic found, defaulting back on -h flag" << std::endl;
     }
@@ -176,27 +115,28 @@ void run(parameters* param) {
     merger = state_merger(eval,the_apta);
     the_apta->context = &merger;
 
-    cout << "creating apta " <<  "using " << eval_string << endl; 
-    
-    if(param->mode == "batch") {
-       cout << "batch mode selected" << endl;  
+    cout << "Creating apta " <<  "using evaluation class " << eval_string << endl;
 
-       ifstream input_stream(param->dfa_file);
+    ifstream input_stream(param->dfa_file);
+
+    if(param->mode == "batch") {
+       cout << "batch mode selected" << endl;
+
        merger.read_apta(input_stream);
-   
+
        input_stream.close();
 
-       cout << "Read data finished, processing:" << endl;
+       cout << "reading data finished, processing:" << endl;
        // run the state merger
        int solution = -1;
-    
+
        std::ostringstream oss3;
        oss3 << "init_" << param->dot_file << ".dot";
        FILE* output = fopen(oss3.str().c_str(), "w");
        merger.todot();
        merger.print_dot(output);
        fclose(output);
-    
+
        for(int i = 0; i < param->runs; ++i){
           std::ostringstream oss;
           oss << param->dot_file << (i+1) << ".aut";
@@ -209,150 +149,38 @@ void run(parameters* param) {
              CLIQUE_BOUND = min(CLIQUE_BOUND, solution - OFFSET + EXTRA_STATES);
          }
 
-     } else {
-       /* this is the outline for streaming mode  */ 
+    } else {
        cout << "stream mode selected" << endl;
-    
-       ifstream input_stream(param->dfa_file);
-
-       // first line has alphabet size and 
-       std::string line;
-       std::getline(input_stream, line);
-       merger.init_apta(line);
-
-       // line by line processing 
-       // add items 
-       int i = 0;   
-       int solution = 0;
-       merge_list all_merges;
-
-       merger.reset();
-
-       std::getline(input_stream, line);
-       merger.advance_apta(line); 
-       
- 
-       while (std::getline(input_stream, line)) {
-        merger.advance_apta(line);
-        //merger.update_red_blue();
-
-       if(merger.intersect() > 0) cout << "INTERSECT" << endl;
-
-
-        merge_list all_merges; 
-       
-        while( true ) { 
-            cout << " ";
-            if(EXTEND_ANY_RED) while(merger.extend_red() != 0) {
-               if(merger.intersect() > 0) cout << "INTERSECT2" << endl;
-                cerr << "+ ";
-            }
-
-            merge_map* possible_merges = merger.get_possible_merges();
-
-            if(!EXTEND_ANY_RED && possible_merges->empty()){
-                if(merger.extend_red() != 0) { cerr << "+"; continue; }
-                cout << "no more possible merges with extend any red" << endl;
-                break;
-            }
-            if(possible_merges->empty()){
-                cout << "no more possible merges " << merger.blue_states.size() << endl;
-                break;
-            }
-            if(merger.red_states.size() > CLIQUE_BOUND){
-               cout << "too many red states " << merger.red_states.size() << endl;
-               break;
-            }
-
-            merge_pair top_pair = (*possible_merges->rbegin()).second;
-            float top_score = (*possible_merges->rbegin()).first;
-
-            merge_pair runnerup_pair;
-            float runnerup_score = -1;
-
-            if(possible_merges->size() > 1) {
-                runnerup_score = (*(++(possible_merges->rbegin()))).first;
-	    } else {
-	       
-            }
-
-	   // random-greedy scales all scores by random number
-            /*if(GREEDY_METHOD == RANDOMG){
-                merge_map randomized_merges;
-                for(merge_map::reverse_iterator it = possible_merges->rbegin(); it != possible_merges->rend(); it++){
-                    //if((*it).first < LOWER_BOUND) break;
-                    randomized_merges.insert(pair<int, merge_pair>((*it).first * (rand() / (double)RAND_MAX), (*it).second));
-                }
-                top_score = (*randomized_merges.rbegin()).first;
-                top_pair = (*randomized_merges.rbegin()).second;
-            }*/
-
-	    // if heuristic requirement basedo n Hoeffding bound is true, i.e.
-	    // if difference between top and second-to-top 
-            if(top_score > 0) {
-              merger.perform_merge(top_pair.first, top_pair.second);
-              all_merges.push_front(top_pair);
-            } else {
-              cout << "no positive top score" << endl;
-              break;
-           } 
-            
-	    cout << "( "  << top_score << " " << runnerup_score << " )  ";
-            delete possible_merges;
-
-        }
-        cout << endl;
-        int size =  merger.get_final_apta_size();
-        int red_size = merger.red_states.size();
-        cout << endl << "found intermediate solution with " << size << " and " << red_size << " red states" << endl;
-     
-     
-       }
-       
+       stream_mode(merger, param, input_stream);
     }
 
-}
+    std::ostringstream oss2;
+    oss2 << param->dot_file << "final"  << ".dot";
+
+    FILE* output = fopen(oss2.str().c_str(), "w");
+    merger.todot();
+    merger.print_dot(output);
+    fclose(output);
+
+} // end run
+
 
 int main(int argc, const char *argv[]){
-    
+
     char c = 0;
     parameters* param = new parameters();
-    
+
     /* temporary holder for string arguments */
     char* dot_file = NULL;
     char* sat_program = NULL;
     char* hName;
     char* hData;
-    
+
     /* below parses command-line options, see 'man popt' */
     poptContext optCon;
     struct poptOption optionsTable[] = {
         { "version", 0, POPT_ARG_NONE, NULL, 1, "Display version information", NULL },
-/*        { "seed", 's', POPT_ARG_INT, &(param->seed), 's', "Seed for random merge heuristic; default=12345678", "integer" },
-        { "output file name", 'o', POPT_ARG_STRING, &dot_file, 'o', "The filename in which to store the learned DFAs in .dot and .aut format, default: \"dfa\".", "string" },
-	{ "heuristic-name", 'q', POPT_ARG_STRING, &hName, 'q', "Name of the merge heurstic to use; will default back on -p flag if not specified.", "string" },
-{ "data-name", 'z', POPT_ARG_STRING, &hData, 'z', "Name of the merge data class to use.", "string" },
-        { "runs", 'n', POPT_ARG_INT, &(param->tries), 'n', "Number of DFASAT runs/iterations; default=100", "integer" },
-        {"sink states", 'i', POPT_ARG_INT, &(param->sinkson), 'i', "Set to 1 to use sink states, 0 to consider all states", "integer"},
-        { "apta bound", 'b', POPT_ARG_INT, &(param->apta_bound), 'b', "Maximum number of remaining states in the partially learned DFA before starting the SAT search process. The higher this value, the larger the problem sent to the SAT solver; default=2000", "integer" },
-        { "dfa bound", 'd', POPT_ARG_INT, &(param->dfa_bound), 'd', "Maximum size of the partially learned DFA before starting the SAT search process; default=50", "integer" },
-        { "lower bound", 'l', POPT_ARG_FLOAT, &(param->lower_bound), 'l', "Minimum value of the heuristic function, smaller values are treated as inconsistent, also used as the paramter value in any statistical tests; default=-1", "float" },
-        { "extra states", 'e', POPT_ARG_INT, &(param->offset), 'e', "DFASAT runs a SAT solver to find a solution of size at most the size of the partially learned DFA + e; default=5", "integer" },
-        { "additional states", 'a', POPT_ARG_INT, &(param->extra_states), 'a', "With every iteration, DFASAT tries to find solutions of size at most the best solution found + a, default=0", "int" },
-        { "merge sinks during greedy", 'u', POPT_ARG_INT, &(param->merge_sinks_d), 'u', "Sink nodes are candidates for merging during the greedy runs (setting 0 or 1); default=0", "integer" },
-        { "merge sinks presolve", 'r', POPT_ARG_INT, &(param->merge_sinks_p), 'r', "Merge all sink nodes (setting 0 or 1) before sending the problem to the SAT solver; default=1", "integer" },
-        { "target rejecting sink", 'j', POPT_ARG_INT, &(param->target_rejecting), 'j', "Make all transitions from red states without any occurrences target the rejecting sink (setting 0 or 1) before sending the problem to the SAT solver; default=0", "integer" },
-        { "symmetry breaking", 'k', POPT_ARG_INT, &(param->symmetry), 'k', "Add symmetry breaking predicates to the SAT encoding (setting 0 or 1), based on Ulyantsev et al. BFS symmetry breaking; default=1", "integer" },
-        { "transition forcing", 'f', POPT_ARG_INT, &(param->forcing), 'f', "Add predicates to the SAT encoding that force transitions in the learned DFA to be used by input examples (setting 0 or 1); default=0", "integer" },
-        { "extend any red", 'x', POPT_ARG_INT, &(param->extend), 'r', "During greedy runs any merge candidate (blue) that cannot be merged with any (red) target is immediately changed into a (red) target; default=1. If set to 0, a merge candidate is only changed into a target when no more merges are possible.", "integer" },
-        { "method", 'm', POPT_ARG_INT, &(param->method), 'm', "Method to use during the greedy preprocessing, default value 1 is random greedy (used in Stamina winner), 2 is one non-randomized greedy", "integer" },
-        { "heuristic", 'h', POPT_ARG_INT, &(param->heuristic), 'h', "Heuristic to use during the greedy preprocessing, default value 1 counts the number of merges, 2 is EDSM (evidence driven state merging), 3 is shallow first (like RPNI), 4 counts overlap in merged positive transitions (used in Stamina winner), 5 is the overlap method for time series/flows (no loops or back-arcs), 6 is ALERGIA consistency check with shallow first, 7 computes a likelihoodratio test for score and consistency (like RTI algorithm), 8 computes the Akaike Information Criterion, 9 computes the Kullback-Leibler divergence (based on MDI algorithm). Statistical tests are computed only on positive traces.", "integer" },
-        { "state count", 't', POPT_ARG_INT, &(param->state_count), 't', "The minimum number of positive occurrences of a state for it to be included in overlap/statistical checks, default=25", "integer" },
-        { "symbol count", 'y', POPT_ARG_INT, &(param->symbol_count), 'y', "The minimum number of positive occurrences of a symbol/transition for it to be included in overlap/statistical checks, symbols with less occurrences are binned together, default=10", "integer" },
-        { "correction", 'c', POPT_ARG_FLOAT, &(param->correction), 'c', "Value of a Laplace correction (smoothing) added to all symbol counts when computing statistical tests (in ALERGIA, LIKELIHOODRATIO, AIC, and KULLBACK-LEIBLER), default=1.0", "float" },
-        { "extra parameter", 'p', POPT_ARG_FLOAT, &(param->parameter), 'p', "Extra parameter used during statistical tests, the significance level for the likelihood ratio test, the alpha value for ALERGIA, default=0.5", "float" },
-        { "solver", 'S', POPT_ARG_STRING, &sat_program, 'S', "Path to the program used to solve the problem, default=none", "string" },
-=======*/
+        { "debug", 'V', POPT_ARG_INT, &(param->debugging), 'V', "Debug mode and verbosity", "integer" },
         { "output file name", 'o', POPT_ARG_STRING, &(dot_file), 'o', "The filename in which to store the learned DFAs in .dot and .aut format, default: \"dfa\".", "string" },
         { "heuristic-name", 'h', POPT_ARG_STRING, &(hName), 'h', "Name of the merge heurstic to use; default count_driven. Use any heuristic in the evaluation directory. It is often beneficial to write your own, as heuristics are very application specific.", "string" },
         { "data-name", 'd', POPT_ARG_STRING, &(hData), 'd', "Name of the merge data class to use; default count_data. Use any heuristic in the evaluation directory.", "string" },
@@ -372,6 +200,9 @@ int main(int argc, const char *argv[]){
         { "lowerbound", 'l', POPT_ARG_FLOAT, &(param->lower_bound), 'l', "Minimum value of the heuristic function, smaller values are treated as inconsistent, also used as the paramater value in any statistical tests; default=-1. Advice: state merging is forced to perform the merge with best heuristic value, it can sometimes be better to color a state red rather then performing a bad merge. This is achieved using a positive lower bound value. Models learned with positive lower bound are frequently more interpretable.", "float" },
         { "state_count", 'q', POPT_ARG_INT, &(param->state_count), 'q', "The minimum number of positive occurrences of a state for it to be included in overlap/statistical checks (see evaluation functions); default=25. Advice: low frequency states can have an undesired influence on statistical tests, set to at least 10. Note that different evaluation functions can use this parameter in different ways.", "integer" },
         { "symbol_count", 'y', POPT_ARG_INT, &(param->symbol_count), 'y', "The minimum number of positive occurrences of a symbol/transition for it to be included in overlap/statistical checks, symbols with less occurrences are binned together; default=10. Advice: low frequency transitions can have an undesired influence on statistical tests, set to at least 4. Note that different evaluation functions can use this parameter in different ways.", "integer" },
+        { "epsilon", 'e', POPT_ARG_FLOAT, &(param->epsilon), 'e', "epsilon for Hoeffding condition", "float" },
+        { "delta", 'D', POPT_ARG_FLOAT, &(param->delta), 'D', "delta for Hoeffding condition", "float" },
+        { "batchsize", 'B', POPT_ARG_INT, &(param->batchsize), 'B', "bachsize for streaming", "int" },
         { "correction", 'c', POPT_ARG_FLOAT, &(param->correction), 'c', "Value of a Laplace correction (smoothing) added to all symbol counts when computing statistical tests (in ALERGIA, LIKELIHOODRATIO, AIC, and KULLBACK-LEIBLER); default=0.0. Advice: unclear whether smoothing is needed for the different tests, more smoothing typically leads to smaller models.", "float" },
         { "extrapar", 'p', POPT_ARG_FLOAT, &(param->extrapar), 'p', "Extra parameter used during statistical tests, the significance level for the likelihood ratio test, the alpha value for ALERGIA; default=0.5. Advice: look up the statistical test performed, this parameter is not always the same as a p-value.\n\nSettings influencing the SAT solving procedures:", "float" },
         { "sataptabound", 'A', POPT_ARG_INT, &(param->sataptabound), 'A', "Maximum number of remaining states in the partially learned DFA before starting the SAT search process. The higher this value, the larger the problem sent to the SAT solver; default=2000. Advice: try sending problem instances that are as large as possible, since larger instances take more time, test what time is acceptable for you.", "integer" },
@@ -386,13 +217,13 @@ int main(int argc, const char *argv[]){
     };
     optCon = poptGetContext(NULL, argc, (const char**)argv, optionsTable, 0);
     poptSetOtherOptionHelp(optCon, "[OPTIONS]* [input dfa file]");
-    
+
     while ((c = poptGetNextOpt(optCon)) >= 0){
         if(c == 1){
             cout << endl << "flexFringe" << endl;
             cout << "Copyright 2017 Sicco Verwer, Delft University of Technology" << endl;
             cout << "with contributions from Christian Hammerschmidt, University of Luxembourg" << endl;
-            cout << "based on " << endl; 
+            cout << "based on " << endl;
             cout << "DFASAT with random greedy preprocessing" << endl;
             cout << "Copyright 2015 Sicco Verwer and Marijn Heule, Delft University of Technology." << endl;
             exit( 1 );
@@ -402,20 +233,20 @@ int main(int argc, const char *argv[]){
         cerr << poptBadOption( optCon, POPT_BADOPTION_NOALIAS ) << ": " << poptStrerror(c) << endl;
         exit( 1 );
     }
-    
+
     char* f = const_cast<char*>(poptGetArg(optCon));
     if( f == 0 ){
         cout << "A DFA learning input file in Abbadingo format is required." << endl << endl;
         exit( 1 );
     }
     param->dfa_file = f;
-    
+
     while ((c = poptGetNextOpt(optCon)) >= 0);
     if( c < -1 ){
         cerr << poptBadOption( optCon, POPT_BADOPTION_NOALIAS ) << ": " << poptStrerror(c) << endl;
         exit( 1 );
     }
-    
+
     if(dot_file != NULL)
         param->dot_file = dot_file;
 
@@ -426,10 +257,10 @@ int main(int argc, const char *argv[]){
 
     param->hName = hName;
     param->hData = hData;
-   
-    run(param); 
-    
+
+    run(param);
+
     delete param;
-    
-    return 0;    
+
+    return 0;
 }
