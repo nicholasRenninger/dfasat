@@ -52,37 +52,11 @@ void evaluation_data::print_state_style(iostream& output){
 
 };
 
-void evaluation_data::print_transition_label(iostream& output, apta_node* source, set<int> labels, apta_node* target){
-   std::string labelstring = "";
-   for(set<int>::iterator labels_it = labels.begin(); labels_it != labels.end(); labels_it++) {
-       labelstring += target->context->alph_str(*labels_it) + " ";
-   }
-
-   output << labelstring; 
-};
-
-void evaluation_data::print_transition_style(iostream& output, apta_node* child){
+void evaluation_data::print_transition_label(iostream& output, int symbol){
 
 };
 
-void evaluation_data::print_sink_label(iostream& output, int type){
-
-};
-
-void evaluation_data::print_sink_style(iostream& output, int type){
-
-};
-
-void evaluation_data::print_sink_transition_label(iostream& output, int type, set<int> labels, apta_node* target){
-   std::string labelstring = "";
-   for(set<int>::iterator labels_it = labels.begin(); labels_it != labels.end(); labels_it++) {
-       labelstring += target->context->alph_str(*labels_it) + " ";
-   }
-
-   output << labelstring; 
-};
-
-void evaluation_data::print_sink_transition_style(iostream& output, int type){
+void evaluation_data::print_transition_style(iostream& output, set<int> symbols){
 
 };
 

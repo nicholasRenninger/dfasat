@@ -34,6 +34,10 @@ public:
     virtual void read_from(int type, int index, int length, int symbol, string data);
     virtual void update(evaluation_data* right);
     virtual void undo(evaluation_data* right);
+    
+    virtual bool is_low_count_sink();
+    virtual int sink_type();
+    virtual bool sink_consistent(int type);
 };
 
 
@@ -49,8 +53,8 @@ public:
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
   //virtual void print_dot(iostream&, state_merger *);
 
-  virtual int sink_type(apta_node* node);
-  virtual bool sink_consistent(apta_node* node, int type);
+  //virtual int sink_type(apta_node* node);
+  //virtual bool sink_consistent(apta_node* node, int type);
   virtual int num_sink_types();
 };
 

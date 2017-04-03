@@ -69,16 +69,12 @@ public:
 /* Undo updates when undoing merge */
     virtual void undo(evaluation_data* other);
 
-/* Printing of nodes and transitions in dor output */
+/* Printing of nodes and transitions in dot output */
     virtual void print_state_label(iostream& output);
     virtual void print_state_style(iostream& output);
-    virtual void print_transition_label(iostream& output, apta_node* source, set<int> labels, apta_node* target);
-    virtual void print_transition_style(iostream& output, apta_node* child);
-    virtual void print_sink_label(iostream& output, int type);
-    virtual void print_sink_style(iostream& output, int type);
-    virtual void print_sink_transition_label(iostream& output, int type, set<int> labels, apta_node* target);
-    virtual void print_sink_transition_style(iostream& output, int type);
-
+    virtual void print_transition_label(iostream& output, int symbol);
+    virtual void print_transition_style(iostream& output, set<int> symbols);
+    
     virtual int sink_type();
     virtual bool sink_consistent(int type);
 };

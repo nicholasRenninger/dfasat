@@ -140,6 +140,7 @@ bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right
  * low count sink = frequency smaller than STATE_COUNT */
 bool is_low_count_sink_alergia(apta_node* node){
     node = node->find();
+    cerr << node->size << " " << STATE_COUNT << endl;
     return node->size < STATE_COUNT;
 }
 

@@ -121,7 +121,7 @@ public:
     
     apta_node* next_forward();
     apta_node* next_backward();
-    void increment();
+    virtual void increment();
     
     apta_node* operator*() const { return current; }
     APTA_iterator& operator++() { increment(); return *this; }
@@ -136,10 +136,20 @@ public:
 
     apta_node* next_forward();
     apta_node* next_backward();
-    void increment();
+    virtual void increment();
     
     apta_node* operator*() const { return current; }
     merged_APTA_iterator& operator++() { increment(); return *this; }
+};
+
+class merged_APTA_iterator_func : public merged_APTA_iterator {
+public:
+    
+    bool(*check_function)(apta_node*);
+
+    merged_APTA_iterator_func(apta_node* start, bool(*)(apta_node*));
+
+    void increment();    
 };
 
 struct size_compare

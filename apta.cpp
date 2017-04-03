@@ -80,11 +80,16 @@ void apta::read_file(istream &input_stream){
     }
 };
 
+bool is_sink(apta_node* node){
+    //cerr << node->size << endl;
+    return node->data->sink_type() != -1;
+}
+
 void apta::print_dot(iostream& output){
     output << "digraph DFA {\n";
     output << "\t" << root->find()->number << " [label=\"root\" shape=box];\n";
     output << "\t\tI -> " << root->find()->number << ";\n";
-    for(merged_APTA_iterator Ait = merged_APTA_iterator(root); *Ait != 0; ++Ait){
+    for(merged_APTA_iterator_func Ait = merged_APTA_iterator_func(root, is_sink); *Ait != 0; ++Ait){
         apta_node* n = *Ait;
         output << "\t" << n->number << " [ label=\"";
         n->data->print_state_label(output);
@@ -94,60 +99,65 @@ void apta::print_dot(iostream& output){
         if(n->red == false) output << " style=dotted";
         output << " ];\n";
 
-        // items to reach
-        state_set childnodes;
-        set<int> sinks;
         // transition labels for item
-        map<apta_node*, set<int>> labels;
-        map<apta_node*, set<int>> sinklabels;
+        map<apta_node*, set<int>> childlabels;
+        map<int, set<int>> sinklabels;
 
         for(child_map::iterator it = n->children.begin(); it != n->children.end(); ++it){
-            apta_node* child = (*it).second;
+            apta_node* child = (*it).second->find();
             if(child->data->sink_type() != -1){
-                sinks.insert(child->data->sink_type());
-                if(sinklabels.find(child) == sinklabels.end()) {
-
-                } else {
-                    sinklabels[child].insert( it->first );
-                }
-
+                if(sinklabels.find(child->data->sink_type()) == sinklabels.end())
+                    sinklabels[child->data->sink_type()] = set<int>();
+                sinklabels[child->data->sink_type()].insert( it->first );
             } else {
-                childnodes.insert(child);
-                if(labels.find(child) == labels.end()) {
-
-                    labels[child].insert( it->first );
-                } else {
-
-                    labels[child].insert( it->first );
-                }
+                if(childlabels.find(child) == childlabels.end())
+                    childlabels[child] = set<int>();
+                childlabels[child].insert( it->first );
             }
         }
-        for(state_set::iterator it2 = childnodes.begin(); it2 != childnodes.end(); ++it2){
-            apta_node* child = *it2;
+        for(map<apta_node*, set<int>>::iterator it2 = childlabels.begin(); it2 != childlabels.end(); ++it2){
+            apta_node* child = (*it2).first;
+            set<int> labels  = (*it2).second;
+            
             output << "\t\t" << n->number << " -> " << child->number << " [label=\"";
-
-            n->data->print_transition_label(output, n, labels[child], child);
+            
+            for(set<int>::iterator it3 = labels.begin(); it3 != labels.end(); ++it3){
+                output << alph_str(*it3) << ":";
+                n->data->print_transition_label(output, *it3);
+                output << "\n";
+            }
 
             output << "\" ";
-            n->data->print_transition_style(output, child);
+            n->data->print_transition_style(output, labels);
             output << " ];\n";
         }
-
-        /*for(set<int>::iterator it = sinks.begin(); it != sinks.end(); ++it){
-            int stype = *it;
+        for(map<int, set<int>>::iterator it2 = sinklabels.begin(); it2 != sinklabels.end(); ++it2){
+            int stype = (*it2).first;
+            set<int> labels  = (*it2).second;
+            
             output << "\tS" << n->number << "t" << stype << " [ label=\"";
-            n->data->print_sink_label(output, stype);
+            for(set<int>::iterator it3 = labels.begin(); it3 != labels.end(); ++it3){
+                output << n->get_child(*it3)->size << " ";
+                n->get_child(*it3)->data->print_state_label(output);
+                output << "\n";
+            }
             output << "\" ";
-            n->data->print_sink_style(output, stype);
+            n->get_child(*(labels.begin()))->data->print_state_style(output);
+            if(n->red == false) output << " style=dotted";
             output << " ];\n";
 
             output << "\t\t" << n->number << " -> S" << n->number << "t" << stype << " [ label=\"";
+            
+            for(set<int>::iterator it3 = labels.begin(); it3 != labels.end(); ++it3){
+                output << alph_str(*it3) << ":";
+                n->data->print_transition_label(output, *it3);
+                output << "\n";
+            }
 
-            n->data->print_sink_transition_label(output, stype, sinklabels[n], n);
             output << "\" ";
-            n->data->print_sink_transition_style(output, stype);
+            n->data->print_transition_style(output, labels);
             output << " ];\n";
-        }*/
+        }
     }
     output << "}\n";
 };
@@ -314,6 +324,21 @@ void merged_APTA_iterator::increment() {
     if(next != 0){ current = next; return; }
     current = 0;
 }
+
+void merged_APTA_iterator_func::increment() {
+    apta_node* next = next_forward();
+    while(next != 0 && check_function(next)){
+        current = next;
+        next = next_backward();
+    }
+    if(next != 0){ current = next; return; }
+    current = 0;
+}
+
+merged_APTA_iterator_func::merged_APTA_iterator_func(apta_node* start, bool(*node_check)(apta_node*)) : merged_APTA_iterator(start){
+    check_function = node_check;
+}
+
 
 /*apta_node::add_target(int symbol){
     if(node->child(symbol) == 0){
