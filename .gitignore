@@ -16,3 +16,5 @@ indexing_suite/*
 generated.cpp
 # articfacs
 .DS_Store
+# data files
+PAutomaC-competition_sets/*
