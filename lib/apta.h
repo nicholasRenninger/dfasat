@@ -11,6 +11,7 @@
 #include <string>
 
 #include "parameters.h"
+//#include "state_merger.h"
 
 using namespace std;
 
@@ -25,6 +26,23 @@ typedef list<int> int_list;
 typedef list<double> double_list;
 
 typedef map<int, apta_node*> child_map;
+
+typedef pair<bool, double> score_pair;
+typedef pair< pair<int, int>, score_pair > ts_pair;
+typedef map< apta_node*, ts_pair > score_map;
+typedef list< pair< int, int > > size_list;
+
+typedef set<apta_node*, total_weight_compare> state_set;
+typedef pair<apta_node*, apta_node*> merge_pair;
+typedef list< merge_pair > merge_list;
+typedef multimap<double, merge_pair > merge_map;
+
+typedef list<apta_node*> node_list;
+typedef list<int> int_list;
+typedef list<double> double_list;
+
+typedef map<int, apta_node*> child_map;
+typedef map<int, int> num_map;
 
 class apta_node{
 public:
@@ -58,7 +76,11 @@ public:
     
     /* is this a red state? */
     bool red;
-
+    
+    /* store previously tested merges */
+    score_map eval_store;
+    size_list size_store;
+    
     /* extra information for merging heursitics and consistency checks */
     evaluation_data* data;
 

@@ -294,12 +294,15 @@ int state_merger::intersect() {
 /* perform a merge, assumed to succeed, no testing for consistency or score computation */
 void state_merger::perform_merge(apta_node* left, apta_node* right){
     merge_force(left, right);
+    left->size_store.push_back(pair<int,int>(num_merges,right->size));
+    num_merges++;
     update_red_blue();
 }
 
 /* undo a merge, assumed to succeed, no testing for consistency or score computation */
 void state_merger::undo_perform_merge(apta_node* left, apta_node* right){
     undo_merge(left, right);
+    left->size_store.pop_back();
     update_red_blue();
 }
 
@@ -310,7 +313,35 @@ score_pair state_merger::test_merge(apta_node* left, apta_node* right){
     eval->reset(this);
 
     // TODO: when does this happen and why?
+    // Should never happen, perhaps make an assert?
     //if(left==right) return score_pair(false, -1);
+    
+    if(STORE_MERGES){
+        score_map::iterator it = right->eval_store.find(left);
+        if(it != right->eval_store.end()){
+            merge_time = (*it).second.first.first;
+            merge_size = (*it).second.first.second;
+            score_pair merge_score = (*it).second.second;
+            
+            int size_same = 0;
+            for(size_list::reverse_iterator it2 = left->size_store.rbegin(); it2 != left->size_store.rend(); ++it2){
+                if((*it2).first <= merge_time){
+                    size_same = (*it2).second;
+                    break;
+                }
+            }
+            int size_change = left->size - size_same;
+            
+            if(STORE_MERGES_KEEP_CONFLICT && size_same == merge_size && merge_score.first == false)
+                return merge_score;
+            
+            if(size_change < STORE_MERGES_SIZE_THRESHOLD)
+                return merge_score;
+
+            if((double)size_change/(double)left->size < STORE_MERGES_RATIO_THRESHOLD)
+                return merge_score;
+        }
+    }
     
     double score_result = -1;
     bool   merge_result = false;
@@ -330,6 +361,10 @@ score_pair state_merger::test_merge(apta_node* left, apta_node* right){
     
     if(MERGE_WHEN_TESTING) undo_merge(left,right);
     
+    if(STORE_MERGES){
+        right->eval_store[left] = ts_pair(pair<int,int>(num_merges,left->size),score_pair(merge_result, score_result));
+    }
+
     return score_pair(merge_result, score_result);
 }
 
@@ -446,7 +481,6 @@ void state_merger::read_apta(vector<string> dfa_data){
     //eval->read_file(input_stream, this);
     read_apta(input_stream);
 }
-
 
 /* output functions */
 void state_merger::todot(){

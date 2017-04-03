@@ -10,6 +10,8 @@
 class evaluation_data;
 class evaluation_function;
 
+class apta_node;
+
 #include "evaluation_factory.h"
 #include "apta.h"
 #include "state_merger.h"

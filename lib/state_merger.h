@@ -14,8 +14,8 @@
 class state_merger;
 class merger_context;
 
-#include "apta.h"
 #include "evaluate.h"
+#include "apta.h"
 
 using namespace std;
 
@@ -73,24 +73,12 @@ public:
 
 };
 
-//typedef set<apta_node*, total_weight_compare> state_set;
-typedef list< pair<apta_node*, apta_node*> > merge_list;
-typedef multimap<double, pair<apta_node*, apta_node*> > merge_map;
-typedef pair<apta_node*, apta_node*> merge_pair;
-typedef pair<bool, double> score_pair;
-
-typedef list<apta_node*> node_list;
-typedef list<int> int_list;
-typedef list<double> double_list;
-
-typedef map<int, apta_node*> child_map;
-typedef map<int, int> num_map;
-
 class state_merger{
 public:
     /* for building the apta  */
     map<string, int> seen;
-    int node_number = 1; 
+    int node_number = 1;
+    int num_merges = 0;
 
     merger_context context;
     apta* aut;
