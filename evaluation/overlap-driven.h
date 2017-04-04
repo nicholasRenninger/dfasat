@@ -7,6 +7,12 @@
 class overlap_data: public alergia_data {
 protected:
   REGISTER_DEC_DATATYPE(overlap_data);
+
+public:
+
+  virtual void print_transition_label(iostream& output, int symbol);
+
+
 };
 
 class overlap_driven: public alergia {
@@ -21,6 +27,7 @@ public:
   virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
   virtual void reset(state_merger *merger);
+
 };
 
 #endif
