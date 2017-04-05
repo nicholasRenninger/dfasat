@@ -90,7 +90,8 @@ void apta::print_dot(iostream& output){
     output << "digraph DFA {\n";
     output << "\t" << root->find()->number << " [label=\"root\" shape=box];\n";
     output << "\t\tI -> " << root->find()->number << ";\n";
-    for(merged_APTA_iterator_func Ait = merged_APTA_iterator_func(root, is_sink); *Ait != 0; ++Ait){
+    //for(merged_APTA_iterator_func Ait = merged_APTA_iterator_func(root, is_sink); *Ait != 0; ++Ait){
+    for(merged_APTA_iterator Ait = merged_APTA_iterator(root); *Ait != 0; ++Ait){
         apta_node* n = *Ait;
         output << "\t" << n->number << " [ label=\"";
         n->data->print_state_label(output);
@@ -328,11 +329,16 @@ void merged_APTA_iterator::increment() {
 
 void merged_APTA_iterator_func::increment() {
     apta_node* next = next_forward();
-    while(next != 0 && check_function(next)){
+    if(next != 0){
         current = next;
+        if(!check_function(current)) return;
+    }
+    next = next_backward();
+    while(next != 0){
+        current = next;
+        if(!check_function(current)) return;
         next = next_backward();
     }
-    if(next != 0){ current = next; return; }
     current = 0;
 }
 
