@@ -77,6 +77,7 @@ void apta::read_file(istream &input_stream){
         }
         if(depth > max_depth) max_depth = depth;
         node->type = type;
+        node->size = node->size + 1;
     }
 };
 
@@ -178,7 +179,7 @@ apta_node::apta_node(apta *context) {
     number = 0;
     satnumber = 0;
     colour = 0;
-    size = 1;
+    size = 0;
     depth = 0;
     type = -1;
 
