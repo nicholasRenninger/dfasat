@@ -2,12 +2,14 @@
 *.dot
 *.aut
 *.pdf
+*.png
 # ignore all object files
 *.o
 *.so
 evaluation/*.o
 # ignore binaries
 dfasat
+flexfringe
 lingeling
 # py++ temporary files
 exposed_decl.pypp.txt
