@@ -80,4 +80,7 @@ void overlap_driven::reset(state_merger *merger){
   overlap = 0;
 };
 
+void overlap_data::print_transition_label(iostream& output, int symbol){
+    output << (num_pos[symbol]+num_neg[symbol]);
+};
 
