@@ -74,6 +74,14 @@ public:
 };
 
 class state_merger{
+private:
+
+    /* recursive state merging routines */
+    bool merge(apta_node* red, apta_node* blue);
+    void merge_force(apta_node* red, apta_node* blue);
+    bool merge_test(apta_node* red, apta_node* blue);
+    void undo_merge(apta_node* red, apta_node* blue);
+
 public:
     /* for building the apta  */
     map<string, int> seen;
@@ -93,21 +101,19 @@ public:
     state_merger(evaluation_function*, apta*);
 
     void reset();
-    /* state merging (recursive) */
-    bool merge(apta_node* red, apta_node* blue);
-    void merge_force(apta_node* red, apta_node* blue);
-    bool merge_test(apta_node* red, apta_node* blue);
-    void undo_merge(apta_node* red, apta_node* blue);
 
-    int intersect();
+    /* performing red-blue merges */
+    void perform_merge(apta_node*, apta_node*);
+    void undo_perform_merge(apta_node*, apta_node*);
 
+    /* creating new red states */
     void extend(apta_node* blue);
     void undo_extend(apta_node* blue);
     
-    /* find merges */
-    merge_map*  get_possible_merges();
+    /* find refinements */
+    merge_map*  get_possible_refinements();
     merge_map*  get_possible_merges(int);
-    merge_pair* get_best_merge();
+    merge_pair* get_best_refinement();
     merge_pair* get_best_merge(int);
  
     /* find unmergable states */
@@ -119,8 +125,6 @@ public:
     score_pair test_merge(apta_node*,apta_node*);
     score_pair test_local_merge(apta_node* red, apta_node* blue);
 
-    void perform_merge(apta_node*, apta_node*);
-    void undo_perform_merge(apta_node*, apta_node*);
 
     state_set& get_candidate_states();
     state_set& get_sink_states();

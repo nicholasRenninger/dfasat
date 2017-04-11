@@ -216,10 +216,10 @@ void state_merger::update_red_blue(){
 
 /* make a given blue state red, and its children blue */
 void state_merger::extend(apta_node* blue){
-
+    blue->red = true;
+    //return;
     blue_states.erase(blue);
     red_states.insert(blue);
-    blue->red = true;
 
     for(child_map::iterator it = blue->children.begin(); it != blue->children.end(); ++it){
         apta_node* child = (*it).second;
@@ -229,9 +229,11 @@ void state_merger::extend(apta_node* blue){
 
 /* undo making a given blue state red */
 void state_merger::undo_extend(apta_node* blue){
+    blue->red = false;
+    //return;
+
     blue_states.insert(blue);
     red_states.erase(blue);
-    blue->red = false;
 
     for(child_map::iterator it = blue->children.begin(); it != blue->children.end(); ++it){
         apta_node* child = (*it).second;
@@ -241,13 +243,27 @@ void state_merger::undo_extend(apta_node* blue){
 
 /* make the first blue state (ordered by size) red, and its children blue */
 apta_node* state_merger::extend_red(){
-    for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
+    
+    apta_node* top_state = 0;
+    for(blue_state_iterator it = blue_state_iterator(aut->root); *it != 0; ++it){
+        if(!MERGE_SINKS_DSOLVE && (sink_type(*it) != -1)) continue;
+        if(top_state == 0 || top_state->size < (*it)->size) top_state = *it;
+    }
+    if(top_state != 0) extend(top_state);
+    return top_state;
+
+    state_set blues = state_set();
+    for(blue_state_iterator it = blue_state_iterator(aut->root); *it != 0; ++it) blues.insert(*it);
+    
+    for(state_set::iterator it = blues.begin(); it != blues.end(); ++it){
+    //for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
         apta_node* blue = *it;
         bool found = false;
 
         if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
 
-        for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
+        for(red_state_iterator it2 = red_state_iterator(aut->root); *it2 != 0; ++it2){
+        //for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;
             score_pair score = test_merge(red, blue);
             if(score.first == true){ found = true; break; }
@@ -261,27 +277,10 @@ apta_node* state_merger::extend_red(){
     return 0;
 }
 
-// this was added for debugging purposes only
-int state_merger::intersect() {
-
-    int count = 0;
-
-    for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
-        apta_node* blue = *it;
-
-        for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
-            apta_node* red = *it2;
-            if(red == blue) { count++; }
-        }
-    }
-
-    return count;
-}
-
 /* perform a merge, assumed to succeed, no testing for consistency or score computation */
 void state_merger::perform_merge(apta_node* left, apta_node* right){
     merge_force(left, right);
-    left->size_store.push_back(pair<int,int>(num_merges,right->size));
+    if(STORE_MERGES) left->size_store.push_back(pair<int,int>(num_merges,right->size));
     num_merges++;
     update_red_blue();
 }
@@ -289,7 +288,7 @@ void state_merger::perform_merge(apta_node* left, apta_node* right){
 /* undo a merge, assumed to succeed, no testing for consistency or score computation */
 void state_merger::undo_perform_merge(apta_node* left, apta_node* right){
     undo_merge(left, right);
-    left->size_store.pop_back();
+    if(STORE_MERGES) left->size_store.pop_back();
     update_red_blue();
 }
 
@@ -298,12 +297,7 @@ void state_merger::undo_perform_merge(apta_node* left, apta_node* right){
  * returns a <consistency,score> pair */
 score_pair state_merger::test_merge(apta_node* left, apta_node* right){
     eval->reset(this);
-
-    // TODO: when does this happen and why?
-    // Should never happen, perhaps make an assert?
-    //if(left==right) return score_pair(false, -1);
-
-    
+  
     if(STORE_MERGES){
         score_map::iterator it = right->eval_store.find(left);
         if(it != right->eval_store.end()){
@@ -331,9 +325,6 @@ score_pair state_merger::test_merge(apta_node* left, apta_node* right){
         }
     }
     
-
-
-
     double score_result = -1;
     bool   merge_result = false;
 
@@ -348,6 +339,7 @@ score_pair state_merger::test_merge(apta_node* left, apta_node* right){
     if(merge_result && !eval->compute_before_merge) score_result = eval->compute_score(this, left, right);
 
     if((merge_result && eval->compute_consistency(this, left, right) == false)) merge_result = false;
+    
     if(USE_LOWER_BOUND && score_result < LOWER_BOUND) merge_result = -1;
 
     if(MERGE_WHEN_TESTING) undo_merge(left,right);
@@ -357,33 +349,36 @@ score_pair state_merger::test_merge(apta_node* left, apta_node* right){
         right->eval_store[left] = ts_pair(pair<int,int>(num_merges,left->size),score_pair(merge_result, score_result));
     }
 
-
-
     return score_pair(merge_result, score_result);
 }
 
-/* returns all possible merges given the current sets of red and blue states
+/* returns all possible refinements given the current sets of red and blue states
  * behavior depends on input parameters
- * note that state sets are ordered on size
- * the merge score is used as key in the returned merge_map */
-merge_map* state_merger::get_possible_merges(){
-    merge_map* mset = new merge_map();
+ * the merge score is used as key in the returned refinement_map */
+refinement_set* state_merger::get_possible_refinements(){
+    refinement_set* result = new refinement_set();
 
-    for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
-        apta_node* blue = *(it);
+    state_set blue_its = state_set();
+    for(blue_state_iterator it = blue_state_iterator(aut->root); *it != 0; ++it) blue_its.insert(*it);
+    
+    for(state_set::iterator it = blue_its.begin(); it != blue_its.end(); ++it){
+        apta_node* blue = *it;
+        bool found = false;
+        
         if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
 
-        for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
+        for(red_state_iterator it2 = red_state_iterator(aut->root); *it2 != 0; ++it2){
             apta_node* red = *it2;
 
             score_pair score = test_merge(red,blue);
             if(score.first == true){
                 mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(red, blue)));
+                    found = true;
             }
         }
 
         if(MERGE_BLUE_BLUE){
-            for(state_set::iterator it2 = blue_states.begin(); it2 != blue_states.end(); ++it2){
+            for(state_set::iterator it2 = blue_its.begin(); it2 != blue_its.end(); ++it2){
                 apta_node* blue2 = *it2;
 
                 if(blue == blue2) continue;
@@ -391,10 +386,15 @@ merge_map* state_merger::get_possible_merges(){
                 score_pair score = test_merge(blue2,blue);
                 if(score.first == true){
                     mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(blue2, blue)));
+                    found = true;
                 }
             }
         }
 
+        if(found == false) {
+            mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(blue2, blue)));
+        }
+    
         if(MERGE_MOST_VISITED) break;
     }
     return mset;
@@ -405,12 +405,14 @@ merge_map* state_merger::get_possible_merges(){
 merge_map* state_merger::get_possible_merges(int count){
     merge_map* mset = new merge_map();
 
-    for(state_set::iterator it = red_states.begin(); it != red_states.end(); ++it){
+    for(red_state_iterator it = red_state_iterator(aut->root); *it != 0; ++it){
+    //for(state_set::iterator it = red_states.begin(); it != red_states.end(); ++it){
         apta_node* red = *(it);
 
         if(red->size < count) continue;
 
-        for(state_set::iterator it2 = blue_states.begin(); it2 != blue_states.end(); ++it2){
+        for(blue_state_iterator it2 = blue_state_iterator(aut->root); *it2 != 0; ++it2){
+        //for(state_set::iterator it2 = blue_states.begin(); it2 != blue_states.end(); ++it2){
             apta_node* blue = *it2;
             if(blue->size < count) continue;
 
@@ -425,8 +427,9 @@ merge_map* state_merger::get_possible_merges(int count){
             blue->age = 0;
 
             if(MERGE_BLUE_BLUE){
-                for(state_set::iterator it2 = blue_states.begin(); it2 != blue_states.end(); ++it2){
-                    apta_node* blue2 = *it2;
+                for(blue_state_iterator it3 = blue_state_iterator(aut->root); *it3 != 0; ++it3){
+                //for(state_set::iterator it2 = blue_states.begin(); it2 != blue_states.end(); ++it2){
+                    apta_node* blue2 = *it3;
 
                     if(blue->size < count) continue;
                     if(blue == blue2) continue;
@@ -450,11 +453,13 @@ merge_pair* state_merger::get_best_merge(){
     merge_pair* best = new merge_pair(0,0);
     double result = -1;
 
-    for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
+    for(blue_state_iterator it = blue_state_iterator(aut->root); *it != 0; ++it){
+    //for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
         apta_node* blue = *(it);
         if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
 
-        for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
+        for(red_state_iterator it2 = red_state_iterator(aut->root); *it2 != 0; ++it2){
+        //for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;
 
             score_pair score = test_merge(red,blue);
@@ -466,7 +471,8 @@ merge_pair* state_merger::get_best_merge(){
         }
 
         if(MERGE_BLUE_BLUE){
-            for(state_set::iterator it2 = blue_states.begin(); it2 != blue_states.end(); ++it2){
+            for(blue_state_iterator it2 = blue_state_iterator(aut->root); *it2 != 0; ++it2){
+            //for(state_set::iterator it2 = blue_states.begin(); it2 != blue_states.end(); ++it2){
                 apta_node* blue2 = *it2;
 
                 if(blue == blue2) continue;
@@ -489,11 +495,13 @@ merge_pair* state_merger::get_best_merge(int count){
     merge_pair* best = new merge_pair(0,0);
     double result = -1;
 
-    for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
+    for(blue_state_iterator it = blue_state_iterator(aut->root); *it != 0; ++it){
+    //for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
         apta_node* blue = *(it);
         if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
 
-        for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
+        for(red_state_iterator it2 = red_state_iterator(aut->root); *it2 != 0; ++it2){
+        //for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;
 
             score_pair score = test_merge(red,blue);
@@ -505,7 +513,8 @@ merge_pair* state_merger::get_best_merge(int count){
         }
 
         if(MERGE_BLUE_BLUE){
-            for(state_set::iterator it2 = blue_states.begin(); it2 != blue_states.end(); ++it2){
+            for(blue_state_iterator it2 = blue_state_iterator(aut->root); *it2 != 0; ++it2){
+            //for(state_set::iterator it2 = blue_states.begin(); it2 != blue_states.end(); ++it2){
                 apta_node* blue2 = *it2;
 
                 if(blue == blue2) continue;

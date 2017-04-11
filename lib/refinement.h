@@ -22,22 +22,43 @@
  *  Feel free to adapt the code to your needs, please inform me of (potential) improvements.
  */
 
-#ifndef _SEARCHER_H_
-#define _SEARCHER_H_
+#ifndef _REFINEMENT_H_
+#define _REFINEMENT_H_
 
 using namespace std;
 
-#include <fstream>
-#include <iostream>
 #include <list>
 #include <queue>
 #include <map>
 
-#include "state_merger.h"
-#include "refinement.h"
+class refinement;
 
-extern int NODES;
+typedef list<refinement> refinement_list;
+typedef multimap<double, refinement, greater<double> > refinement_set;
 
-void bestfirst(state_merger* merger);
+class refinement{
+	apta_node* left;
+	apta_node* right;
+	
+public:
+	refinement(apta_node* l, apta_node* r);
 
-#endif /* _SEARCHER_H_ */
+	inline void print() const{
+        if(left == 0) cerr << "extend( " << right->number << " )" << endl;
+        else cerr << "merge( " << left->number << " " << right->number << " )" << endl;
+	};
+	
+	inline void doref(state_merger* m){
+		//cerr << "do : "; print();
+        if(left == 0) m->extend(right);
+        else m->perform_merge(left, right);
+	};
+	
+	inline void undo(state_merger* m){
+		//cerr << "undo : "; print();
+        if(left == 0) m->undo_extend(right);
+        else m->undo_perform_merge(left, right);
+	};
+};
+
+#endif /* _REFINEMENT_H_ */

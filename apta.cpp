@@ -19,6 +19,7 @@ using namespace std;
 /* constructors and destructors */
 apta::apta(){
     root = new apta_node(this);
+    root->red = true;
     max_depth = 0;
     merge_count = 0;
 }
@@ -90,8 +91,8 @@ void apta::print_dot(iostream& output){
     output << "digraph DFA {\n";
     output << "\t" << root->find()->number << " [label=\"root\" shape=box];\n";
     output << "\t\tI -> " << root->find()->number << ";\n";
-    //for(merged_APTA_iterator_func Ait = merged_APTA_iterator_func(root, is_sink); *Ait != 0; ++Ait){
-    for(merged_APTA_iterator Ait = merged_APTA_iterator(root); *Ait != 0; ++Ait){
+    for(merged_APTA_iterator_func Ait = merged_APTA_iterator_func(root, is_sink); *Ait != 0; ++Ait){
+    //for(merged_APTA_iterator Ait = merged_APTA_iterator(root); *Ait != 0; ++Ait){
         apta_node* n = *Ait;
         output << "\t" << n->number << " [ label=\"";
         n->data->print_state_label(output);
@@ -327,6 +328,52 @@ void merged_APTA_iterator::increment() {
     current = 0;
 }
 
+void blue_state_iterator::increment() {
+    apta_node* next = next_backward();
+    while(next != 0){
+        while(next != 0){
+            current = next;
+            if(!current->red) return;
+            next = next_forward();
+        }
+        next = next_backward();
+    }
+    current = 0;
+}
+
+blue_state_iterator::blue_state_iterator(apta_node* start) :
+    merged_APTA_iterator(start) {
+    apta_node* next = start;
+    while(next != 0){
+        while(next != 0){
+            current = next;
+            if(!current->red) return;
+            next = next_forward();
+        }
+        next = next_backward();
+    }
+    current = 0;
+}
+
+void red_state_iterator::increment() {
+    apta_node* next = next_forward();
+    if(next != 0){
+        current = next;
+        if(current->red) return;
+    }
+    next = next_backward();
+    while(next != 0){
+        current = next;
+        if(current->red) return;
+        next = next_backward();
+    }
+    current = 0;
+}
+
+red_state_iterator::red_state_iterator(apta_node* start) :
+    merged_APTA_iterator(start) {
+}
+
 void merged_APTA_iterator_func::increment() {
     apta_node* next = next_forward();
     if(next != 0){
@@ -345,7 +392,6 @@ void merged_APTA_iterator_func::increment() {
 merged_APTA_iterator_func::merged_APTA_iterator_func(apta_node* start, bool(*node_check)(apta_node*)) : merged_APTA_iterator(start){
     check_function = node_check;
 }
-
 
 /*apta_node::add_target(int symbol){
     if(node->child(symbol) == 0){

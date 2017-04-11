@@ -142,6 +142,22 @@ public:
     merged_APTA_iterator& operator++() { increment(); return *this; }
 };
 
+class blue_state_iterator : public merged_APTA_iterator {
+public:
+    
+    blue_state_iterator(apta_node* start);
+
+    void increment();    
+};
+
+class red_state_iterator : public merged_APTA_iterator {
+public:
+    
+    red_state_iterator(apta_node* start);
+
+    void increment();    
+};
+
 class merged_APTA_iterator_func : public merged_APTA_iterator {
 public:
     

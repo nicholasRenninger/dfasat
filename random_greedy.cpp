@@ -17,7 +17,7 @@ merge_list random_greedy_bounded_run(state_merger* merger){
             
             
             cout << " ";
-            if(EXTEND_ANY_RED) while(merger->extend_red() != 0) cerr << "+ ";
+            // if(EXTEND_ANY_RED) while(merger->extend_red() != 0) cerr << "+ ";
             // leak here, too
             merge_map* possible_merges = merger->get_possible_merges();
 
