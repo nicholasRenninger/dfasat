@@ -32,33 +32,64 @@ using namespace std;
 #include <map>
 
 class refinement;
+class merge_refinement;
+class extend_refinement;
+struct score_compare;
 
 typedef list<refinement> refinement_list;
-typedef multimap<double, refinement, greater<double> > refinement_set;
+typedef set<refinement, greater<double> > refinement_set;
 
 class refinement{
+public:
+	virtual void print() const;
+	virtual void doref(state_merger* m);
+	virtual void undo(state_merger* m);
+};
+
+class merge_refinement : refinement {
 	apta_node* left;
+	apta_node* right;
+    double score;
+	
+public:
+	merge_refinement(double s, apta_node* l, apta_node* r);
+
+	virtual inline void print() const{
+        cerr << "merge( " << left->number << " " << right->number << " )" << endl;
+	};
+	
+	virtual inline void doref(state_merger* m){
+        m->perform_merge(left, right);
+	};
+	
+	virtual inline void undo(state_merger* m){
+        m->undo_perform_merge(left, right);
+	};
+};
+
+class extend_refinement : refinement {
 	apta_node* right;
 	
 public:
-	refinement(apta_node* l, apta_node* r);
+	extend_refinement(apta_node* r);
 
-	inline void print() const{
-        if(left == 0) cerr << "extend( " << right->number << " )" << endl;
-        else cerr << "merge( " << left->number << " " << right->number << " )" << endl;
+	virtual inline void print() const{
+        cerr << "extend( " << right->number << " )" << endl;
 	};
 	
-	inline void doref(state_merger* m){
-		//cerr << "do : "; print();
-        if(left == 0) m->extend(right);
-        else m->perform_merge(left, right);
+	virtual inline void doref(state_merger* m){
+        m->extend(right);
 	};
 	
-	inline void undo(state_merger* m){
-		//cerr << "undo : "; print();
-        if(left == 0) m->undo_extend(right);
-        else m->undo_perform_merge(left, right);
+	virtual inline void undo(state_merger* m){
+        m->undo_extend(right);
 	};
+};
+
+struct score_compare {
+    bool operator()(refinement* left, refinement* right) const {
+        return left->number < right->number;
+    }
 };
 
 #endif /* _REFINEMENT_H_ */

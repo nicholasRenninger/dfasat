@@ -372,8 +372,9 @@ refinement_set* state_merger::get_possible_refinements(){
 
             score_pair score = test_merge(red,blue);
             if(score.first == true){
-                mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(red, blue)));
-                    found = true;
+                result->insert(merge_refinement(score.second, red, blue));
+                //mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(red, blue)));
+                found = true;
             }
         }
 
@@ -385,19 +386,25 @@ refinement_set* state_merger::get_possible_refinements(){
 
                 score_pair score = test_merge(blue2,blue);
                 if(score.first == true){
-                    mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(blue2, blue)));
+                    result->insert(merge_refinement(score.second, red, blue));
+                    //mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(blue2, blue)));
                     found = true;
                 }
             }
         }
 
         if(found == false) {
-            mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(blue2, blue)));
+            if(EXTEND_ANY_RED){
+                result.clear();
+                result->insert(color_refinement(blue));
+                return result;
+            }
+            result->insert(color_refinement(blue));
         }
     
         if(MERGE_MOST_VISITED) break;
     }
-    return mset;
+    return result;
 }
 
 // streaming version: relevant threshold count from Hoeffding bound and using epsilon to determine whether
@@ -447,7 +454,6 @@ merge_map* state_merger::get_possible_merges(int count){
 
 /* returns the highest scoring merge given the current sets of red and blue states
  * behavior depends on input parameters
- * note that state sets are ordered on size
  * returns (0,0) if none exists (given the input parameters) */
 merge_pair* state_merger::get_best_merge(){
     merge_pair* best = new merge_pair(0,0);

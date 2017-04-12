@@ -5,7 +5,12 @@
 
 using namespace std;
 
-refinement::refinement(apta_node* l, apta_node* r){
+merge_refinement::merge_refinement(double s, apta_node* l, apta_node* r){
     left = l;
+    right = r;
+    score = s;
+}
+
+extend_refinement::extend_refinement(apta_node* r){
     right = r;
 }
