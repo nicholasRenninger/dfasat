@@ -54,27 +54,21 @@ int greedy(state_merger* merger){
 
 double compute_score(state_merger* merger){
     if(SEARCH_DEEP) return greedy(merger);
-    merge_pair* top_pair = merger->get_best_merge();
-    return merger->test_merge(top_pair->first, top_pair->second).second;
+    return merger->get_total_apta_size();
+    //refinement topref = merger->get_best_refinement();
+    //return merger->test_merge(top_pair->first, top_pair->second).second;
 }
 
 void add_to_q(state_merger* merger){
-    merge_map* possible_merges = merger->get_possible_merges();
+    refinement_set* refs = merger->get_possible_refinements();
 
     if(possible_merges->empty()){
-        apta_node* node = merger->extend_red();
-        if(node != 0){
-            refinement ref = refinement(0, node);
-            double score = compute_score(merger);
-            refinement_list::iterator it2 = current_refinements->insert(current_refinements->end(), ref);
-            Q.push(pair<double, refinement_list*>(score, new refinement_list(*current_refinements)));
-            current_refinements->erase(it2);
-            merger->undo_extend(node);
-        }
+        delete refs;
+        return;
     }
-    
-	for(merge_map::iterator it = possible_merges->begin(); it != possible_merges->end(); ++it){
-        refinement ref = refinement((*it).second.first, (*it).second.second);
+
+	for(refinement_set::iterator it = refs->begin(); it != refs->end(); ++it){
+        refinement ref = *it;
 
         ref.doref(merger);
 		double score = compute_score(merger);
@@ -84,7 +78,7 @@ void add_to_q(state_merger* merger){
 		Q.push(pair<double, refinement_list*>(score, new refinement_list(*current_refinements)));
 		current_refinements->erase(it2);
 	}
-    delete possible_merges;
+    delete refs;
 }
 
 void change_refinement_list(state_merger* merger, refinement_list* new_list){

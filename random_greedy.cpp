@@ -14,19 +14,14 @@ merge_list random_greedy_bounded_run(state_merger* merger){
     while( true ){
         merger->reset();
         while( true ){
-            
-            
             cout << " ";
             // if(EXTEND_ANY_RED) while(merger->extend_red() != 0) cerr << "+ ";
             // leak here, too
-            merge_map* possible_merges = merger->get_possible_merges();
+            //merge_map* possible_merges = merger->get_possible_merges();
 
-            if(!EXTEND_ANY_RED && possible_merges->empty()){
-                if(merger->extend_red() != 0) { cerr << "+"; continue; }
-                cout << "no more possible merges with extend any red" << endl;
-                break;
-            }
-            if(possible_merges->empty()){
+            refinement_set* refs = merger->get_possible_refinements();
+
+            if(refs->empty()){
                 cout << "no more possible merges" << endl;
                 break;
             }
@@ -39,19 +34,8 @@ merge_list random_greedy_bounded_run(state_merger* merger){
                cout << "APTA too small" << endl;
                break;
             }
-            /*if((*possible_merges.rbegin()).first < LOWER_BOUND){
-                cerr << "merge score below lower bound" << endl;
-                break;
-            }*/
 
-            /*cerr << "possible merges: ";
-            for(merge_map::reverse_iterator it = possible_merges.rbegin(); it != possible_merges.rend(); it++){
-                cerr << (*it).first << " ";
-            }
-            cerr << endl;*/
-
-            merge_pair top_pair = (*possible_merges->rbegin()).second;
-            float top_score = (*possible_merges->rbegin()).first;
+            refinement best_ref = *refs->rbegin();
             /* if(GREEDY_METHOD == RANDOMG){
                 merge_map randomized_merges;
                 for(merge_map::reverse_iterator it = possible_merges->rbegin(); it != possible_merges->rend(); it++){
@@ -61,8 +45,8 @@ merge_list random_greedy_bounded_run(state_merger* merger){
                 top_score = (*randomized_merges.rbegin()).first;
                 top_pair = (*randomized_merges.rbegin()).second;
             }*/
-            cout << top_score;
-            merger->perform_merge(top_pair.first, top_pair.second);
+            cout << best_ref.score;
+            best_ref.do_ref();
             all_merges.push_front(top_pair);
             
             delete possible_merges;

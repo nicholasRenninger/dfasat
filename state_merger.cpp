@@ -396,10 +396,10 @@ refinement_set* state_merger::get_possible_refinements(){
         if(found == false) {
             if(EXTEND_ANY_RED){
                 result.clear();
-                result->insert(color_refinement(blue));
+                result->insert(extend_refinement(blue));
                 return result;
             }
-            result->insert(color_refinement(blue));
+            result->insert(extend_refinement(blue));
         }
     
         if(MERGE_MOST_VISITED) break;
