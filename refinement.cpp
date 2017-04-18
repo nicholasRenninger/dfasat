@@ -34,7 +34,7 @@ inline void merge_refinement::print() const{
 };
 	
 inline void merge_refinement::print_short() const{
-    cerr << score;
+    cerr << "m" << score;
 };
 
 inline void merge_refinement::doref(state_merger* m){
@@ -50,7 +50,7 @@ inline void extend_refinement::print() const{
 };
 	
 inline void extend_refinement::print_short() const{
-    cerr << "+";
+    cerr << "x" << right->size;
 };
 
 inline void extend_refinement::doref(state_merger* m){

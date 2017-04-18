@@ -172,7 +172,7 @@ struct size_compare
 {
     bool operator()(apta_node* left, apta_node* right) const
     {
-        /*if(DEPTH_FIRST){
+        if(DEPTH_FIRST){
             if(left->depth > right->depth)
                 return 1;
             if(left->depth < right->depth)
@@ -182,7 +182,7 @@ struct size_compare
                 return 1;
             if(left->size < right->size)
                 return 0;
-        }*/
+        }
         return left->number < right->number;
     }
 };

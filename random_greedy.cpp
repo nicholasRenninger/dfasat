@@ -36,7 +36,7 @@ refinement_list* random_greedy_bounded_run(state_merger* merger){
                break;
             }
 
-            refinement* best_ref = *refs->rbegin();
+            refinement* best_ref = *refs->begin();
             /* if(GREEDY_METHOD == RANDOMG){
                 merge_map randomized_merges;
                 for(merge_map::reverse_iterator it = possible_merges->rbegin(); it != possible_merges->rend(); it++){

@@ -45,6 +45,7 @@ typedef set<refinement*, score_compare > refinement_set;
 class refinement{
 public:
     double score;
+	apta_node* right;
 
 	virtual void print() const;
 	virtual void print_short() const;
@@ -54,7 +55,6 @@ public:
 
 class merge_refinement : public refinement {
 	apta_node* left;
-	apta_node* right;
 	
 public:
 	merge_refinement(double s, apta_node* l, apta_node* r);
@@ -66,8 +66,6 @@ public:
 };
 
 class extend_refinement : public refinement {
-	apta_node* right;
-	
 public:
 	extend_refinement(apta_node* r);
 
@@ -78,8 +76,9 @@ public:
 };
 
 struct score_compare {
-    inline bool operator()(refinement* left, refinement* right) const {
-        return left->score < right->score;
+    inline bool operator()(refinement* r1, refinement* r2) const {
+        if(r1->score == r2->score) return r1->right->size > r2->right->size;
+        return r1->score > r2->score;
     }
 };
 

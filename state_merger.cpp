@@ -359,7 +359,9 @@ refinement_set* state_merger::get_possible_refinements(){
     refinement_set* result = new refinement_set();
 
     state_set blue_its = state_set();
-    for(blue_state_iterator it = blue_state_iterator(aut->root); *it != 0; ++it) blue_its.insert(*it);
+    for(blue_state_iterator it = blue_state_iterator(aut->root); *it != 0; ++it){
+        blue_its.insert(*it);
+    }
     
     for(state_set::iterator it = blue_its.begin(); it != blue_its.end(); ++it){
         apta_node* blue = *it;
