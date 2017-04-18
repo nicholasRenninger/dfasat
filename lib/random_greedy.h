@@ -8,12 +8,13 @@
 #include <set>
 #include <list>
 #include "state_merger.h"
+#include "refinement.h"
 
 using namespace std;
 
 const int RANDOMG = 1;
 const int NORMALG = 2;
 
-merge_list random_greedy_bounded_run(state_merger* merger);
+refinement_list* random_greedy_bounded_run(state_merger* merger);
 
 #endif /* _GENERATOR_H_ */

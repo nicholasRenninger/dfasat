@@ -16,6 +16,7 @@ class merger_context;
 
 #include "evaluate.h"
 #include "apta.h"
+#include "refinement.h"
 
 using namespace std;
 
@@ -111,9 +112,9 @@ public:
     void undo_extend(apta_node* blue);
     
     /* find refinements */
-    merge_map*  get_possible_refinements();
-    merge_map*  get_possible_merges(int);
-    merge_pair* get_best_refinement();
+    refinement_set* get_possible_refinements();
+    merge_map* get_possible_merges(int);
+    refinement* get_best_refinement();
     merge_pair* get_best_merge(int);
  
     /* find unmergable states */
@@ -124,7 +125,6 @@ public:
 
     score_pair test_merge(apta_node*,apta_node*);
     score_pair test_local_merge(apta_node* red, apta_node* blue);
-
 
     state_set& get_candidate_states();
     state_set& get_sink_states();

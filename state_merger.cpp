@@ -372,7 +372,7 @@ refinement_set* state_merger::get_possible_refinements(){
 
             score_pair score = test_merge(red,blue);
             if(score.first == true){
-                result->insert(merge_refinement(score.second, red, blue));
+                result->insert(new merge_refinement(score.second, red, blue));
                 //mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(red, blue)));
                 found = true;
             }
@@ -386,7 +386,7 @@ refinement_set* state_merger::get_possible_refinements(){
 
                 score_pair score = test_merge(blue2,blue);
                 if(score.first == true){
-                    result->insert(merge_refinement(score.second, red, blue));
+                    result->insert(new merge_refinement(score.second, blue2, blue));
                     //mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(blue2, blue)));
                     found = true;
                 }
@@ -395,11 +395,12 @@ refinement_set* state_merger::get_possible_refinements(){
 
         if(found == false) {
             if(EXTEND_ANY_RED){
-                result.clear();
-                result->insert(extend_refinement(blue));
+                for(refinement_set::iterator it = result->begin(); it != result->end(); ++it) delete *it;
+                result->clear();
+                result->insert(new extend_refinement(blue));
                 return result;
             }
-            result->insert(extend_refinement(blue));
+            result->insert(new extend_refinement(blue));
         }
     
         if(MERGE_MOST_VISITED) break;
@@ -455,43 +456,53 @@ merge_map* state_merger::get_possible_merges(int count){
 /* returns the highest scoring merge given the current sets of red and blue states
  * behavior depends on input parameters
  * returns (0,0) if none exists (given the input parameters) */
-merge_pair* state_merger::get_best_merge(){
-    merge_pair* best = new merge_pair(0,0);
-    double result = -1;
-
-    for(blue_state_iterator it = blue_state_iterator(aut->root); *it != 0; ++it){
-    //for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
-        apta_node* blue = *(it);
+refinement* state_merger::get_best_refinement(){
+    refinement* best = 0;
+    
+    state_set blue_its = state_set();
+    for(blue_state_iterator it = blue_state_iterator(aut->root); *it != 0; ++it) blue_its.insert(*it);
+    
+    for(state_set::iterator it = blue_its.begin(); it != blue_its.end(); ++it){
+        apta_node* blue = *it;
+        bool found = false;
+        
         if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
 
         for(red_state_iterator it2 = red_state_iterator(aut->root); *it2 != 0; ++it2){
-        //for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;
 
             score_pair score = test_merge(red,blue);
-            if(score.first == true && score.second > result){
-                best->first = red;
-                best->second = blue;
-                result = score.second;
+            if(score.first == true && (best == 0 || best->score < score.second)){
+                delete best;
+                best = new merge_refinement(score.second, red, blue);
             }
         }
 
         if(MERGE_BLUE_BLUE){
-            for(blue_state_iterator it2 = blue_state_iterator(aut->root); *it2 != 0; ++it2){
-            //for(state_set::iterator it2 = blue_states.begin(); it2 != blue_states.end(); ++it2){
+            for(state_set::iterator it2 = blue_its.begin(); it2 != blue_its.end(); ++it2){
                 apta_node* blue2 = *it2;
 
                 if(blue == blue2) continue;
 
                 score_pair score = test_merge(blue2,blue);
-                if(score.first == true && score.second > result){
-                    best->first = blue2;
-                    best->second = blue;
-                    result = score.second;
+                if(score.first == true && (best == 0 || best->score < score.second)){
+                    delete best;
+                    best = new merge_refinement(score.second, blue2, blue);
                 }
             }
         }
 
+        if(found == false) {
+            if(EXTEND_ANY_RED){
+                delete best;
+                return new extend_refinement(blue);
+            }
+            if(best == 0 || best->score < -1){
+                delete best;
+                best = new extend_refinement(blue);
+            }
+        }
+    
         if(MERGE_MOST_VISITED) break;
     }
     return best;

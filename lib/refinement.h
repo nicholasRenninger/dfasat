@@ -30,65 +30,56 @@ using namespace std;
 #include <list>
 #include <queue>
 #include <map>
+#include <set>
 
 class refinement;
 class merge_refinement;
 class extend_refinement;
 struct score_compare;
 
-typedef list<refinement> refinement_list;
-typedef set<refinement, greater<double> > refinement_set;
+typedef list<refinement*> refinement_list;
+typedef set<refinement*, score_compare > refinement_set;
+
+#include "apta.h"
 
 class refinement{
 public:
+    double score;
+
 	virtual void print() const;
+	virtual void print_short() const;
 	virtual void doref(state_merger* m);
 	virtual void undo(state_merger* m);
 };
 
-class merge_refinement : refinement {
+class merge_refinement : public refinement {
 	apta_node* left;
 	apta_node* right;
-    double score;
 	
 public:
 	merge_refinement(double s, apta_node* l, apta_node* r);
 
-	virtual inline void print() const{
-        cerr << "merge( " << left->number << " " << right->number << " )" << endl;
-	};
-	
-	virtual inline void doref(state_merger* m){
-        m->perform_merge(left, right);
-	};
-	
-	virtual inline void undo(state_merger* m){
-        m->undo_perform_merge(left, right);
-	};
+	virtual inline void print() const;
+	virtual inline void print_short() const;
+	virtual inline void doref(state_merger* m);
+	virtual inline void undo(state_merger* m);
 };
 
-class extend_refinement : refinement {
+class extend_refinement : public refinement {
 	apta_node* right;
 	
 public:
 	extend_refinement(apta_node* r);
 
-	virtual inline void print() const{
-        cerr << "extend( " << right->number << " )" << endl;
-	};
-	
-	virtual inline void doref(state_merger* m){
-        m->extend(right);
-	};
-	
-	virtual inline void undo(state_merger* m){
-        m->undo_extend(right);
-	};
+	virtual inline void print() const;
+	virtual inline void print_short() const;
+	virtual inline void doref(state_merger* m);
+	virtual inline void undo(state_merger* m);
 };
 
 struct score_compare {
-    bool operator()(refinement* left, refinement* right) const {
-        return left->number < right->number;
+    inline bool operator()(refinement* left, refinement* right) const {
+        return left->score < right->score;
     }
 };
 

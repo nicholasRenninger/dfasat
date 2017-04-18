@@ -843,7 +843,7 @@ int dfasat(state_merger &merger, string sat_program, const char* dot_output_file
 //    merger = m;
     apta* the_apta = merger.aut;
 
-    merge_list merges = random_greedy_bounded_run(&merger);
+    refinement_list* refs = random_greedy_bounded_run(&merger);
     
     merger.todot();
 
@@ -862,11 +862,13 @@ int dfasat(state_merger &merger, string sat_program, const char* dot_output_file
     
     if(merger.context.best_solution != -1 && merger.red_states.size() >= merger.context.best_solution + EXTRA_STATES){
         cerr << "Greedy preprocessing resulted in too many red states." << endl;
-        while(!merges.empty()){
-            merge_pair performed_merge = merges.front();
-            merges.pop_front();
-            merger.undo_merge(performed_merge.first, performed_merge.second);
+        while(!refs->empty()){
+            refinement* ref = refs->front();
+            refs->pop_front();
+            ref->undo(&merger);
+            delete ref;
         }
+        delete refs;
         return -1;
     }
     
@@ -1065,14 +1067,16 @@ int dfasat(state_merger &merger, string sat_program, const char* dot_output_file
                 merger.context.print_aut_output(aut_output);
             }
             
-            while(!merges.empty()){
-                merge_pair performed_merge = merges.front();
-                merges.pop_front();
-                merger.undo_merge(performed_merge.first, performed_merge.second);
+            while(!refs->empty()){
+                refinement* ref = refs->front();
+                refs->pop_front();
+                ref->undo(&merger);
+                delete ref;
             }
+            delete refs;
         }
-     merger.context.delete_literals();
-   }
+        merger.context.delete_literals();
+    }
     else {
         cout << "No valid solver specified, skipping..." << endl;
     }

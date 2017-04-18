@@ -4,13 +4,14 @@
 #include <fstream>
 #include <cstdlib>
 
+#include "refinement.h"
 #include "random_greedy.h"
 #include "parameters.h"
 
-merge_list random_greedy_bounded_run(state_merger* merger){
+refinement_list* random_greedy_bounded_run(state_merger* merger){
     cerr << "starting greedy merging" << endl;
     int num = 1;
-    merge_list all_merges;
+    refinement_list* all_refs = new refinement_list();
     while( true ){
         merger->reset();
         while( true ){
@@ -20,22 +21,22 @@ merge_list random_greedy_bounded_run(state_merger* merger){
             //merge_map* possible_merges = merger->get_possible_merges();
 
             refinement_set* refs = merger->get_possible_refinements();
-
+            
             if(refs->empty()){
-                cout << "no more possible merges" << endl;
+                cerr << "no more possible merges" << endl;
                 break;
             }
             if(merger->red_states.size() > CLIQUE_BOUND){
-               cout << "too many red states" << endl;
+               cerr << "too many red states" << endl;
                break;
             }
             // FIXME
             if(merger->get_final_apta_size() <= APTA_BOUND){
-               cout << "APTA too small" << endl;
+               cerr << "APTA too small" << endl;
                break;
             }
 
-            refinement best_ref = *refs->rbegin();
+            refinement* best_ref = *refs->rbegin();
             /* if(GREEDY_METHOD == RANDOMG){
                 merge_map randomized_merges;
                 for(merge_map::reverse_iterator it = possible_merges->rbegin(); it != possible_merges->rend(); it++){
@@ -45,19 +46,23 @@ merge_list random_greedy_bounded_run(state_merger* merger){
                 top_score = (*randomized_merges.rbegin()).first;
                 top_pair = (*randomized_merges.rbegin()).second;
             }*/
-            cout << best_ref.score;
-            best_ref.do_ref();
-            all_merges.push_front(top_pair);
+            best_ref->print_short();
+            cerr << " ";
+            best_ref->doref(merger);
+            all_refs->push_front(best_ref);
             
-            delete possible_merges;
+            for(refinement_set::iterator it = refs->begin(); it != refs->end(); ++it){
+                if(*it != best_ref) delete *it;
+            }
+            delete refs;
         }
         cout << endl;
         int size =  merger->get_final_apta_size();
         int red_size = merger->red_states.size();
         cout << endl << "found intermediate solution with " << size << " and " << red_size << " red states" << endl;
-        return all_merges;
+        return all_refs;
     }
-    return all_merges;
+    return all_refs;
 };
 
 
