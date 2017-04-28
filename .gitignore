@@ -20,3 +20,6 @@ generated.cpp
 .DS_Store
 # data files
 PAutomaC-competition_sets/*
+
+# other files
+processidentification/
