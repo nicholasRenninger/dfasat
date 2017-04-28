@@ -112,6 +112,7 @@ public:
 * compute the local consistency of a merge and update stored data values
 *
 * huge influence on performance, needs to be simple */
+  virtual bool consistency_check(evaluation_data* l, evaluation_data* r);
   virtual bool consistent(state_merger*, apta_node* left, apta_node* right);
   virtual void update_score(state_merger*, apta_node* left, apta_node* right);
   virtual void undo_update(state_merger*, apta_node* left, apta_node* right);

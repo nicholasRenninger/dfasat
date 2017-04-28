@@ -268,7 +268,7 @@ apta_node* APTA_iterator::next_backward() {
     apta_node* source = current;
     while(source != base){
         current = source;
-        source = source->source->find();
+        source = source->source;
         it = source->children.find(current->label);
         ++it;
         for(; it != source->children.end(); ++it){

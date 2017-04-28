@@ -34,6 +34,7 @@ public:
   virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
   virtual void reset(state_merger *merger);
+  virtual bool consistency_check(evaluation_data* l, evaluation_data* r);
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
 
   virtual int sink_type(apta_node* node);

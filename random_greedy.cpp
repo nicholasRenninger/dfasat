@@ -12,6 +12,7 @@ refinement_list* random_greedy_bounded_run(state_merger* merger){
     cerr << "starting greedy merging" << endl;
     int num = 1;
     refinement_list* all_refs = new refinement_list();
+    merger->eval->initialize(merger);
     while( true ){
         merger->reset();
         while( true ){
@@ -19,8 +20,15 @@ refinement_list* random_greedy_bounded_run(state_merger* merger){
             // if(EXTEND_ANY_RED) while(merger->extend_red() != 0) cerr << "+ ";
             // leak here, too
             //merge_map* possible_merges = merger->get_possible_merges();
+            
+            cerr << endl;
 
             refinement_set* refs = merger->get_possible_refinements();
+            for(refinement_set::iterator it = refs->begin(); it != refs->end(); ++it){
+                (*it)->print_short();
+                cerr << " , ";
+            }
+            cerr << endl;
             
             if(refs->empty()){
                 cerr << "no more possible merges" << endl;

@@ -24,7 +24,6 @@ state_merger::state_merger(evaluation_function* e, apta* a)
     context.merger = this;
     aut = a;
     eval = e;
-    eval->initialize(this);
     reset();
 }
 
@@ -371,8 +370,11 @@ refinement_set* state_merger::get_possible_refinements(){
 
         for(red_state_iterator it2 = red_state_iterator(aut->root); *it2 != 0; ++it2){
             apta_node* red = *it2;
-
+            
             score_pair score = test_merge(red,blue);
+
+            cerr << score.first << " " << score.second << "   " << red->number << " " << blue->number << endl;
+
             if(score.first == true){
                 result->insert(new merge_refinement(score.second, red, blue));
                 //mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(red, blue)));

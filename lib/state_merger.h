@@ -77,13 +77,13 @@ public:
 class state_merger{
 private:
 
+public:
     /* recursive state merging routines */
     bool merge(apta_node* red, apta_node* blue);
     void merge_force(apta_node* red, apta_node* blue);
     bool merge_test(apta_node* red, apta_node* blue);
     void undo_merge(apta_node* red, apta_node* blue);
 
-public:
     /* for building the apta  */
     map<string, int> seen;
     int node_number = 1;

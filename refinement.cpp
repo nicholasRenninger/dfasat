@@ -13,6 +13,7 @@ merge_refinement::merge_refinement(double s, apta_node* l, apta_node* r){
 
 extend_refinement::extend_refinement(apta_node* r){
     right = r;
+    score = LOWER_BOUND;
 }
 
 inline void refinement::print() const{

@@ -18,19 +18,16 @@ evaluation_data::evaluation_data(){
 };
 
 void evaluation_data::read_from(int type, int index, int length, int symbol, string data){
-    if(length == index){
-        node_type = type;
-    }
 };
 
 void evaluation_data::read_to(int type, int index, int length, int symbol, string data){
-    if(length == index){
+    if(length == index+1){
         node_type = type;
     }
 };
 
 void evaluation_data::update(evaluation_data* right){
-    cerr << "read " << endl;
+    //cerr << "read " << endl;
     if(node_type == -1){
         node_type = right->node_type;
         undo_pointer = right;
@@ -69,6 +66,11 @@ bool evaluation_data::sink_consistent(int type){
 };
 
 /* default evaluation, count number of performed merges */
+bool evaluation_function::consistency_check(evaluation_data* l, evaluation_data* r){
+  if(l->node_type != -1 && r->node_type != -1 && l->node_type != r->node_type) return false;
+  return true;
+};
+
 bool evaluation_function::consistent(state_merger *merger, apta_node* left, apta_node* right){
   if(inconsistency_found) return false;
   

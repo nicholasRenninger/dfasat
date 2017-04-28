@@ -57,13 +57,23 @@ void count_data::undo(evaluation_data* right){
     rejecting_paths -= other->rejecting_paths;
 };
 
+bool count_driven::consistency_check(evaluation_data* left, evaluation_data* right){
+    count_data* l = reinterpret_cast<count_data*>(left);
+    count_data* r = reinterpret_cast<count_data*>(right);
+    
+    if(l->num_accepting != 0 && r->num_rejecting != 0){ return false; }
+    if(l->num_rejecting != 0 && r->num_accepting != 0){ return false; }
+    
+    return true;
+};
+
 /* default evaluation, count number of performed merges */
 bool count_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
     if(inconsistency_found) return false;
   
     count_data* l = (count_data*)left->data;
     count_data* r = (count_data*)right->data;
-        
+
     if(l->num_accepting != 0 && r->num_rejecting != 0){ inconsistency_found = true; return false; }
     if(l->num_rejecting != 0 && r->num_accepting != 0){ inconsistency_found = true; return false; }
     
