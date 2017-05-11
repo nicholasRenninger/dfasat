@@ -122,7 +122,7 @@ int likelihoodratio::compute_score(state_merger *merger, apta_node* left, apta_n
     double test_statistic = 2.0 * (loglikelihood_orig - loglikelihood_merged);
     double p_value = gsl_cdf_chisq_Q (test_statistic, (double)extra_parameters);
 
-    return (int)(p_value * 1000.0);
+    return (int)(p_value * 10000000.0);
 };
 
 void likelihoodratio::reset(state_merger *merger){

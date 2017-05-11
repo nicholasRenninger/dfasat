@@ -22,10 +22,7 @@ class conflict_driven: public count_driven{
 protected:
   REGISTER_DEC_TYPE(conflict_driven);
 
-  int score;
-
 public:
-  virtual void update_score(state_merger*, apta_node* left, apta_node* right);
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
   virtual void reset(state_merger *merger);
   virtual void initialize(state_merger *);

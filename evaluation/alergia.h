@@ -32,6 +32,8 @@ public:
     alergia_data();
 
     virtual void read_from(int type, int index, int length, int symbol, string data);
+    virtual void print_transition_label(iostream& output, int symbol);
+    virtual void print_state_label(iostream& output);
     virtual void update(evaluation_data* right);
     virtual void undo(evaluation_data* right);
     

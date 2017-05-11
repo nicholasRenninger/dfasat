@@ -52,16 +52,37 @@ void conflict_data::undo(evaluation_data* right){
     }
 };
 
-int conflict_driven::compute_score(state_merger *merger, apta_node* left, apta_node* right){
+void conflict_driven::update_score(state_merger *merger, apta_node* left, apta_node* right){
     conflict_data* r = (conflict_data*)right->data;
     int val = r->conflicts.size() - r->undo_info.size();
+    score = score + val;
+};
+
+int conflict_driven::compute_score(state_merger *merger, apta_node* left, apta_node* right){
+    //conflict_data* r = (conflict_data*)right->data;
+    //int val = r->conflicts.size() - r->undo_info.size();
     //cerr << r->conflicts.size() << endl;
-    if (val > 0) return val;
+    if (score > 0) return score;
     return 0;
 };
 
 void conflict_driven::reset(state_merger *merger){
-  count_driven::reset(merger);
+    score = 0;
+    count_driven::reset(merger);
+};
+
+struct conflict_compare
+{
+    bool operator()(apta_node* left, apta_node* right) const
+    {
+        conflict_data* l = (conflict_data*)left->data;
+        conflict_data* r = (conflict_data*)right->data;
+        if(l->conflicts.size() > r->conflicts.size())
+            return 1;
+        if(l->conflicts.size() < r->conflicts.size())
+            return 0;
+        return left->number < right->number;
+    }
 };
 
 void conflict_driven::initialize(state_merger *merger){
@@ -75,6 +96,7 @@ void conflict_driven::initialize(state_merger *merger){
             if(*it == *it2) continue;
             apta_node* n2 = *it2;
             
+            reset(merger);
             if(merger->merge_test(n1,n2) == false){
                 conflict_data* d1 = (conflict_data*)n1->data;
                 conflict_data* d2 = (conflict_data*)n2->data;
@@ -82,7 +104,18 @@ void conflict_driven::initialize(state_merger *merger){
                 d2->conflicts.insert(n1->number);
             }
         }
-        //cerr << n1->number << " " << ((conflict_data*)n1->data)->conflicts.size() << endl;
     }
+    
+    /*set<apta_node*, conflict_compare> ordered_nodes;
+    for(merged_APTA_iterator it = merged_APTA_iterator(merger->aut->root); *it != 0; ++it){
+        apta_node* n1 = *it;
+        ordered_nodes.insert(n1);
+    }
+
+    for(set<apta_node*, conflict_compare>::iterator it = ordered_nodes.begin(); it!= ordered_nodes.end(); ++it){
+        apta_node* n1 = *it;
+        conflict_data* d1 = (conflict_data*)n1->data;
+        cerr << n1->number << " " << d1->conflicts.size() << endl;
+    }*/
 };
 

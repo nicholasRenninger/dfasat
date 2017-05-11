@@ -96,7 +96,7 @@ void apta::print_dot(iostream& output){
         apta_node* n = *Ait;
         output << "\t" << n->number << " [ label=\"";
         n->data->print_state_label(output);
-        output << n->size;
+        output << "#" << n->size;
         output << "\" ";
         n->data->print_state_style(output);
         if(n->red == false) output << " style=dotted";
@@ -134,6 +134,7 @@ void apta::print_dot(iostream& output){
             n->data->print_transition_style(output, labels);
             output << " ];\n";
         }
+        continue;
         for(map<int, set<int>>::iterator it2 = sinklabels.begin(); it2 != sinklabels.end(); ++it2){
             int stype = (*it2).first;
             set<int> labels  = (*it2).second;

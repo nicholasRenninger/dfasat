@@ -339,7 +339,7 @@ score_pair state_merger::test_merge(apta_node* left, apta_node* right){
 
     if((merge_result && eval->compute_consistency(this, left, right) == false)) merge_result = false;
     
-    if(USE_LOWER_BOUND && score_result < LOWER_BOUND) merge_result = -1;
+    if(USE_LOWER_BOUND && score_result < LOWER_BOUND) merge_result = false;
 
     if(MERGE_WHEN_TESTING) undo_merge(left,right);
 
@@ -373,8 +373,6 @@ refinement_set* state_merger::get_possible_refinements(){
             
             score_pair score = test_merge(red,blue);
 
-            cerr << score.first << " " << score.second << "   " << red->number << " " << blue->number << endl;
-
             if(score.first == true){
                 result->insert(new merge_refinement(score.second, red, blue));
                 //mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(red, blue)));
@@ -387,6 +385,8 @@ refinement_set* state_merger::get_possible_refinements(){
                 apta_node* blue2 = *it2;
 
                 if(blue == blue2) continue;
+
+                if(!MERGE_SINKS_DSOLVE && (sink_type(blue2) != -1)) continue;
 
                 score_pair score = test_merge(blue2,blue);
                 if(score.first == true){
@@ -445,6 +445,8 @@ merge_map* state_merger::get_possible_merges(int count){
 
                     if(blue->size < count) continue;
                     if(blue == blue2) continue;
+
+                    if(!MERGE_SINKS_DSOLVE && (sink_type(blue2) != -1)) continue;
 
                     score_pair score = test_merge(blue2,blue);
                     if(score.first == true){

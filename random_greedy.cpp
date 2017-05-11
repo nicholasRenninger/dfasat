@@ -17,18 +17,25 @@ refinement_list* random_greedy_bounded_run(state_merger* merger){
         merger->reset();
         while( true ){
             cout << " ";
+            
+            merger->todot();
+            std::ostringstream oss2;
+            oss2 << "pre_" << num << ".dot";
+            ofstream output(oss2.str().c_str());
+            output << merger->dot_output;
+            output.close();
             // if(EXTEND_ANY_RED) while(merger->extend_red() != 0) cerr << "+ ";
             // leak here, too
             //merge_map* possible_merges = merger->get_possible_merges();
             
-            cerr << endl;
-
             refinement_set* refs = merger->get_possible_refinements();
+            /*cerr << endl;
+
             for(refinement_set::iterator it = refs->begin(); it != refs->end(); ++it){
                 (*it)->print_short();
                 cerr << " , ";
             }
-            cerr << endl;
+            cerr << endl;*/
             
             if(refs->empty()){
                 cerr << "no more possible merges" << endl;
@@ -63,6 +70,7 @@ refinement_list* random_greedy_bounded_run(state_merger* merger){
                 if(*it != best_ref) delete *it;
             }
             delete refs;
+            num = num + 1;
         }
         cout << endl;
         int size =  merger->get_final_apta_size();

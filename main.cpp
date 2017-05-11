@@ -55,6 +55,7 @@ void init_with_params(parameters* param) {
     CORRECTION = param->correction;
 
     LOWER_BOUND = param->lower_bound;
+    USE_LOWER_BOUND = 1;
     OFFSET = param->satextra;
     USE_SINKS = param->sinkson;
     MERGE_SINKS_PRESOLVE = param->mergesinks;

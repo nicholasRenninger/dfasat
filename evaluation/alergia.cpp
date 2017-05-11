@@ -12,6 +12,8 @@
 
 #include "parameters.h"
 
+int EVAL_TYPE = 1;
+
 REGISTER_DEF_DATATYPE(alergia_data);
 REGISTER_DEF_TYPE(alergia);
 
@@ -27,6 +29,14 @@ void alergia_data::read_from(int type, int index, int length, int symbol, string
     } else {
         num_neg[symbol] = neg(symbol) + 1;
     }
+};
+
+void alergia_data::print_transition_label(iostream& output, int symbol){
+    output << num_pos[symbol];
+};
+
+void alergia_data::print_state_label(iostream& output){
+    output << num_accepting;
 };
 
 void alergia_data::update(evaluation_data* right){
@@ -64,13 +74,19 @@ bool alergia::alergia_consistency(double right_count, double left_count, double 
 };
 
 bool alergia::data_consistent(alergia_data* l, alergia_data* r){
-    if(l->accepting_paths < STATE_COUNT || r->accepting_paths < STATE_COUNT) return true;
+    if(EVAL_TYPE == 1){ if(l->accepting_paths + l->num_accepting < STATE_COUNT || r->accepting_paths + l->num_accepting < STATE_COUNT) return true; }
+    else if(l->accepting_paths < STATE_COUNT || r->accepting_paths < STATE_COUNT) return true;
     
     double left_count = 0.0;
     double right_count = 0.0;
     
     double left_total = (double)l->accepting_paths;
     double right_total = (double)r->accepting_paths;
+    
+    if(EVAL_TYPE == 1){
+        left_total += (double)l->num_accepting;
+        right_total += (double)r->num_accepting;
+    }
 
     double l1_pool = 0.0;
     double r1_pool = 0.0;
@@ -98,6 +114,27 @@ bool alergia::data_consistent(alergia_data* l, alergia_data* r){
             r2_pool += right_count;
         }
     }
+    if(EVAL_TYPE == 1){
+        left_count = l->num_accepting;
+        right_count = r->num_accepting;
+        if(left_count != 0) matching_right += right_count;
+        
+        if(left_count >= SYMBOL_COUNT && right_count >= SYMBOL_COUNT){
+            if(alergia_consistency(right_count, left_count, right_total, left_total) == false){
+                inconsistency_found = true; return false;
+            }
+        }
+
+        if(right_count < SYMBOL_COUNT){
+            l1_pool += left_count;
+            r1_pool += right_count;
+        }
+        if(left_count < SYMBOL_COUNT) {
+            l2_pool += left_count;
+            r2_pool += right_count;
+        }
+    }
+
     r2_pool += r->accepting_paths - matching_right;
     
     left_count = l1_pool;
@@ -139,6 +176,7 @@ bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right
  * rejecting sink = only reject, reject now, reject afterwards 
  * low count sink = frequency smaller than STATE_COUNT */
 bool alergia_data::is_low_count_sink(){
+    if(EVAL_TYPE == 1) return num_accepting + num_rejecting + accepting_paths + rejecting_paths < STATE_COUNT;
     return accepting_paths + rejecting_paths < STATE_COUNT;
 }
 
