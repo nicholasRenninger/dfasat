@@ -41,6 +41,7 @@ extern double STORE_MERGES_RATIO_THRESHOLD;
 
 class parameters{
 public:
+    string command;
     string dfa_file;
     vector<string> dfa_data;
     string dot_file;

@@ -239,7 +239,8 @@ void evaluation_function::add_sample(string data, state_merger* merger) {
     }
 
     if(depth > aut->max_depth)  aut->max_depth = depth;
-
+    
+    node->size = node->size + 1;
     node->type = label;
 
 };

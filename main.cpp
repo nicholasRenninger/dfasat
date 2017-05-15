@@ -95,7 +95,7 @@ void init_with_params(parameters* param) {
 void run(parameters* param) {
 
     state_merger merger;
-
+    
     init_with_params(param);
 
     evaluation_function *eval;

@@ -26,7 +26,7 @@ bool MERGE_BLUE_BLUE = 0;
 bool RED_FIXED = 0;
 bool MERGE_WHEN_TESTING = 0;
 bool DEPTH_FIRST = 0;
-int RANGE = 10;
+int RANGE = 100;
 string eval_string;
 
 int STORE_MERGES = 0;
