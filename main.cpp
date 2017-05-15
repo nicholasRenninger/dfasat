@@ -152,7 +152,7 @@ void run(parameters* param) {
 
     } else {
        cout << "stream mode selected" << endl;
-       stream_mode(merger, param, input_stream);
+       stream_mode(&merger, param, input_stream);
     }
 
     std::ostringstream oss2;
