@@ -38,6 +38,7 @@ extern int STORE_MERGES;
 extern int STORE_MERGES_KEEP_CONFLICT;
 extern int STORE_MERGES_SIZE_THRESHOLD;
 extern double STORE_MERGES_RATIO_THRESHOLD;
+extern string COMMAND;
 
 class parameters{
 public:

@@ -35,6 +35,7 @@ double STORE_MERGES_RATIO_THRESHOLD = 0.3;
 int STORE_MERGES_SIZE_THRESHOLD = 100;
 
 parameters::parameters(){
+    command = string("");
     batchsize=1000;
     epsilon=0.3;
     delta=0.95;

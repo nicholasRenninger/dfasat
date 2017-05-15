@@ -31,7 +31,7 @@
 
 using namespace std;
 
-
+string COMMAND;
 bool debugging_enabled = false;
 
 /*
@@ -75,6 +75,8 @@ void init_with_params(parameters* param) {
     MERGE_WHEN_TESTING = !param->testmerge;
     DEPTH_FIRST = param->shallowfirst;
 
+    COMMAND = param->command;
+
     if(param->debugging > 0) debugging_enabled = true;
 
     if(param->method == 1) GREEDY_METHOD = RANDOMG;
@@ -95,7 +97,7 @@ void init_with_params(parameters* param) {
 void run(parameters* param) {
 
     state_merger merger;
-    
+
     init_with_params(param);
 
     evaluation_function *eval;
@@ -170,6 +172,12 @@ int main(int argc, const char *argv[]){
 
     char c = 0;
     parameters* param = new parameters();
+
+    for(int i = 0; i < argc; i++) {
+      param->command += string(argv[i]) + string(" ");
+    }
+
+    cout << "welcome, running: " << param->command << endl;
 
     /* temporary holder for string arguments */
     char* dot_file = NULL;
