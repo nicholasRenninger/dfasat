@@ -81,4 +81,6 @@ int stream_mode(state_merger* merger, parameters* param, ifstream& input_stream)
           }
         } // if batchsize
       } // while input
+
+      return 0;
 }
