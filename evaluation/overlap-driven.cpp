@@ -96,6 +96,9 @@ void overlap_driven::update_score(state_merger *merger, apta_node* left, apta_no
                 overlap -= r->pos(i);
             }
         }
+        /*if(l->pos(i) != 0 && r->pos(i) != 0){
+            overlap += 1;
+        }*/
         /*if(l->neg(i) != 0 && r->neg(i) != 0){
             overlap += 1;
         }*/
@@ -111,6 +114,9 @@ void overlap_driven::update_score(state_merger *merger, apta_node* left, apta_no
             overlap -= r->num_accepting;
         }
     }
+    /*if(l->num_accepting != 0 && r->num_accepting != 0){
+        overlap += 1;
+    }*/
 };
 
 
