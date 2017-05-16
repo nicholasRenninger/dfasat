@@ -12,6 +12,7 @@ public:
 
   virtual void print_transition_label(iostream& output, int symbol);
 
+  virtual bool is_low_count_sink();
 
 };
 
@@ -22,7 +23,7 @@ protected:
 
 public:
   int overlap;
-  
+
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
   virtual void update_score(state_merger *merger, apta_node* left, apta_node* right);
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);

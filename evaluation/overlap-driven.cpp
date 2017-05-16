@@ -26,10 +26,10 @@ bool overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node
         return false;
     }
     */
-    
+
     overlap_data* l = (overlap_data*) left->data;
     overlap_data* r = (overlap_data*) right->data;
-    
+
     /*if(l->num_accepting != 0 && r->num_accepting == 0){
         inconsistency_found = true; return false;
     }
@@ -51,7 +51,7 @@ bool overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node
             }
         }*/
     }
-  
+
     if(r->accepting_paths >= STATE_COUNT){
         for(num_map::iterator it = l->num_pos.begin(); it != l->num_pos.end(); ++it){
             if((*it).second >= SYMBOL_COUNT && r->pos((*it).first) == 0){
@@ -80,10 +80,10 @@ bool overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node
 void overlap_driven::update_score(state_merger *merger, apta_node* left, apta_node* right){
     overlap_data* l = (overlap_data*) left->data;
     overlap_data* r = (overlap_data*) right->data;
-    
+
     if (inconsistency_found) return;
     if (consistent(merger, left, right) == false) return;
-    
+
     for(int i = 0; i < alphabet_size; ++i){
         if(l->pos(i) != 0 && r->pos(i) != 0){
             if(l->pos(i) > r->pos(i)) overlap += r->pos(i);
@@ -134,3 +134,9 @@ void overlap_data::print_transition_label(iostream& output, int symbol){
     output << (num_pos[symbol]+num_neg[symbol]);
 };
 
+
+
+// streaming sinks
+bool overlap_data::is_low_count_sink(){
+    return false; //accepting_paths + rejecting_paths < 100;
+}

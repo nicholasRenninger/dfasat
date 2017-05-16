@@ -25,8 +25,10 @@ public:
     int literal_counter = 1;
     int clause_counter = 0;
 
+    parameters param;
+
     bool computing_header = true;
-    
+
     state_merger* merger;
     state_set red_states;
     state_set non_red_states;
@@ -97,7 +99,7 @@ public:
     state_set blue_states;
 
     evaluation_function* eval;
-    
+
     state_merger();
     state_merger(evaluation_function*, apta*);
 
@@ -110,13 +112,13 @@ public:
     /* creating new red states */
     void extend(apta_node* blue);
     void undo_extend(apta_node* blue);
-    
+
     /* find refinements */
     refinement_set* get_possible_refinements();
     merge_map* get_possible_merges(int);
     refinement* get_best_refinement();
     merge_pair* get_best_merge(int);
- 
+
     /* find unmergable states */
     apta_node* extend_red();
 
@@ -145,7 +147,7 @@ public:
     int sink_type(apta_node* node);
     bool sink_consistent(apta_node* node, int type);
     int num_sink_types();
-    
+
     int compute_global_score();
 
     string dot_output;

@@ -41,14 +41,26 @@ int stream_mode(state_merger* merger, parameters* param, ifstream& input_stream)
        refinement_list* all_refs = new refinement_list();
        merger->eval->initialize(merger);
 
+       int batch = 0;
+
        while (std::getline(input_stream, line)) {
         merger->advance_apta(line);
+
+
         samplecount++;
+        batch++;
         //merger.update_red_blue();
 
-        if(samplecount % param->batchsize*hoeffding_count == 0) {
+        if(samplecount % param->batchsize == 0) {
           while( true ) {
-            cout << " ";
+
+            merger->todot();
+            std::ostringstream oss2;
+            oss2 << "stream_pre_" << samplecount++ << ".dot";
+            ofstream output(oss2.str().c_str());
+            output << merger->dot_output;
+            output.close();
+
 
             refinement_set* refs = merger->get_possible_refinements();
 
@@ -68,10 +80,34 @@ int stream_mode(state_merger* merger, parameters* param, ifstream& input_stream)
 
             refinement* best_ref = *refs->begin();
 
+            // top refinements to compare?
+            if(refs->size() > 1) {
+
+              // go find nex t blue state or up to blue
+              refinement* runner_up = *( ++(refs->begin()));
+
+              // enough evidence?
+              if( (best_ref->score - runner_up->score) > param->epsilon) {
+                // implement merge
+              } else {
+                // we need more data
+                cerr << best_ref->score << " " << runner_up->score << " ";
+                //break;
+              }
+
+            } else {
+              // only one ref
+              //cerr << "ref size  " << refs->size() << " ";
+            }
+
+            if(batch > 1) {
+              cerr << "b" << batch << " ";
+            }
             best_ref->print_short();
             cerr << " ";
             best_ref->doref(merger);
             all_refs->push_front(best_ref);
+            batch = 0;
 
             for(refinement_set::iterator it = refs->begin(); it != refs->end(); ++it){
                 if(*it != best_ref) delete *it;
@@ -82,5 +118,9 @@ int stream_mode(state_merger* merger, parameters* param, ifstream& input_stream)
         } // if batchsize
       } // while input
 
+      // do one last step of batch?
+
+      // remaining input not used
+      cerr << "b" << batch << " ";
       return 0;
 }
