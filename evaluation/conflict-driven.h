@@ -10,8 +10,8 @@ class conflict_data: public count_data {
 
 
   public:
-	set<int> conflicts;
-    set<int> undo_info;
+	set<apta_node*> conflicts;
+    set<apta_node*> undo_info;
     
     virtual void update(evaluation_data* right);
     virtual void undo(evaluation_data* right);

@@ -9,6 +9,7 @@ protected:
   REGISTER_DEC_DATATYPE(process_data);
 public:
     set<int> done_tasks;
+    set<int> future_tasks;
 
     virtual void print_state_label(iostream& output);
 };
