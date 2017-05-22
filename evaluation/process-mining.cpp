@@ -13,13 +13,13 @@
 REGISTER_DEF_DATATYPE(process_data);
 REGISTER_DEF_TYPE(process_mining);
 
-void process_data::print_state_label(iostream& output){
+void process_data::print_state_label(iostream& output, apta* aptacontext){
     for(set<int>::iterator it = done_tasks.begin(); it != done_tasks.end(); ++it){
-        output << *it << " ";
+        output << aptacontext->alph_str(*it) << " ";
     }
     output << "\n";
     for(set<int>::iterator it = future_tasks.begin(); it != future_tasks.end(); ++it){
-        output << *it << " ";
+        output << aptacontext->alph_str(*it) << " ";
     }
     output << "\n";
 };

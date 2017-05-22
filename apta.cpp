@@ -95,10 +95,10 @@ void apta::print_dot(iostream& output){
     //for(merged_APTA_iterator Ait = merged_APTA_iterator(root); *Ait != 0; ++Ait){
         apta_node* n = *Ait;
         output << "\t" << n->number << " [ label=\"";
-        n->data->print_state_label(output);
+        n->data->print_state_label(output, this);
         output << "#" << n->size;
         output << "\" ";
-        n->data->print_state_style(output);
+        n->data->print_state_style(output, this);
         if(n->red == false) output << " style=dotted";
         output << " ];\n";
 
@@ -126,12 +126,12 @@ void apta::print_dot(iostream& output){
             
             for(set<int>::iterator it3 = labels.begin(); it3 != labels.end(); ++it3){
                 output << alph_str(*it3) << ":";
-                n->data->print_transition_label(output, *it3);
+                n->data->print_transition_label(output, *it3, this);
                 output << "\n";
             }
 
             output << "\" ";
-            n->data->print_transition_style(output, labels);
+            n->data->print_transition_style(output, labels, this);
             output << " ];\n";
         }
         continue;
@@ -142,11 +142,11 @@ void apta::print_dot(iostream& output){
             output << "\tS" << n->number << "t" << stype << " [ label=\"";
             for(set<int>::iterator it3 = labels.begin(); it3 != labels.end(); ++it3){
                 output << n->get_child(*it3)->size << " ";
-                n->get_child(*it3)->data->print_state_label(output);
+                n->get_child(*it3)->data->print_state_label(output, this);
                 output << "\n";
             }
             output << "\" ";
-            n->get_child(*(labels.begin()))->data->print_state_style(output);
+            n->get_child(*(labels.begin()))->data->print_state_style(output, this);
             if(n->red == false) output << " style=dotted";
             output << " ];\n";
 
@@ -154,12 +154,12 @@ void apta::print_dot(iostream& output){
             
             for(set<int>::iterator it3 = labels.begin(); it3 != labels.end(); ++it3){
                 output << alph_str(*it3) << ":";
-                n->data->print_transition_label(output, *it3);
+                n->data->print_transition_label(output, *it3, this);
                 output << "\n";
             }
 
             output << "\" ";
-            n->data->print_transition_style(output, labels);
+            n->data->print_transition_style(output, labels, this);
             output << " ];\n";
         }
     }

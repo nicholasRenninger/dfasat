@@ -41,19 +41,19 @@ void evaluation_data::undo(evaluation_data* right){
     }
 };
 
-void evaluation_data::print_state_label(iostream& output){
+void evaluation_data::print_state_label(iostream& output, apta* aptacontext){
 
 };
 
-void evaluation_data::print_state_style(iostream& output){
+void evaluation_data::print_state_style(iostream& output, apta* aptacontext){
 
 };
 
-void evaluation_data::print_transition_label(iostream& output, int symbol){
+void evaluation_data::print_transition_label(iostream& output, int symbol, apta* aptacontext){
 
 };
 
-void evaluation_data::print_transition_style(iostream& output, set<int> symbols){
+void evaluation_data::print_transition_style(iostream& output, set<int> symbols, apta* aptacontext){
 
 };
 
@@ -112,16 +112,24 @@ void evaluation_function::initialize(state_merger *merger){
  *
  * accepting sink = only accept, accept now, accept afterwards
  * rejecting sink = only reject, reject now, reject afterwards 
- * low count sink = frequency smaller than STATE_COUNT */
+ * low count sink = frequency smaller than STATE_COUNT 		
+ * stream sink 	  = frequency smaller than hoeffding says
+ ****								*/
 bool is_low_count_sink(apta_node* node){
     node = node->find();
     return node->size < STATE_COUNT;
+}
+
+bool is_stream_sink(apta_node* node){
+    node = node->find();
+    return node->size < STREAM_COUNT;
 }
 
 int evaluation_function::sink_type(apta_node* node){
     if(!USE_SINKS) return -1;
 
     if (is_low_count_sink(node)) return 0;
+    if (is_stream_sink(node)) return 3;
     //if (is_accepting_sink(node)) return 1;
     //if (is_rejecting_sink(node)) return 2;
     return -1;
@@ -131,6 +139,7 @@ bool evaluation_function::sink_consistent(apta_node* node, int type){
     if(!USE_SINKS) return true;
     
     if(type == 0) return is_low_count_sink(node);
+    if(type == 3) return is_stream_sink(node);
     //if(type == 1) return is_accepting_sink(node);
     //if(type == 2) return is_rejecting_sink(node);
     
@@ -140,8 +149,9 @@ bool evaluation_function::sink_consistent(apta_node* node, int type){
 int evaluation_function::num_sink_types(){
     if(!USE_SINKS) return 0;
     
-    // accepting, rejecting, and low count
-    return 1;
+    // accepting, rejecting, and low count (old)
+    // low count and stream
+    return 2;
 };
 
 /*  read functions*/ 
