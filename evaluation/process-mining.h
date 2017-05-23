@@ -10,8 +10,12 @@ protected:
 public:
     set<int> done_tasks;
     set<int> future_tasks;
+    set<int> undo_info;
+    set<int> undo_dinfo;
 
     virtual void print_state_label(iostream& output);
+    virtual void update(evaluation_data* right);
+    virtual void undo(evaluation_data* right);
 };
 
 class process_mining: public overlap_driven {

@@ -24,6 +24,73 @@ void process_data::print_state_label(iostream& output){
     output << "\n";
 };
 
+void process_data::update(evaluation_data* right){
+    overlap_data::update(right);
+
+    process_data* r = (process_data*)right;
+    
+    set<int>::iterator it  = future_tasks.begin();
+    set<int>::iterator it2 = r->future_tasks.begin();
+    r->undo_info.clear();
+    
+    while(it != future_tasks.end() && it2 != r->future_tasks.end()){
+        if(*it == *it2){
+            it++;
+            it2++;
+        } else if(*it < *it2){
+            it++;
+        } else {
+            r->undo_info.insert(*it2);
+            it2++;
+        }
+    }
+    while(it2 != r->future_tasks.end()){
+        r->undo_info.insert(*it2);
+        it2++;
+    }
+    
+    for(it = r->undo_info.begin(); it != r->undo_info.end(); ++it){
+        future_tasks.insert(*it);
+    }
+
+    it  = done_tasks.begin();
+    it2 = r->done_tasks.begin();
+    r->undo_dinfo.clear();
+    
+    while(it != done_tasks.end() && it2 != r->done_tasks.end()){
+        if(*it == *it2){
+            it++;
+            it2++;
+        } else if(*it < *it2){
+            it++;
+        } else {
+            r->undo_dinfo.insert(*it2);
+            it2++;
+        }
+    }
+    while(it2 != r->done_tasks.end()){
+        r->undo_dinfo.insert(*it2);
+        it2++;
+    }
+    
+    for(it = r->undo_dinfo.begin(); it != r->undo_dinfo.end(); ++it){
+        done_tasks.insert(*it);
+    }
+};
+
+void process_data::undo(evaluation_data* right){
+    overlap_data::undo(right);
+    
+    process_data* r = (process_data*)right;
+    
+    for(set<int>::iterator it = r->undo_info.begin(); it != r->undo_info.end(); ++it){
+        future_tasks.erase(*it);
+    }
+    for(set<int>::iterator it = r->undo_dinfo.begin(); it != r->undo_dinfo.end(); ++it){
+        done_tasks.erase(*it);
+    }
+};
+
 bool process_mining::consistent(state_merger *merger, apta_node* left, apta_node* right){
     //return overlap_driven::consistent(merger, left, right);
 
@@ -81,12 +148,23 @@ bool process_mining::compute_consistency(state_merger *merger, apta_node* left, 
     //if(l->accepting_paths >= STATE_COUNT && r->accepting_paths >= STATE_COUNT)
     //    return overlap_driven::compute_consistency(merger, left, right);
     
+    set<int> diff;
     for(set<int>::iterator it = r->future_tasks.begin(); it != r->future_tasks.end(); ++it){
-        if(l->future_tasks.find(*it) == l->future_tasks.end()) return false;
+        if(l->future_tasks.find(*it) == l->future_tasks.end()) return false;//diff.insert(*it);//return false;
     }
+    
+    if(diff.empty() == false){
+    for(set<int>::iterator it = l->done_tasks.begin(); it != l->done_tasks.end(); ++it){
+        if(r->done_tasks.find(*it) == r->done_tasks.end() && diff.find(*it) == diff.end()) return false;
+    }}
+    diff.clear();
     for(set<int>::iterator it = l->future_tasks.begin(); it != l->future_tasks.end(); ++it){
-        if(r->future_tasks.find(*it) == r->future_tasks.end()) return false;
+        if(r->future_tasks.find(*it) == r->future_tasks.end()) return false;//diff.insert(*it);//return false;
     }
+    if(diff.empty() == false){
+    for(set<int>::iterator it = r->done_tasks.begin(); it != r->done_tasks.end(); ++it){
+        if(l->done_tasks.find(*it) == l->done_tasks.end() && diff.find(*it) == diff.end()) return false;
+    }}
     return overlap_driven::compute_consistency(merger, left, right);
 
     for(set<int>::iterator it = r->done_tasks.begin(); it != r->done_tasks.end(); ++it){
