@@ -11,7 +11,7 @@ public:
     set<int> done_tasks;
     set<int> future_tasks;
 
-    virtual void print_state_label(iostream& output);
+    virtual void print_state_label(iostream& output, apta* aptacontext);
 };
 
 class process_mining: public overlap_driven {
