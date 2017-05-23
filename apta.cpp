@@ -84,7 +84,11 @@ void apta::read_file(istream &input_stream){
 
 bool is_sink(apta_node* node){
     //cerr << node->size << endl;
-    return node->data->sink_type() != -1;
+    return node->data->sink_type(node) != -1;
+}
+
+int apta::sink_type(apta_node* node) {
+    return node->data->sink_type(node);
 }
 
 void apta::print_dot(iostream& output){
@@ -108,10 +112,10 @@ void apta::print_dot(iostream& output){
 
         for(child_map::iterator it = n->children.begin(); it != n->children.end(); ++it){
             apta_node* child = (*it).second->find();
-            if(child->data->sink_type() != -1){
-                if(sinklabels.find(child->data->sink_type()) == sinklabels.end())
-                    sinklabels[child->data->sink_type()] = set<int>();
-                sinklabels[child->data->sink_type()].insert( it->first );
+            if( sink_type(child) != -1){
+                if(sinklabels.find(sink_type(child)) == sinklabels.end())
+                    sinklabels[sink_type(child)] = set<int>();
+                sinklabels[sink_type(child)].insert( it->first );
             } else {
                 if(childlabels.find(child) == childlabels.end())
                     childlabels[child] = set<int>();

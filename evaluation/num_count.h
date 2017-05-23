@@ -21,6 +21,12 @@ public:
     virtual void read_to(int type, int index, int length, int symbol, string data);
     virtual void update(evaluation_data* right);
     virtual void undo(evaluation_data* right);
+
+    virtual int sink_type(apta_node* node);
+    virtual bool sink_consistent(apta_node* node, int type);
+    virtual int num_sink_types();
+
+
 };
 
 class count_driven: public evaluation_function {
@@ -36,10 +42,6 @@ public:
   virtual void reset(state_merger *merger);
   virtual bool consistency_check(evaluation_data* l, evaluation_data* r);
   virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
-
-  virtual int sink_type(apta_node* node);
-  virtual bool sink_consistent(apta_node* node, int type);
-  virtual int num_sink_types();
 
   //virtual void print_dot(iostream&, state_merger *);
 };

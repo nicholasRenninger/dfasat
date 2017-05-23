@@ -12,7 +12,7 @@ public:
 
   virtual void print_transition_label(iostream& output, int symbol);
 
-  virtual bool is_low_count_sink();
+
 
 };
 

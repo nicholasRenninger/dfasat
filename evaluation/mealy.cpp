@@ -103,6 +103,44 @@ void mealy::reset(state_merger* merger){
     num_unmatched = 0;
 };
 
+bool mealy_data::is_stream_sink(apta_node* node) {
+
+   return node->size < STREAM_COUNT;
+}
+
+bool mealy_data::is_low_count_sink(apta_node* node) {
+
+   return node->size < STATE_COUNT;
+}
+
+
+
+int mealy_data::sink_type(apta_node* node){
+
+    if(is_stream_sink(node)) return 2;
+
+    if(!USE_SINKS) return -1;
+
+    if(is_low_count_sink(node)) return 0;
+
+    return -1;
+};
+
+bool mealy_data::sink_consistent(int type){
+    if(!USE_SINKS) return true;
+    
+    //if(type == 0) return is_low_count_sink();
+    //if(type == 1) return this->is_stream_sink();
+    return true;
+};
+
+int mealy::num_sink_types(){
+    if(!USE_SINKS) return 0;
+    return 2;
+};
+
+
+
 /*void mealy::print_dot(iostream& output, state_merger* merger){
     apta* aut = merger->aut;
     state_set s  = merger->red_states;

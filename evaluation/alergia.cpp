@@ -180,10 +180,16 @@ bool alergia_data::is_low_count_sink(){
     return accepting_paths + rejecting_paths < STATE_COUNT;
 }
 
-int alergia_data::sink_type(){
+bool alergia_data::is_stream_sink(apta_node* node) {
+
+   return node->size < STREAM_COUNT;
+}
+
+int alergia_data::sink_type(apta_node* node){
     if(!USE_SINKS) return -1;
 
     if (is_low_count_sink()) return 0;
+    if(is_stream_sink(node)) return 2;
     return -1;
 };
 
@@ -191,12 +197,13 @@ bool alergia_data::sink_consistent(int type){
     if(!USE_SINKS) return true;
     
     if(type == 0) return is_low_count_sink();
+    //if(type == 1) return this->is_stream_sink();
     return true;
 };
 
 int alergia::num_sink_types(){
     if(!USE_SINKS) return 0;
-    return 1;
+    return 2;
 };
 
 /*void alergia::print_dot(iostream& output, state_merger* merger){

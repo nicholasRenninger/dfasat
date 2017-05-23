@@ -130,7 +130,7 @@ int stream_mode(state_merger* merger, parameters* param, ifstream& input_stream)
 
             // what if we have no confident in any proposed refinement?
             if(found==false) {
-              best_ref == *(refs->begin());
+              best_ref = *(refs->begin());
               //cerr << "no option" << endl;
             }
 
