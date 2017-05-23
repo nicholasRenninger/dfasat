@@ -27,6 +27,14 @@ public:
     virtual void read_from(int type, int index, int length, int symbol, string data);
     virtual void update(evaluation_data* right);
     virtual void undo(evaluation_data* right);
+
+
+    virtual bool is_stream_sink(apta_node* node);
+    virtual bool is_low_count_sink(apta_node* node);
+    virtual int sink_type(apta_node* node);
+    virtual bool sink_consistent(int type);
+
+
 };
 
 class mealy: public evaluation_function {
@@ -44,6 +52,9 @@ public:
   virtual bool compute_consistency(state_merger *, apta_node* left, apta_node* right);
   virtual int  compute_score(state_merger*, apta_node* left, apta_node* right);
   virtual void reset(state_merger *);
+
+  int num_sink_types();
+
 };
 
 #endif

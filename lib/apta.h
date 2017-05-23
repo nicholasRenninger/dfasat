@@ -205,6 +205,7 @@ public:
     string alph_str(int i);
     void read_file(istream &input_stream);
     void print_dot(iostream& output);
+    int sink_type(apta_node* apta);
 };
 
 #endif

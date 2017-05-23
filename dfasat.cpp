@@ -874,7 +874,7 @@ int dfasat(state_merger &merger, string sat_program, const char* dot_output_file
     
     merger.context.dfa_size = min(merger.red_states.size() + OFFSET, merger.context.red_states.size() + merger.context.non_red_states.size());
     merger.context.sinks_size = 0;
-    if(USE_SINKS) merger.context.sinks_size = merger.num_sink_types();
+    if(USE_SINKS) merger.context.sinks_size = merger.aut->root->data->num_sink_types();
     
     if(!MERGE_SINKS_PRESOLVE) merger.context.non_red_states.insert(merger.context.sink_states.begin(), merger.context.sink_states.end());
     merger.context.num_states = merger.context.red_states.size() + merger.context.non_red_states.size();

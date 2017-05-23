@@ -38,7 +38,8 @@ public:
     virtual void undo(evaluation_data* right);
     
     virtual bool is_low_count_sink();
-    virtual int sink_type();
+    virtual bool is_stream_sink(apta_node* node);
+    virtual int sink_type(apta_node* node);
     virtual bool sink_consistent(int type);
 };
 

@@ -50,6 +50,7 @@ state_set& state_merger::get_candidate_states(){
 }
 
 state_set& state_merger::get_sink_states(){
+
     state_set states = blue_states;
     state_set* sink_states = new state_set();
     for(state_set::iterator it = blue_states.begin();it != blue_states.end();++it){
@@ -83,7 +84,7 @@ bool state_merger::merge(apta_node* left, apta_node* right){
 
     if(left->red && RED_FIXED){
         for(child_map::iterator it = right->children.begin();it != right->children.end(); ++it)
-            if(left->child((*it).first) == 0 && !eval->sink_consistent((*it).second, 0)) return false;
+            if(left->child((*it).first) == 0 && !(*it).second->data->sink_consistent((*it).second, 0)) return false;
     }
 
     left->data->update(right->data);
@@ -143,7 +144,7 @@ bool state_merger::merge_test(apta_node* left, apta_node* right){
 
     if(left->red && RED_FIXED){
         for(child_map::iterator it = right->children.begin(); it != right->children.end(); ++it)
-            if(left->child((*it).first) == 0 && !eval->sink_consistent((*it).second, 0)) return false;
+            if(left->child((*it).first) == 0 && !(*it).second->data->sink_consistent((*it).second, 0)) return false;
     }
     eval->update_score(this, left, right);
     for(child_map::iterator it = right->children.begin();it != right->children.end(); ++it){
@@ -366,7 +367,7 @@ refinement_set* state_merger::get_possible_refinements(){
         apta_node* blue = *it;
         bool found = false;
 
-        if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
+        if((sink_type(blue) != -1)) continue;
 
         for(red_state_iterator it2 = red_state_iterator(aut->root); *it2 != 0; ++it2){
             apta_node* red = *it2;
@@ -603,16 +604,16 @@ void state_merger::print_dot(FILE* output)
 }
 
 int state_merger::sink_type(apta_node* node){
-    return node->data->sink_type();
+    return node->data->sink_type(node);
 };
 
 bool state_merger::sink_consistent(apta_node* node, int type){
     return node->data->sink_consistent(type);
 };
 
-int state_merger::num_sink_types(){
+/*int state_merger::num_sink_types(){
     return eval->num_sink_types();
-};
+}; // this got moved to eval data */
 
 int state_merger::compute_global_score(){
     return get_final_apta_size();

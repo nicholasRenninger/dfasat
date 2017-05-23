@@ -94,6 +94,8 @@ void count_driven::reset(state_merger *merger){
   compute_before_merge=false;
 };
 
+
+// sinks for evaluation data type
 bool is_accepting_sink(apta_node* node){
     count_data* d = reinterpret_cast<count_data*>(node->data);
 
@@ -108,7 +110,7 @@ bool is_rejecting_sink(apta_node* node){
     return d->accepting_paths == 0 && d->num_accepting == 0;
 };
 
-int count_driven::sink_type(apta_node* node){
+int count_data::sink_type(apta_node* node){
     if(!USE_SINKS) return -1;
 
     if (is_rejecting_sink(node)) return 0;
@@ -116,7 +118,7 @@ int count_driven::sink_type(apta_node* node){
     return -1;
 };
 
-bool count_driven::sink_consistent(apta_node* node, int type){
+bool count_data::sink_consistent(apta_node* node, int type){
     if(!USE_SINKS) return true;
     
     if(type == 0) return is_rejecting_sink(node);
@@ -125,7 +127,7 @@ bool count_driven::sink_consistent(apta_node* node, int type){
     return true;
 };
 
-int count_driven::num_sink_types(){
+int count_data::num_sink_types(){
     if(!USE_SINKS) return 0;
     
     // accepting or rejecting

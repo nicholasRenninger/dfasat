@@ -79,8 +79,18 @@ public:
     virtual void print_transition_style(iostream& output, set<int> symbols, apta* aptacontext);
 
 /* what to ignore, and why */    
-    virtual int sink_type();
+    
     virtual bool sink_consistent(int type);
+
+/* Return a sink type, or -1 if no sink
+ * Sinks are special states that optionally are not considered as merge candidates,
+ * and are optionally merged into one (for every type) before starting exact solving */
+  virtual int sink_type(apta_node* node);
+  virtual bool sink_consistent(apta_node* node, int type);
+  virtual int num_sink_types();
+
+ 
+
 };
 
 class evaluation_function  {
@@ -143,14 +153,7 @@ public:
 * called only once for every run, can be complex */
   virtual void initialize(state_merger *);
   
-/* Return a sink type, or -1 if no sink
- * Sinks are special states that optionally are not considered as merge candidates,
- * and are optionally merged into one (for every type) before starting exact solving */
-  virtual int sink_type(apta_node* node);
-  virtual bool sink_consistent(apta_node* node, int type);
-  virtual int num_sink_types();
-
-  //virtual void read_file(istream &input_stream, state_merger *);
+ //virtual void read_file(istream &input_stream, state_merger *);
   virtual void init(string data, state_merger* merger);
   virtual void add_sample(string data, state_merger* merger);
   //virtual void print_dot(iostream&, state_merger *);
