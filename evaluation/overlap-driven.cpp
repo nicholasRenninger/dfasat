@@ -138,5 +138,5 @@ void overlap_data::print_transition_label(iostream& output, int symbol){
 
 // streaming sinks
 bool overlap_data::is_low_count_sink(){
-    return false; //accepting_paths + rejecting_paths < 100;
+    return false; // accepting_paths + rejecting_paths < 100;
 }

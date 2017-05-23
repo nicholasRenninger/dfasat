@@ -104,6 +104,7 @@ void run(parameters* param) {
 
     for(auto myit = DerivedRegister<evaluation_function>::getMap()->begin(); myit != DerivedRegister<evaluation_function>::getMap()->end(); myit++   ) {
        cout << myit->first << " " << myit->second << endl;
+       DEBUG("test");
     }
 
     try {

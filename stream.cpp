@@ -14,6 +14,8 @@
 
 #include "parameters.h"
 
+int STREAM_COUNT = 0;
+
 int stream_mode(state_merger* merger, parameters* param, ifstream& input_stream) {
        // first line has alphabet size and
        std::string line;
@@ -54,6 +56,7 @@ int stream_mode(state_merger* merger, parameters* param, ifstream& input_stream)
         if(samplecount % param->batchsize == 0) {
           while( true ) {
 
+            // output each micro-batch
             merger->todot();
             std::ostringstream oss2;
             oss2 << "stream_pre_" << samplecount++ << ".dot";
@@ -65,9 +68,11 @@ int stream_mode(state_merger* merger, parameters* param, ifstream& input_stream)
             refinement_set* refs = merger->get_possible_refinements();
 
             if(refs->empty()){
-                cerr << "no more possible merges" << endl;
+                // we just need more data
+                // cerr << "no more possible merges" << endl;
                 break;
             }
+            // the following flags are mostly important for the sat solver
             if(merger->red_states.size() > CLIQUE_BOUND){
                cerr << "too many red states" << endl;
                break;
@@ -78,26 +83,55 @@ int stream_mode(state_merger* merger, parameters* param, ifstream& input_stream)
                break;
             }
 
-            refinement* best_ref = *refs->begin();
+            // top refinements to compare
+            refinement* best_ref;
+            bool found = true;
 
-            // top refinements to compare?
             if(refs->size() > 1) {
 
-              // go find nex t blue state or up to blue
-              refinement* runner_up = *( ++(refs->begin()));
+              std::set<refinement*, score_compare>::iterator top_ref_it = refs->begin();
+              std::set<refinement*, score_compare>::iterator runner_up_ref_it = refs->begin();
 
-              // enough evidence?
-              if( (best_ref->score - runner_up->score) > param->epsilon) {
-                // implement merge
-              } else {
-                // we need more data
-                cerr << best_ref->score << " " << runner_up->score << " ";
-                //break;
-              }
+              refinement* top_ref = *top_ref_it;
+              refinement* runner_up_ref = *( ++(runner_up_ref_it));
+
+              // enough evidence take best score and compare
+              while( ! (top_ref_it == refs->end()) ) {
+                // where's the match;
+                for(runner_up_ref_it = std::next(top_ref_it); runner_up_ref_it != refs->end() && top_ref->score - runner_up_ref->score <  param->epsilon; ++runner_up_ref_it) {
+
+                  if(runner_up_ref->right != top_ref->right) {
+                    continue;
+                  } else {
+                    if(top_ref->score - runner_up_ref->score > param->epsilon) {
+                      found = true;
+                      break;
+                    } else {
+                        cout << " [" << top_ref->score << ":" << runner_up_ref->score << "] ";
+                        // we are not cnofident in top merge
+                        found = false;
+                    }
+                  }
+                  runner_up_ref = *runner_up_ref_it;
+                }
+
+                // current top score is hoeffding match for this blue state
+                best_ref = top_ref;
+                if(found) break;
+
+                // check if next best score is hoeffding match
+                top_ref = *(++top_ref_it);
+              } // end find matching
 
             } else {
-              // only one ref
-              //cerr << "ref size  " << refs->size() << " ";
+              // execute if enough evidence?
+              best_ref = *(refs->begin());
+            } // end only one ref
+
+            // what if we have no confident in any proposed refinement?
+            if(found==false) {
+              best_ref == *(refs->begin());
+              //cerr << "no option" << endl;
             }
 
             if(batch > 1) {
@@ -122,5 +156,11 @@ int stream_mode(state_merger* merger, parameters* param, ifstream& input_stream)
 
       // remaining input not used
       cerr << "b" << batch << " ";
+
+      cout << endl;
+      int size =  merger->get_final_apta_size();
+      int red_size = merger->red_states.size();
+      cout << endl << "found intermediate solution with " << size << " and " << red_size << " red states" << endl;
+
       return 0;
 }
