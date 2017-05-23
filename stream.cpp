@@ -40,6 +40,7 @@ int stream_mode(state_merger* merger, parameters* param, ifstream& input_stream)
        cout <<  (2*param->epsilon*param->epsilon);
        cout << " therefore, relevant Hoeffding count for " << (double) param->delta << " and " << (float)  param->epsilon << " delta/epsilon is " << hoeffding_count << endl;
 
+       STREAM_COUNT = hoeffding_count;
        refinement_list* all_refs = new refinement_list();
        merger->eval->initialize(merger);
 
