@@ -103,6 +103,12 @@ void mealy::reset(state_merger* merger){
     num_unmatched = 0;
 };
 
+
+void mealy_data::print_transition_label(iostream& output, int symbol, apta* aptacontext){
+
+};
+
+
 bool mealy_data::is_stream_sink(apta_node* node) {
 
    return node->size < STREAM_COUNT;

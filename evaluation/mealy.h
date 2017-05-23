@@ -28,6 +28,7 @@ public:
     virtual void update(evaluation_data* right);
     virtual void undo(evaluation_data* right);
 
+    void print_transition_label(std::iostream&, int, apta*);
 
     virtual bool is_stream_sink(apta_node* node);
     virtual bool is_low_count_sink(apta_node* node);

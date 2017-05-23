@@ -53,6 +53,7 @@ void evaluation_data::print_transition_label(iostream& output, int symbol, apta*
 
 };
 
+// this should have a pair, set<pair<int, eval_data*>>
 void evaluation_data::print_transition_style(iostream& output, set<int> symbols, apta* aptacontext){
 
 };
