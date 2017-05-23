@@ -18,6 +18,9 @@ class apta_node;
 
 using namespace std;
 
+bool is_stream_sink(apta_node*);
+
+
 // for registering evaluation data objects
 #define REGISTER_DEC_DATATYPE(NAME) \
     static DerivedDataRegister<NAME> reg
@@ -70,11 +73,12 @@ public:
     virtual void undo(evaluation_data* other);
 
 /* Printing of nodes and transitions in dot output */
-    virtual void print_state_label(iostream& output);
-    virtual void print_state_style(iostream& output);
-    virtual void print_transition_label(iostream& output, int symbol);
-    virtual void print_transition_style(iostream& output, set<int> symbols);
-    
+    virtual void print_state_label(iostream& output, apta* aptacontext);
+    virtual void print_state_style(iostream& output, apta* aptacontext);
+    virtual void print_transition_label(iostream& output, int symbol, apta* aptacontext);
+    virtual void print_transition_style(iostream& output, set<int> symbols, apta* aptacontext);
+
+/* what to ignore, and why */    
     virtual int sink_type();
     virtual bool sink_consistent(int type);
 };
