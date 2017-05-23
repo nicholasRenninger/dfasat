@@ -13,7 +13,7 @@ public:
     set<int> undo_info;
     set<int> undo_dinfo;
 
-    virtual void print_state_label(iostream& output, apta* aptacontext);
+
     virtual void update(evaluation_data* right);
     virtual void undo(evaluation_data* right);
 
