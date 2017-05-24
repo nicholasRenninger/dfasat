@@ -160,11 +160,17 @@ void run(parameters* param) {
 
     std::ostringstream oss2;
     oss2 << param->dot_file << "final"  << ".dot";
+     
+    ofstream output(oss2.str().c_str());
+    merger.todot();
+    output << merger.dot_output;
+    output.close();
 
-    FILE* output = fopen(oss2.str().c_str(), "w");
+
+   /*FILE* output = fopen(oss2.str().c_str(), "w");
     merger.todot();
     merger.print_dot(output);
-    fclose(output);
+    fclose(output);*/
 
 } // end run
 
