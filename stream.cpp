@@ -19,8 +19,8 @@ int STREAM_COUNT = 0;
 int stream_mode(state_merger* merger, parameters* param, ifstream& input_stream) {
        // first line has alphabet size and
        std::string line;
-       std::getline(input_stream, line);
-       merger->init_apta(line);
+       //std::getline(input_stream, line);
+       merger->init_apta(string("10 1000"));
 
        // line by line processing
        // add items

@@ -182,11 +182,12 @@ void evaluation_function::add_sample(string data, state_merger* merger) {
     std::stringstream lineStream;
     lineStream.str(data);
            
+    
     // header of line
     int label;
     int length;
 
-    lineStream >> label >> length;
+    lineStream >> label >> length; 
 
     apta* aut = merger->aut;
 
