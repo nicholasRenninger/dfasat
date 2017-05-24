@@ -62,6 +62,7 @@ int stream_mode(state_merger* merger, parameters* param, ifstream& input_stream)
             std::ostringstream oss2;
             oss2 << param->dot_file <<"stream_pre_" << samplecount++ % 10 << ".dot";
             ofstream output(oss2.str().c_str());
+            //if(output == NULL) cerr << "Cannot open " << oss2.str().c_str() << " to write intermediate dot output file" << endl;
             output << merger->dot_output;
             output.close();
 

@@ -21,6 +21,7 @@
 #include "searcher.h"
 #include "stream.h"
 #include <vector>
+#include "interactive.h"
 
 #include "parameters.h"
 
@@ -153,9 +154,22 @@ void run(parameters* param) {
              CLIQUE_BOUND = min(CLIQUE_BOUND, solution - OFFSET + EXTRA_STATES);
          }
 
-    } else {
+    } else if(param->mode == "stream") {
        cout << "stream mode selected" << endl;
        stream_mode(&merger, param, input_stream);
+    } else if(param->mode == "inter") {
+
+       // process data
+       merger.read_apta(input_stream);
+       input_stream.close();
+
+       cout << "reading data finished, processing:" << endl;
+ 
+       // run interactive loop
+       interactive(&merger, param); 
+    } else {
+       cerr << "unknown mode of operation selected, valid options are \"batch\", \"stream\", and \"interactive\", while the parameter provided was " << param->mode << endl;
+       exit(1);
     }
 
     std::ostringstream oss2;
@@ -196,8 +210,8 @@ int main(int argc, const char *argv[]){
     poptContext optCon;
     struct poptOption optionsTable[] = {
         { "version", 0, POPT_ARG_NONE, NULL, 1, "Display version information", NULL },
-        { "debug", 'V', POPT_ARG_INT, &(param->debugging), 'V', "Debug mode and verbosity", "integer" },
-        { "output-dir", 'o', POPT_ARG_STRING, &(dot_file), 'o', "The filename in which to store the learned DFAs in .dot and .aut format, default: \"dfa\".", "string" },
+        { "debug", 'V', POPT_ARG_INT, &(param->debugging), 'V', "Debug mode and verbosity evel", "integer" },
+        { "output-dir", 'o', POPT_ARG_STRING, &(dot_file), 'o', "Relative path for output files with trailing /, default: \"./\".", "string" },
         { "heuristic-name", 'h', POPT_ARG_STRING, &(hName), 'h', "Name of the merge heurstic to use; default count_driven. Use any heuristic in the evaluation directory. It is often beneficial to write your own, as heuristics are very application specific.", "string" },
         { "data-name", 'd', POPT_ARG_STRING, &(hData), 'd', "Name of the merge data class to use; default count_data. Use any heuristic in the evaluation directory.", "string" },
         { "mode", 'M', POPT_ARG_STRING, &(param->mode), 'M', "batch or stream depending on the mode of operation", "string" },
