@@ -57,10 +57,10 @@ int stream_mode(state_merger* merger, parameters* param, ifstream& input_stream)
         if(samplecount % param->batchsize == 0) {
           while( true ) {
 
-            // output each micro-batch
+            // output each micro-batch, keeping at host 10 files
             merger->todot();
             std::ostringstream oss2;
-            oss2 << "stream_pre_" << samplecount++ << ".dot";
+            oss2 << param->dot_file <<"stream_pre_" << samplecount++ % 10 << ".dot";
             ofstream output(oss2.str().c_str());
             output << merger->dot_output;
             output.close();

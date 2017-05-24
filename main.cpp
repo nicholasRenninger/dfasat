@@ -135,7 +135,7 @@ void run(parameters* param) {
        int solution = -1;
 
        std::ostringstream oss3;
-       oss3 << "init_" << param->dot_file << ".dot";
+       oss3 << param->dot_file  << "init_dfa"<< ".dot";
        FILE* output = fopen(oss3.str().c_str(), "w");
        merger.todot();
        merger.print_dot(output);
@@ -143,9 +143,9 @@ void run(parameters* param) {
 
        for(int i = 0; i < param->runs; ++i){
           std::ostringstream oss;
-          oss << param->dot_file << (i+1) << ".aut";
+          oss << param->dot_file << "dfa" << (i+1) << ".aut";
           std::ostringstream oss2;
-          oss2 << param->dot_file << (i+1) << ".dot";
+          oss2 << param->dot_file << "dfa" << (i+1) << ".dot";
 
           solution = dfasat(merger, param->sat_program, oss2.str().c_str(), oss.str().c_str());
           //bestfirst(&merger);
@@ -191,7 +191,7 @@ int main(int argc, const char *argv[]){
     struct poptOption optionsTable[] = {
         { "version", 0, POPT_ARG_NONE, NULL, 1, "Display version information", NULL },
         { "debug", 'V', POPT_ARG_INT, &(param->debugging), 'V', "Debug mode and verbosity", "integer" },
-        { "output file name", 'o', POPT_ARG_STRING, &(dot_file), 'o', "The filename in which to store the learned DFAs in .dot and .aut format, default: \"dfa\".", "string" },
+        { "output-dir", 'o', POPT_ARG_STRING, &(dot_file), 'o', "The filename in which to store the learned DFAs in .dot and .aut format, default: \"dfa\".", "string" },
         { "heuristic-name", 'h', POPT_ARG_STRING, &(hName), 'h', "Name of the merge heurstic to use; default count_driven. Use any heuristic in the evaluation directory. It is often beneficial to write your own, as heuristics are very application specific.", "string" },
         { "data-name", 'd', POPT_ARG_STRING, &(hData), 'd', "Name of the merge data class to use; default count_data. Use any heuristic in the evaluation directory.", "string" },
         { "mode", 'M', POPT_ARG_STRING, &(param->mode), 'M', "batch or stream depending on the mode of operation", "string" },
