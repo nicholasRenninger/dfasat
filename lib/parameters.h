@@ -10,6 +10,7 @@ extern int alphabet_size;
 extern bool MERGE_SINKS;
 extern int STATE_COUNT;
 extern int SYMBOL_COUNT;
+extern int SINK_COUNT;
 extern float CORRECTION;
 extern float CHECK_PARAMETER;
 extern bool USE_SINKS;
@@ -64,6 +65,7 @@ public:
     int heuristic;
     int symbol_count;
     int state_count;
+    int sink_count;
     float correction;
     float extrapar;
     int satplus;
