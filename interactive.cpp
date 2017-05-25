@@ -3,6 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include <cstdlib>
+#include <sstream>
 
 #include "refinement.h"
 #include "random_greedy.h"
@@ -14,17 +15,27 @@ refinement_list* interactive(state_merger* merger, parameters* param){
     refinement_list* all_refs = new refinement_list();
     merger->eval->initialize(merger);
 
+    string command = string("");
+    string arg;
     int choice = 1;
     int pos = 0;
+
     // if there is only one choice, do we auto-execute
     // or read for confirmation & chance for parameter changes?
     bool manual = false;
+    bool execute = false;
+
+    refinement_set* refs;
+    refinement* chosen_ref;
 
     while( true ){
         merger->reset();
         while( true ){
             cout << " ";
-            
+
+          while(!execute) {
+
+	    // output current merged apta
             merger->todot();
             std::ostringstream oss2;
             oss2 << param->dot_file <<"pre_" << num % 2 << ".dot";
@@ -32,8 +43,8 @@ refinement_list* interactive(state_merger* merger, parameters* param){
             output << merger->dot_output;
             output.close();
            
-            refinement_set* refs = merger->get_possible_refinements();
-            refinement* chosen_ref = *refs->begin();
+            refs = merger->get_possible_refinements();
+            chosen_ref = *refs->begin();
 
             cerr << endl;
 
@@ -46,15 +57,52 @@ refinement_list* interactive(state_merger* merger, parameters* param){
                   cout << " , ";
               }
 
-              cout << endl <<"Your choice : " << endl;
-              cin >> choice;
+              cout << endl << "Your choice : " << endl;
+              getline(std::cin, command);
+	      stringstream cline(command);
+              cline >> arg;
+cout << arg << endl;
+	      // parse (prefix-free) commands 
+	      if(arg  == "undo") {
+                cout << "undo not implemented yet" << endl;
+	      } else if(arg == "set") {
+	        // set PARAM <value>
+	          // simple modify the param structure and call init_with_params, done
+
+		cline >> arg;
+
+		if(arg == "state_count") {
+		  cline >> arg;
+                  param->state_count = stoi(arg);
+		  init_with_params(param);
+		  cout << "STATE_COUNT is now " << STATE_COUNT << endl;
+                }
+
+	      } else if(arg == "next") {
+
+	      } else if(arg == "help") {
+		cout << "Available commands: set param value, next value, help" << endl;
+                // next command?
+	        
+	      } else {
+		execute = true;
+		pos = stoi(arg);
+                break;
+	      }
  
+	    } else {
+              pos = 1;
+              execute = true;
+             
+	    } // refs->size() 
+          } //execute
+
+	    // find chosen refinement and execute
               for(refinement_set::iterator it = refs->begin(); it != refs->end(); ++it){
                   if(pos == choice) chosen_ref = *it;
                   pos++;
               }
-              pos = 1;
-            }
+              pos = 1;     
 
             // execute choice 
             if(refs->empty()){
@@ -93,12 +141,14 @@ refinement_list* interactive(state_merger* merger, parameters* param){
             }
             delete refs;
             num = num + 1;
+
+	    execute = false;
         }
         cout << endl;
 
         int size =  merger->get_final_apta_size();
         int red_size = merger->red_states.size();
-        cout << endl << "found intermediate solution with " << size << " and " << red_size << " red states" << endl;
+        cout << endl << "Found heuristic solution tion with " << size << " states, of which " << red_size << " are red states." << endl;
         return all_refs;
     }
     return all_refs;

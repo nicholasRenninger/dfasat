@@ -85,4 +85,5 @@ public:
     parameters();
 };
 
+void init_with_params(parameters*);
 #endif
