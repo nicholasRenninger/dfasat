@@ -61,10 +61,12 @@ refinement_list* interactive(state_merger* merger, parameters* param){
               getline(std::cin, command);
 	      stringstream cline(command);
               cline >> arg;
-cout << arg << endl;
+
 	      // parse (prefix-free) commands 
 	      if(arg  == "undo") {
-                cout << "undo not implemented yet" << endl;
+                (*all_refs->begin())->undo(merger);
+                all_refs->pop_front();
+                cout << "undid last merge" << endl;
 	      } else if(arg == "set") {
 	        // set PARAM <value>
 	          // simple modify the param structure and call init_with_params, done
@@ -81,11 +83,12 @@ cout << arg << endl;
 	      } else if(arg == "next") {
 
 	      } else if(arg == "help") {
-		cout << "Available commands: set param value, next value, help" << endl;
+		cout << "Available commands: set param value, undo, help; <int> merges the <int>th merge from the proposed list" << endl;
                 // next command?
 	        
 	      } else {
 		execute = true;
+                // TODO Error handling
 		pos = stoi(arg);
                 break;
 	      }
