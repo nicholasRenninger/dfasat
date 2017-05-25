@@ -118,7 +118,7 @@ void evaluation_function::initialize(state_merger *merger){
  ****								*/
 bool is_low_count_sink(apta_node* node){
     node = node->find();
-    return node->size < STATE_COUNT;
+    return node->size < SINK_COUNT;
 }
 
 bool is_stream_sink(apta_node* node){

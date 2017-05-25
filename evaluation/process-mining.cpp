@@ -150,7 +150,7 @@ bool process_mining::compute_consistency(state_merger *merger, apta_node* left, 
     
     set<int> diff;
     for(set<int>::iterator it = r->future_tasks.begin(); it != r->future_tasks.end(); ++it){
-        if(l->future_tasks.find(*it) == l->future_tasks.end()) return false;//diff.insert(*it);//return false;
+        if(l->future_tasks.find(*it) == l->future_tasks.end()) diff.insert(*it);//return false;
     }
     
     if(diff.empty() == false){
@@ -159,7 +159,7 @@ bool process_mining::compute_consistency(state_merger *merger, apta_node* left, 
     }}
     diff.clear();
     for(set<int>::iterator it = l->future_tasks.begin(); it != l->future_tasks.end(); ++it){
-        if(r->future_tasks.find(*it) == r->future_tasks.end()) return false;//diff.insert(*it);//return false;
+        if(r->future_tasks.find(*it) == r->future_tasks.end()) diff.insert(*it);//return false;
     }
     if(diff.empty() == false){
     for(set<int>::iterator it = r->done_tasks.begin(); it != r->done_tasks.end(); ++it){
