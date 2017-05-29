@@ -1,16 +1,26 @@
-D\+F\+A\+S\+AT in C++
+flexfringe (formerly D\+F\+A\+S\+AT), a flexible state-\/merging framework written in C++.
 
 \subsubsection*{What is this repository for?}
 
+You can issue pull requests for bug fixes and improvements. Most work will happen in the development branch while master contains a more stable version.
+
 \subsubsection*{How do I get set up?}
 
-It needs the G\+NU scientific library (development) package. In Ubuntu, install via \$ apt-\/get install libgsl-\/dev
+flexfringe has one required dependency\+: libpopt for argument parsing. Some heuristic functions bring their own dependencies. We provide an implementation of a likelihood-\/based merge function for probabilistic D\+F\+As. It needs the G\+NU scientific library (development) package (e.\+g. the libgsl-\/dev package in Ubuntu).
 
-Have libpopt installed and run make clean all. If you want to use the S\+A\+T-\/solving part of it, get lingeling from \href{http://fmv.jku.at/lingeling/}{\tt http\+://fmv.\+jku.\+at/lingeling/} and run its build.\+sh, or a similar solver.
+If you want to use the reduction to S\+AT and automatically invoke the S\+AT solver, you need to provide the path to the solver binary. flexfringe has been tested with lingeling (which you can get from \href{http://fmv.jku.at/lingeling/}{\tt http\+://fmv.\+jku.\+at/lingeling/} and run its build.\+sh).
+
+You can build and compile the flexfringe project by running
+
+\$ make clean all
+
+in the main directory to build the executable named /flexfringe/.
 
 \subsubsection*{How do I run it?}
 
-Run ./dfasat --help to get help.
+Run ./flexfringe --help to get help.
+
+The start.\+sh script together with some .ini files provides a shortcut to storing
 
 Example\+:
 
@@ -50,6 +60,6 @@ after installing dot from graphviz.
 
 
 \begin{DoxyItemize}
-\item Sicco Verwer
-\item one of his PhD students\+: Qin, Nino, or Chris 
+\item Sicco Verwer (original author; best to reach out to for questions on batch mode and S\+AT reduction)
+\item Christian Hammerschmidt (author of the online/streaming mode and interactive mode) 
 \end{DoxyItemize}

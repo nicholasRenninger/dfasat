@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.11"/>
-<title>flexfringe: Class List</title>
+<title>flexfringe: interactive.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -49,8 +49,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
-      <li><a href="files.html"><span>Files</span></a></li>
+      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -71,8 +71,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
-      <li class="current"><a href="annotated.html"><span>Class&#160;List</span></a></li>
-      <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
+      <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 </div><!-- top -->
@@ -87,7 +87,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <script type="text/javascript">
-$(document).ready(function(){initNavTree('annotated.html','');});
+$(document).ready(function(){initNavTree('interactive_8cpp.html','');});
 </script>
 <div id="doc-content">
 <!-- window showing the filter options -->
@@ -105,20 +105,81 @@ $(document).ready(function(){initNavTree('annotated.html','');});
 </div>
 
 <div class="header">
+  <div class="summary">
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
-<div class="title">Class List</div>  </div>
+<div class="title">interactive.cpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock">Here are the classes, structs, unions and interfaces with brief descriptions:</div><div class="directory">
-<table class="directory">
-<tr id="row_0_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="structrefinement__list__compare.html" target="_self">refinement_list_compare</a></td><td class="desc"></td></tr>
+
+<p>All the functions and definitions for interactive merge mode.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
+<code>#include &lt;sstream&gt;</code><br />
+<code>#include &lt;fstream&gt;</code><br />
+<code>#include &lt;cstdlib&gt;</code><br />
+<code>#include &quot;refinement.h&quot;</code><br />
+<code>#include &quot;random_greedy.h&quot;</code><br />
+<code>#include &quot;parameters.h&quot;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for interactive.cpp:</div>
+<div class="dyncontent">
+<div class="center"><img src="interactive_8cpp__incl.png" border="0" usemap="#interactive_8cpp" alt=""/></div>
+<map name="interactive_8cpp" id="interactive_8cpp">
+</map>
+</div>
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a62b0ab67b021c0adc94e44c44fdd179c"><td class="memItemLeft" align="right" valign="top">refinement_list *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interactive_8cpp.html#a62b0ab67b021c0adc94e44c44fdd179c">interactive</a> (state_merger *merger, parameters *param)</td></tr>
+<tr class="memdesc:a62b0ab67b021c0adc94e44c44fdd179c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main loop for interactive mode.  <a href="#a62b0ab67b021c0adc94e44c44fdd179c">More...</a><br /></td></tr>
+<tr class="separator:a62b0ab67b021c0adc94e44c44fdd179c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-</div><!-- directory -->
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>All the functions and definitions for interactive merge mode. </p>
+</div><h2 class="groupheader">Function Documentation</h2>
+<a class="anchor" id="a62b0ab67b021c0adc94e44c44fdd179c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">refinement_list* interactive </td>
+          <td>(</td>
+          <td class="paramtype">state_merger *&#160;</td>
+          <td class="paramname"><em>merger</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">parameters *&#160;</td>
+          <td class="paramname"><em>param</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Main loop for interactive mode. </p>
+<p>Constructs batch APTA, gets and prints possible merges, prompts user for interaction, executes command. Loops until some terminal condition is reached or user terminates the session. Outputs into two dot files to visualize current step/last step (merged) APTA. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">merger</td><td>state_merger* object </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">param</td><td>parameters* object to set global variables </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>refinement_list* list of refinments executed by the state merger </dd></dl>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
+    <li class="navelem"><a class="el" href="interactive_8cpp.html">interactive.cpp</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>

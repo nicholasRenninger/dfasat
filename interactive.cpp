@@ -1,4 +1,6 @@
-//#include <malloc.h>
+/// @file
+/// \brief All the functions and definitions for interactive merge mode.
+
 #include <stdio.h>
 #include <sstream>
 #include <fstream>
@@ -9,6 +11,15 @@
 #include "random_greedy.h"
 #include "parameters.h"
 
+/*! \brief Main loop for interactive mode.
+ *         
+ *  Constructs batch APTA, gets and prints possible merges, prompts user for interaction, executes command.
+ *  Loops until some terminal condition is reached or user terminates the session.
+ *  Outputs into two dot files to visualize current step/last step (merged) APTA.
+ * @param[in] merger state_merger* object
+ * @param[in] param  parameters* object to set global variables
+ * @return refinement_list* list of refinments executed by the state merger
+ */
 refinement_list* interactive(state_merger* merger, parameters* param){
     cerr << "starting greedy merging" << endl;
     int num = 1;
@@ -83,9 +94,13 @@ refinement_list* interactive(state_merger* merger, parameters* param){
 	      } else if(arg == "next") {
 
 	      } else if(arg == "help") {
-		cout << "Available commands: set param value, undo, help; <int> merges the <int>th merge from the proposed list" << endl;
+		cout << "Available commands: set <param> value, undo, help; insert <sample> in abd format; <int> merges the <int>th merge from the proposed list" << endl;
                 // next command?
 	        
+	      } else if(arg == "insert") {
+ 	        // TODO: error checking
+		cline >> arg;
+	        merger->advance_apta(arg); 
 	      } else {
 		execute = true;
                 // TODO Error handling
@@ -100,12 +115,12 @@ refinement_list* interactive(state_merger* merger, parameters* param){
 	    } // refs->size() 
           } //execute
 
-	    // find chosen refinement and execute
-              for(refinement_set::iterator it = refs->begin(); it != refs->end(); ++it){
-                  if(pos == choice) chosen_ref = *it;
-                  pos++;
-              }
-              pos = 1;     
+	  // find chosen refinement and execute
+          for(refinement_set::iterator it = refs->begin(); it != refs->end(); ++it){
+            if(pos == choice) chosen_ref = *it;
+              pos++;
+          }
+          pos = 1;     
 
             // execute choice 
             if(refs->empty()){
