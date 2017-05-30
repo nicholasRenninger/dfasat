@@ -51,7 +51,17 @@ inline std::string className(const std::string& prettyFunction)
 
 #define __CLASS_NAME__ className(__PRETTY_FUNCTION__)
 
-/* Local data, contained in every node of the prefix tree or DFA */
+/**
+ * @brief Extra data attached to each symbol, stored in each node.
+ *
+ * Stores all the extra data attached to symbols in a node. The 
+ * class is used by the evaluation_function class.
+ * It also provides the sink functions determining when to ignore
+ * a node due to user-defined criteria, i.e. low frquency counts.
+ * Important: Each evaluation_data type has to be registered by
+ * calling REGISTER_DEF_DATATYPE(<unique name>).
+ * @see evaluation_function
+ */
 class evaluation_data {
 
 protected:
@@ -89,10 +99,16 @@ public:
   virtual bool sink_consistent(apta_node* node, int type);
   virtual int num_sink_types();
 
- 
-
 };
 
+
+/**
+ * @brief User-defined merge heuristic function.
+ *
+ * Important: Each evaluation_data type has to be registered by
+ * calling REGISTER_DEF_TYPE(<unique name>).
+ * @see evaluation_data
+ */
 class evaluation_function  {
 
 protected:

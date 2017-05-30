@@ -1,4 +1,5 @@
 var annotated_dup =
 [
-    [ "refinement_list_compare", "structrefinement__list__compare.html", "structrefinement__list__compare" ]
+    [ "evaluation_data", "classevaluation__data.html", "classevaluation__data" ],
+    [ "evaluation_function", "classevaluation__function.html", "classevaluation__function" ]
 ];

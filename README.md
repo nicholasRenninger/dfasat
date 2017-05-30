@@ -1,40 +1,49 @@
 # README #
 
-DFASAT in C++
+flexfringe (formerly DFASAT), a flexible state-merging framework written in C++.
 
 ### What is this repository for? ###
 
-
+You can issue pull requests for bug fixes and improvements. Most work will happen in the development branch while master contains a more stable version.
 
 ### How do I get set up? ###
 
-It needs the GNU scientific library (development) package. In Ubuntu, install via
-$ apt-get install libgsl-dev
+flexfringe has one required dependency: libpopt for argument parsing. Some heuristic functions bring their own dependencies. We provide an implementation of a likelihood-based merge function for probabilistic DFAs. It needs the GNU scientific library (development) package (e.g. the libgsl-dev package in Ubuntu).
+ 
+If you want to use the reduction to SAT and automatically invoke the SAT solver, you need to provide the path to the solver binary. flexfringe has been tested with lingeling (which you can get from http://fmv.jku.at/lingeling/ and run its build.sh).
 
-Have libpopt installed and run make clean all. If you want to use the SAT-solving part of it, get lingeling from http://fmv.jku.at/lingeling/ and run its build.sh, or a similar solver.
+You can build and compile the flexfringe project by running
+
+$ make clean all
+
+in the main directory to build the executable named /flexfringe/.
+
 
 ### How do I run it? ###
 
-Run ./dfasat --help to get help.
+Run ./flexfringe --help to get help.
+
+The start.sh script together with some .ini files provides a shortcut to storing 
 
 Example:
 
-$ ./dfasat -h alergia -d alergia_data -n 1 -A 0 -D 2000 inputfile "/bin/true"
+$ ./start.sh mealy-batch.ini data/simple.traces 
 
-h defines the algorithm, and d the data type. n defines the number of iterations, which is useful if you use the SAT-solver. -A and -D are used to decide when to switch from the heuristic to the SAT-solver. The parameters in the example essentially prevent the use of the solver.
+See the .ini files for documentation of parameter flags. 
 
-The thresholds for relevance of states and symbols can be adjusted using -q and -y.
 
 ### Output files ###
 
-DFASAT will generate several files:
+flexfringe will generate several .dot files into the specified output directory (. by default):
 
-* pre_dfa1.dot, is a dot file of the problem instance send to the SAT solver
-* dfa1.dot is the result in dot format if you provided a SAT-solver
+* pre\:\*.dot are intermediary dot files created during the merges/search process.
+* final.dot is the end result
 
 You can plot the dot files via
 
 > $ dot -Tpdf file.dot -o outfile.pdf
+or
+> $ ./show.sh final.dot
 
 after installing dot from graphviz.
 
@@ -45,5 +54,5 @@ after installing dot from graphviz.
 
 ### Who do I talk to? ###
 
-* Sicco Verwer
-* one of his PhD students: Qin, Nino, or Chris
+* Sicco Verwer (original author; best to reach out to for questions on batch mode and SAT reduction)
+* Christian Hammerschmidt (author of the online/streaming mode and interactive mode)

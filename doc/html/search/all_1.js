@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['readme',['README',['../md_README.html',1,'']]],
-  ['refinement_5flist_5fcompare',['refinement_list_compare',['../structrefinement__list__compare.html',1,'']]]
+  ['interactive',['interactive',['../interactive_8cpp.html#a62b0ab67b021c0adc94e44c44fdd179c',1,'interactive.cpp']]],
+  ['interactive_2ecpp',['interactive.cpp',['../interactive_8cpp.html',1,'']]]
 ];
