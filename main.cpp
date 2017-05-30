@@ -1,6 +1,5 @@
-/*
- * The DFASAT main file, runs all the routines on an input file
- */
+/// @file
+/// \brief Command line parameter processing and entry point.
 
 
 #define DEBUG(x) do { \
@@ -42,7 +41,10 @@ bool debugging_enabled = false;
 // map_type* BaseFactory::map = NULL;
 
 
-
+/*! \brief Set global vars to values in parameter object.
+ *         
+ * @param[in] param pointer to initialized parameter object.
+ */
 void init_with_params(parameters* param) {
 
     srand(param->seed);
@@ -106,7 +108,7 @@ void run(parameters* param) {
 
     for(auto myit = DerivedRegister<evaluation_function>::getMap()->begin(); myit != DerivedRegister<evaluation_function>::getMap()->end(); myit++   ) {
        cout << myit->first << " " << myit->second << endl;
-       DEBUG("test");
+       //DEBUG("test");
     }
 
     try {

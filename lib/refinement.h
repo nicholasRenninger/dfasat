@@ -42,6 +42,11 @@ typedef set<refinement*, score_compare > refinement_set;
 
 #include "apta.h"
 
+/**
+ * @brief Base class for refinements. Specialized to either
+ * a point (merge), split, or color (adding of a new state).
+ *
+ */
 class refinement{
 public:
     double score;
@@ -53,6 +58,11 @@ public:
 	virtual void undo(state_merger* m);
 };
 
+/**
+ * @brief A merge-refinement assigns a score to the merge of
+ * a left and right state. 
+ *
+ */
 class merge_refinement : public refinement {
 	apta_node* left;
 	
@@ -65,6 +75,11 @@ public:
 	virtual inline void undo(state_merger* m);
 };
 
+ /**
+ * @brief A extend-refinement makes a blue state red. The
+ * score is the size (frequency) of the state in the APTA.
+ *
+ */
 class extend_refinement : public refinement {
 public:
 	extend_refinement(apta_node* r);
@@ -75,6 +90,10 @@ public:
 	virtual inline void undo(state_merger* m);
 };
 
+ /**
+ * @brief Compare function for refinements, based on scores.
+ *
+ */
 struct score_compare {
     inline bool operator()(refinement* r1, refinement* r2) const {
         if(r1->score == r2->score) return r1->right->size > r2->right->size;

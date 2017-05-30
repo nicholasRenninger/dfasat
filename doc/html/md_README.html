@@ -116,18 +116,20 @@ $(document).ready(function(){initNavTree('md_README.html','');});
 <p>Run ./flexfringe &ndash;help to get help.</p>
 <p>The start.sh script together with some .ini files provides a shortcut to storing</p>
 <p>Example:</p>
-<p>$ ./dfasat -h alergia -d alergia_data -n 1 -A 0 -D 2000 inputfile "/bin/true"</p>
-<p>h defines the algorithm, and d the data type. n defines the number of iterations, which is useful if you use the SAT-solver. -A and -D are used to decide when to switch from the heuristic to the SAT-solver. The parameters in the example essentially prevent the use of the solver.</p>
-<p>The thresholds for relevance of states and symbols can be adjusted using -q and -y.</p>
+<p>$ ./start.sh mealy-batch.ini data/simple.traces</p>
+<p>See the .ini files for documentation of parameter flags.</p>
 <h3>Output files</h3>
-<p>DFASAT will generate several files:</p>
+<p>flexfringe will generate several .dot files into the specified output directory (. by default):</p>
 <ul>
-<li>pre_dfa1.dot, is a dot file of the problem instance send to the SAT solver</li>
-<li>dfa1.dot is the result in dot format if you provided a SAT-solver</li>
+<li>pre\:*.dot are intermediary dot files created during the merges/search process.</li>
+<li>final.dot is the end result</li>
 </ul>
 <p>You can plot the dot files via</p>
 <blockquote class="doxtable">
 <p>$ dot -Tpdf file.dot -o outfile.pdf </p>
+</blockquote>
+<p>or </p><blockquote class="doxtable">
+<p>$ ./show.sh final.dot </p>
 </blockquote>
 <p>after installing dot from graphviz.</p>
 <h3>Contribution guidelines</h3>

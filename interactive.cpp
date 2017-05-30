@@ -102,10 +102,15 @@ refinement_list* interactive(state_merger* merger, parameters* param){
 		cline >> arg;
 	        merger->advance_apta(arg); 
 	      } else {
-		execute = true;
-                // TODO Error handling
-		pos = stoi(arg);
-                break;
+	 
+	        try {
+		  pos = stoi(arg);
+	          execute = true;
+		  break;
+                } catch(std::invalid_argument e) {
+                  cout << "Invalid command. Try \"help\" if you are lost" << endl;
+		  execute = false;
+                } 
 	      }
  
 	    } else {

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['readme',['README',['../md_README.html',1,'']]],
-  ['readme',['README',['../md_space-saving_build_README.html',1,'']]]
+  ['main_2ecpp',['main.cpp',['../main_8cpp.html',1,'']]],
+  ['merge_5frefinement',['merge_refinement',['../classmerge__refinement.html',1,'']]]
 ];

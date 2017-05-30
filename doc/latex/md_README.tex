@@ -24,26 +24,26 @@ The start.\+sh script together with some .ini files provides a shortcut to stori
 
 Example\+:
 
-\$ ./dfasat -\/h alergia -\/d alergia\+\_\+data -\/n 1 -\/A 0 -\/D 2000 inputfile \char`\"{}/bin/true\char`\"{}
+\$ ./start.sh mealy-\/batch.\+ini data/simple.\+traces
 
-h defines the algorithm, and d the data type. n defines the number of iterations, which is useful if you use the S\+A\+T-\/solver. -\/A and -\/D are used to decide when to switch from the heuristic to the S\+A\+T-\/solver. The parameters in the example essentially prevent the use of the solver.
-
-The thresholds for relevance of states and symbols can be adjusted using -\/q and -\/y.
+See the .ini files for documentation of parameter flags.
 
 \subsubsection*{Output files}
 
-D\+F\+A\+S\+AT will generate several files\+:
+flexfringe will generate several .dot files into the specified output directory (. by default)\+:
 
 
 \begin{DoxyItemize}
-\item pre\+\_\+dfa1.\+dot, is a dot file of the problem instance send to the S\+AT solver
-\item dfa1.\+dot is the result in dot format if you provided a S\+A\+T-\/solver
+\item pre\textbackslash{}\+:$\ast$.dot are intermediary dot files created during the merges/search process.
+\item final.\+dot is the end result
 \end{DoxyItemize}
 
 You can plot the dot files via
 
 \begin{quote}
 \$ dot -\/\+Tpdf file.\+dot -\/o outfile.\+pdf \end{quote}
+or \begin{quote}
+\$ ./show.sh final.\+dot \end{quote}
 
 
 after installing dot from graphviz.

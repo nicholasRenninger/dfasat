@@ -7,5 +7,6 @@ var files =
     [ "new_code", "dir_7a41819b8c7b90f6e658281bf0ec1729.html", "dir_7a41819b8c7b90f6e658281bf0ec1729" ],
     [ "space-saving", "dir_b13a0655f1caaa1357b355cb305b1f25.html", "dir_b13a0655f1caaa1357b355cb305b1f25" ],
     [ "verify", "dir_00a3723a2e6f9bc6b05d8c4da10ba31f.html", "dir_00a3723a2e6f9bc6b05d8c4da10ba31f" ],
+    [ "main.cpp", "main_8cpp.html", "main_8cpp" ],
     [ "interactive.cpp", "interactive_8cpp.html", "interactive_8cpp" ]
 ];
