@@ -11,30 +11,30 @@ User-\/defined merge heuristic function.
 
 
 
-Inherited by conflict\+\_\+driven, count\+\_\+driven, depth\+\_\+driven, depth\+\_\+driven, depth\+\_\+driven, evidence\+\_\+driven, evidence\+\_\+driven, likelihoodratio, mealy, metric\+\_\+driven, metric\+\_\+driven, metric\+\_\+driven, mse\+\_\+error, mse\+\_\+error, mse\+\_\+error, and overlap\+\_\+driven.
+Inherited by conflict\+\_\+driven, count\+\_\+driven, depth\+\_\+driven, depth\+\_\+driven, depth\+\_\+driven, evidence\+\_\+driven, evidence\+\_\+driven, likelihoodratio, mealy, metric\+\_\+driven, metric\+\_\+driven, metric\+\_\+driven, mse\+\_\+error, mse\+\_\+error, mse\+\_\+error, overlap\+\_\+driven, and sketch\+\_\+driven.
 
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-bool {\bfseries already\+\_\+merged} (apta\+\_\+node $\ast$left)\hypertarget{classevaluation__function_a66ed8b822b6cf90b37716edf50314886}{}\label{classevaluation__function_a66ed8b822b6cf90b37716edf50314886}
+bool {\bfseries already\+\_\+merged} (\hyperlink{classapta__node}{apta\+\_\+node} $\ast$left)\hypertarget{classevaluation__function_a66ed8b822b6cf90b37716edf50314886}{}\label{classevaluation__function_a66ed8b822b6cf90b37716edf50314886}
 
 \item 
 virtual bool {\bfseries consistency\+\_\+check} (\hyperlink{classevaluation__data}{evaluation\+\_\+data} $\ast$l, \hyperlink{classevaluation__data}{evaluation\+\_\+data} $\ast$r)\hypertarget{classevaluation__function_ac6a91c189027249847e00eab2b8bf52f}{}\label{classevaluation__function_ac6a91c189027249847e00eab2b8bf52f}
 
 \item 
-virtual bool {\bfseries consistent} (state\+\_\+merger $\ast$, apta\+\_\+node $\ast$left, apta\+\_\+node $\ast$right)\hypertarget{classevaluation__function_ac226c4fd2b73272b4ef7fa94f9a45744}{}\label{classevaluation__function_ac226c4fd2b73272b4ef7fa94f9a45744}
+virtual bool {\bfseries consistent} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_ac226c4fd2b73272b4ef7fa94f9a45744}{}\label{classevaluation__function_ac226c4fd2b73272b4ef7fa94f9a45744}
 
 \item 
-virtual void {\bfseries update\+\_\+score} (state\+\_\+merger $\ast$, apta\+\_\+node $\ast$left, apta\+\_\+node $\ast$right)\hypertarget{classevaluation__function_afabbf2a4ce4af020707fba03d171f75e}{}\label{classevaluation__function_afabbf2a4ce4af020707fba03d171f75e}
+virtual void {\bfseries update\+\_\+score} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_afabbf2a4ce4af020707fba03d171f75e}{}\label{classevaluation__function_afabbf2a4ce4af020707fba03d171f75e}
 
 \item 
-virtual void {\bfseries undo\+\_\+update} (state\+\_\+merger $\ast$, apta\+\_\+node $\ast$left, apta\+\_\+node $\ast$right)\hypertarget{classevaluation__function_ad0668d572e56e12c0ed267000391432a}{}\label{classevaluation__function_ad0668d572e56e12c0ed267000391432a}
+virtual void {\bfseries undo\+\_\+update} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_ad0668d572e56e12c0ed267000391432a}{}\label{classevaluation__function_ad0668d572e56e12c0ed267000391432a}
 
 \item 
-virtual bool {\bfseries compute\+\_\+consistency} (state\+\_\+merger $\ast$, apta\+\_\+node $\ast$left, apta\+\_\+node $\ast$right)\hypertarget{classevaluation__function_a423a489d49a8156f60e2fce98d0fe525}{}\label{classevaluation__function_a423a489d49a8156f60e2fce98d0fe525}
+virtual bool {\bfseries compute\+\_\+consistency} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_a423a489d49a8156f60e2fce98d0fe525}{}\label{classevaluation__function_a423a489d49a8156f60e2fce98d0fe525}
 
 \item 
-virtual int {\bfseries compute\+\_\+score} (state\+\_\+merger $\ast$, apta\+\_\+node $\ast$left, apta\+\_\+node $\ast$right)\hypertarget{classevaluation__function_a36e533923cde5358ecb74ad40e46f1f9}{}\label{classevaluation__function_a36e533923cde5358ecb74ad40e46f1f9}
+virtual int {\bfseries compute\+\_\+score} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_a36e533923cde5358ecb74ad40e46f1f9}{}\label{classevaluation__function_a36e533923cde5358ecb74ad40e46f1f9}
 
 \item 
 virtual void {\bfseries reset} (state\+\_\+merger $\ast$)\hypertarget{classevaluation__function_acc457754e1aff5d9e20cf51ea8976f37}{}\label{classevaluation__function_acc457754e1aff5d9e20cf51ea8976f37}

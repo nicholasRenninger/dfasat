@@ -74,6 +74,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
       <li><a href="inherits.html"><span>Class&#160;Hierarchy</span></a></li>
+      <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
 </div><!-- top -->
@@ -121,30 +122,30 @@ $(document).ready(function(){initNavTree('classevaluation__function.html','');})
 
 <p><code>#include &lt;<a class="el" href="lib_2evaluate_8h_source.html">evaluate.h</a>&gt;</code></p>
 
-<p>Inherited by conflict_driven, count_driven, depth_driven, depth_driven, depth_driven, evidence_driven, evidence_driven, likelihoodratio, mealy, metric_driven, metric_driven, metric_driven, mse_error, mse_error, mse_error, and overlap_driven.</p>
+<p>Inherited by conflict_driven, count_driven, depth_driven, depth_driven, depth_driven, evidence_driven, evidence_driven, likelihoodratio, mealy, metric_driven, metric_driven, metric_driven, mse_error, mse_error, mse_error, overlap_driven, and sketch_driven.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a66ed8b822b6cf90b37716edf50314886"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a66ed8b822b6cf90b37716edf50314886"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>already_merged</b> (apta_node *left)</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>already_merged</b> (<a class="el" href="classapta__node.html">apta_node</a> *left)</td></tr>
 <tr class="separator:a66ed8b822b6cf90b37716edf50314886"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6a91c189027249847e00eab2b8bf52f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac6a91c189027249847e00eab2b8bf52f"></a>
 virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>consistency_check</b> (<a class="el" href="classevaluation__data.html">evaluation_data</a> *l, <a class="el" href="classevaluation__data.html">evaluation_data</a> *r)</td></tr>
 <tr class="separator:ac6a91c189027249847e00eab2b8bf52f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac226c4fd2b73272b4ef7fa94f9a45744"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac226c4fd2b73272b4ef7fa94f9a45744"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>consistent</b> (state_merger *, apta_node *left, apta_node *right)</td></tr>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>consistent</b> (state_merger *, <a class="el" href="classapta__node.html">apta_node</a> *left, <a class="el" href="classapta__node.html">apta_node</a> *right)</td></tr>
 <tr class="separator:ac226c4fd2b73272b4ef7fa94f9a45744"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afabbf2a4ce4af020707fba03d171f75e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afabbf2a4ce4af020707fba03d171f75e"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>update_score</b> (state_merger *, apta_node *left, apta_node *right)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>update_score</b> (state_merger *, <a class="el" href="classapta__node.html">apta_node</a> *left, <a class="el" href="classapta__node.html">apta_node</a> *right)</td></tr>
 <tr class="separator:afabbf2a4ce4af020707fba03d171f75e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0668d572e56e12c0ed267000391432a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad0668d572e56e12c0ed267000391432a"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>undo_update</b> (state_merger *, apta_node *left, apta_node *right)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>undo_update</b> (state_merger *, <a class="el" href="classapta__node.html">apta_node</a> *left, <a class="el" href="classapta__node.html">apta_node</a> *right)</td></tr>
 <tr class="separator:ad0668d572e56e12c0ed267000391432a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a423a489d49a8156f60e2fce98d0fe525"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a423a489d49a8156f60e2fce98d0fe525"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>compute_consistency</b> (state_merger *, apta_node *left, apta_node *right)</td></tr>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>compute_consistency</b> (state_merger *, <a class="el" href="classapta__node.html">apta_node</a> *left, <a class="el" href="classapta__node.html">apta_node</a> *right)</td></tr>
 <tr class="separator:a423a489d49a8156f60e2fce98d0fe525"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36e533923cde5358ecb74ad40e46f1f9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a36e533923cde5358ecb74ad40e46f1f9"></a>
-virtual int&#160;</td><td class="memItemRight" valign="bottom"><b>compute_score</b> (state_merger *, apta_node *left, apta_node *right)</td></tr>
+virtual int&#160;</td><td class="memItemRight" valign="bottom"><b>compute_score</b> (state_merger *, <a class="el" href="classapta__node.html">apta_node</a> *left, <a class="el" href="classapta__node.html">apta_node</a> *right)</td></tr>
 <tr class="separator:a36e533923cde5358ecb74ad40e46f1f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc457754e1aff5d9e20cf51ea8976f37"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acc457754e1aff5d9e20cf51ea8976f37"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> (state_merger *)</td></tr>

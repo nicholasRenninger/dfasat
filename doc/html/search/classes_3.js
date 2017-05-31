@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['score_5fcompare',['score_compare',['../structscore__compare.html',1,'']]]
+  ['refinement',['refinement',['../classrefinement.html',1,'']]]
 ];

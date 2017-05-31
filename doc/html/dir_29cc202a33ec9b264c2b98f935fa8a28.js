@@ -15,5 +15,6 @@ var dir_29cc202a33ec9b264c2b98f935fa8a28 =
     [ "mse-error.h", "mse-error_8h_source.html", null ],
     [ "num_count.h", "num__count_8h_source.html", null ],
     [ "overlap-driven.h", "overlap-driven_8h_source.html", null ],
-    [ "process-mining.h", "process-mining_8h_source.html", null ]
+    [ "process-mining.h", "process-mining_8h_source.html", null ],
+    [ "sketch_eval.h", "sketch__eval_8h_source.html", null ]
 ];

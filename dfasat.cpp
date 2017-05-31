@@ -1,3 +1,8 @@
+/// @file dfasat.cpp
+/// @brief Reduction for the SAT solver, loop for the combined heuristic-SAT mode
+/// @author Sicco Verwer
+
+
 #include "dfasat.h"
 #include "random_greedy.h"
 #include "evaluate.h"
@@ -149,7 +154,7 @@ void merger_context::delete_literals(){
     free(ya);
 }
 
-/* Print clauses without eliminated literals, -2 = false, -1 = true */
+/** Print clauses without eliminated literals, -2 = false, -1 = true */
 int merger_context::print_clause(bool v1, int l1, bool v2, int l2, bool v3, int l3, bool v4, int l4){
     if(v1 && l1 == -1) return 0;
     if(!v1 && l1 == -2) return 0;
@@ -232,7 +237,7 @@ void merger_context::print_clause_end(){
     fprintf(sat_stream, " 0\n");
 }
 
-/* fix values for red states -2 = false, -1 = true */
+/** fix values for red states -2 = false, -1 = true */
 void merger_context::fix_red_values(){
     for(state_set::iterator it = red_states.begin();it != red_states.end();++it){
         apta_node* node = *it;
@@ -279,9 +284,9 @@ void merger_context::fix_sink_values(){
     }
 }
 
-/* erase possible colors due to symmetry reduction
-<<<<<<< HEAD
- should be compatible with BFS symmtry breaking, unchecked */
+/** erase possible colors due to symmetry reduction
+ * should be compatible with BFS symmtry breaking, unchecked
+ */
 int merger_context::set_symmetry(){
     int num = 0;
     int max_value = new_init;
@@ -334,7 +339,7 @@ int merger_context::print_symmetry(){
     return num;
 }
 
-/* eliminate literals for merges that conflict with the red states */
+/** eliminate literals for merges that conflict with the red states */
 void merger_context::erase_red_conflict_colours(){
     for(state_set::iterator it = red_states.begin(); it != red_states.end(); ++it){
         apta_node* left = *it;

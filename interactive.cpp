@@ -1,5 +1,6 @@
-/// @file
-/// \brief All the functions and definitions for interactive merge mode.
+/// @file interactive.cpp
+/// @brief All the functions and definitions for interactive merge mode.
+/// @author Christian Hammerschmidt, hammerschmidt@posteo.de
 
 #include <stdio.h>
 #include <sstream>
@@ -11,7 +12,7 @@
 #include "random_greedy.h"
 #include "parameters.h"
 
-/*! \brief Main loop for interactive mode.
+/*! @brief Main loop for interactive mode.
  *         
  *  Constructs batch APTA, gets and prints possible merges, prompts user for interaction, executes command.
  *  Loops until some terminal condition is reached or user terminates the session.

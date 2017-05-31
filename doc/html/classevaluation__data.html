@@ -74,6 +74,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
       <li><a href="inherits.html"><span>Class&#160;Hierarchy</span></a></li>
+      <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
 </div><!-- top -->
@@ -121,7 +122,7 @@ $(document).ready(function(){initNavTree('classevaluation__data.html','');});
 
 <p><code>#include &lt;<a class="el" href="lib_2evaluate_8h_source.html">evaluate.h</a>&gt;</code></p>
 
-<p>Inherited by conflict_data, count_data, depth_data, mealy_data, mse_data, and mse_data.</p>
+<p>Inherited by conflict_data, count_data, depth_data, mealy_data, mse_data, mse_data, and sketch_data.</p>
 <div class="dynheader">
 Collaboration diagram for evaluation_data:</div>
 <div class="dyncontent">
@@ -143,25 +144,25 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>update</b> (<
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>undo</b> (<a class="el" href="classevaluation__data.html">evaluation_data</a> *other)</td></tr>
 <tr class="separator:a14974d8526bdfbf7a05a4d2f53378b0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42ec54d6111c2dc9979b679c714e03f3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42ec54d6111c2dc9979b679c714e03f3"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print_state_label</b> (iostream &amp;output, apta *aptacontext)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print_state_label</b> (iostream &amp;output, <a class="el" href="classapta.html">apta</a> *aptacontext)</td></tr>
 <tr class="separator:a42ec54d6111c2dc9979b679c714e03f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6cb73abd19dc438a0060fc675486703f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6cb73abd19dc438a0060fc675486703f"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print_state_style</b> (iostream &amp;output, apta *aptacontext)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print_state_style</b> (iostream &amp;output, <a class="el" href="classapta.html">apta</a> *aptacontext)</td></tr>
 <tr class="separator:a6cb73abd19dc438a0060fc675486703f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42616b2b65dcce18c38db0198c0c6357"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42616b2b65dcce18c38db0198c0c6357"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print_transition_label</b> (iostream &amp;output, int symbol, apta *aptacontext)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print_transition_label</b> (iostream &amp;output, int symbol, <a class="el" href="classapta.html">apta</a> *aptacontext)</td></tr>
 <tr class="separator:a42616b2b65dcce18c38db0198c0c6357"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:addc2c82524a7056090084c65560e13ab"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="addc2c82524a7056090084c65560e13ab"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print_transition_style</b> (iostream &amp;output, set&lt; int &gt; symbols, apta *aptacontext)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print_transition_style</b> (iostream &amp;output, set&lt; int &gt; symbols, <a class="el" href="classapta.html">apta</a> *aptacontext)</td></tr>
 <tr class="separator:addc2c82524a7056090084c65560e13ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3045eb73b3d82d657e808aa33848722"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3045eb73b3d82d657e808aa33848722"></a>
 virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>sink_consistent</b> (int type)</td></tr>
 <tr class="separator:ad3045eb73b3d82d657e808aa33848722"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a185bc8febf0cf0a8bd0a967e911c523c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a185bc8febf0cf0a8bd0a967e911c523c"></a>
-virtual int&#160;</td><td class="memItemRight" valign="bottom"><b>sink_type</b> (apta_node *node)</td></tr>
+virtual int&#160;</td><td class="memItemRight" valign="bottom"><b>sink_type</b> (<a class="el" href="classapta__node.html">apta_node</a> *node)</td></tr>
 <tr class="separator:a185bc8febf0cf0a8bd0a967e911c523c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb8607435f006cb15269f252cd18b9da"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb8607435f006cb15269f252cd18b9da"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>sink_consistent</b> (apta_node *node, int type)</td></tr>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>sink_consistent</b> (<a class="el" href="classapta__node.html">apta_node</a> *node, int type)</td></tr>
 <tr class="separator:abb8607435f006cb15269f252cd18b9da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac863fd6a529ba41a87bdeac91cb981fb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac863fd6a529ba41a87bdeac91cb981fb"></a>
 virtual int&#160;</td><td class="memItemRight" valign="bottom"><b>num_sink_types</b> ()</td></tr>

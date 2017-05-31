@@ -74,6 +74,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
       <li class="current"><a href="inherits.html"><span>Class&#160;Hierarchy</span></a></li>
+      <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
 </div><!-- top -->
@@ -113,24 +114,34 @@ $(document).ready(function(){initNavTree('hierarchy.html','');});
 <div class="textblock">
 <p><a href="hierarchy.html">Go to the textual class hierarchy</a></p>
 </div><table border="0" cellspacing="10" cellpadding="0">
-<tr><td><img src="inherit_graph_0.png" border="0" alt="" usemap="#evaluation__data"/>
+<tr><td><img src="inherit_graph_0.png" border="0" alt="" usemap="#apta"/>
+<map name="apta" id="apta">
+<area shape="rect" id="node1" href="classapta.html" title="Data structure for the prefix tree. " alt="" coords="5,5,52,32"/>
+</map>
+</td></tr>
+<tr><td><img src="inherit_graph_1.png" border="0" alt="" usemap="#apta__node"/>
+<map name="apta__node" id="apta__node">
+<area shape="rect" id="node1" href="classapta__node.html" title="Node structure in the prefix tree. " alt="" coords="5,5,88,32"/>
+</map>
+</td></tr>
+<tr><td><img src="inherit_graph_2.png" border="0" alt="" usemap="#evaluation__data"/>
 <map name="evaluation__data" id="evaluation__data">
 <area shape="rect" id="node1" href="classevaluation__data.html" title="Extra data attached to each symbol, stored in each node. " alt="" coords="5,5,119,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_1.png" border="0" alt="" usemap="#evaluation__function"/>
+<tr><td><img src="inherit_graph_3.png" border="0" alt="" usemap="#evaluation__function"/>
 <map name="evaluation__function" id="evaluation__function">
 <area shape="rect" id="node1" href="classevaluation__function.html" title="User&#45;defined merge heuristic function. " alt="" coords="5,5,140,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_2.png" border="0" alt="" usemap="#refinement"/>
+<tr><td><img src="inherit_graph_4.png" border="0" alt="" usemap="#refinement"/>
 <map name="refinement" id="refinement">
 <area shape="rect" id="node1" href="classrefinement.html" title="Base class for refinements. Specialized to either a point (merge), split, or color (adding of a new s..." alt="" coords="5,31,88,57"/>
 <area shape="rect" id="node2" href="classextend__refinement.html" title="A extend&#45;refinement makes a blue state red. The score is the size (frequency) of the state in the APT..." alt="" coords="136,5,265,32"/>
 <area shape="rect" id="node3" href="classmerge__refinement.html" title="A merge&#45;refinement assigns a score to the merge of a left and right state. " alt="" coords="137,56,264,83"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_3.png" border="0" alt="" usemap="#score__compare"/>
+<tr><td><img src="inherit_graph_5.png" border="0" alt="" usemap="#score__compare"/>
 <map name="score__compare" id="score__compare">
 <area shape="rect" id="node1" href="structscore__compare.html" title="Compare function for refinements, based on scores. " alt="" coords="5,5,116,32"/>
 </map>

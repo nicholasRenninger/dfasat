@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['readme',['README',['../md_README.html',1,'']]],
-  ['readme',['README',['../md_space-saving_build_README.html',1,'']]],
-  ['refinement',['refinement',['../classrefinement.html',1,'']]]
+  ['eval_5fstore',['eval_store',['../classapta__node.html#a61b271696a3f73cb1b5c74a303542522',1,'apta_node']]],
+  ['evaluation_5fdata',['evaluation_data',['../classevaluation__data.html',1,'']]],
+  ['evaluation_5ffunction',['evaluation_function',['../classevaluation__function.html',1,'']]],
+  ['extend_5frefinement',['extend_refinement',['../classextend__refinement.html',1,'']]]
 ];

@@ -44,47 +44,49 @@ typedef list<double> double_list;
 typedef map<int, apta_node*> child_map;
 typedef map<int, int> num_map;
 
+/** 
+ * @brief Node structure in the prefix tree.
+ *
+ * The prefix tree is a pointer structure made
+ * of apta_nodes.
+ */
 class apta_node{
 public:
 
-    apta* context;
-    /* parent state in the prefix tree */
-    apta_node* source;
-    /* UNION/FIND datastructure */
-    apta_node* representative;
-    /* target states */
-    child_map children;
-    /* UNDO information */
-    child_map det_undo;
+    apta* context; /**< pointer to the tree the node is part of (legacy) */
+    apta_node* source; /**< parent state in the prefix tree */
+    apta_node* representative; /**< UNION/FIND data structure for merges*/
+    child_map children; /**< target states/children in the prefix tree*/
+    child_map det_undo; /**< UNDO information */
 
-    /* the incomming transition label */
+    /** the incomming transition label */
     int label;
     
-    /* the type of node (accepting/rejecting/other)*/
+    /** the type of node (accepting/rejecting/other)*/
     int type;
 
-    /* depth of the node in the apta */
+    /** depth of the node in the apta */
     int depth;
 
-    /* unique state identifiers, used by SAT encoding */
+    /** unique state identifiers, used by SAT encoding */
     int number;
     int satnumber;
     int colour;
 
-    /* for streaming mode */ 
+    /** for streaming mode */ 
     int age;
 
-    /* UNION/FIND size measure */
+    /** UNION/FIND size measure */
     int size;
     
-    /* is this a red state? */
+    /** is this a red state? */
     bool red;
     
-    /* store previously tested merges */
+    /** store previously tested merges */
     score_map eval_store;
     size_list size_store;
     
-    /* extra information for merging heursitics and consistency checks */
+    /** extra information for merging heursitics and consistency checks */
     evaluation_data* data;
 
     apta_node();
@@ -191,18 +193,26 @@ typedef set<apta_node*, size_compare> state_set;
 
 #include "evaluate.h"
 
+/** 
+ * @brief Data structure for the  prefix tree.
+ *
+ * The prefix tree is a pointer structure made
+ * of apta_nodes.
+ * @see apta_node
+ */
+
 class apta{
 public:
     state_merger *context;
-    apta_node* root;
-    map<int, string> alphabet;
+    apta_node* root; /**< root of the tree */
+    map<int, string> alphabet; /**< mapping between internal representation and alphabet symbol */
     int merge_count;
     int max_depth;
     
     apta();
     ~apta();
 
-    string alph_str(int i);
+    string alph_str(int i); /**< return alphabet symbol for internal index i */
     void read_file(istream &input_stream);
     void print_dot(iostream& output);
     int sink_type(apta_node* apta);

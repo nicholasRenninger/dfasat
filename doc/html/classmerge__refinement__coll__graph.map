@@ -1,3 +1,6 @@
 <map id="merge_refinement" name="merge_refinement">
-<area shape="rect" id="node2" href="$classrefinement.html" title="Base class for refinements. Specialized to either a point (merge), split, or color (adding of a new s..." alt="" coords="27,5,110,32"/>
+<area shape="rect" id="node2" href="$classrefinement.html" title="Base class for refinements. Specialized to either a point (merge), split, or color (adding of a new s..." alt="" coords="27,231,110,257"/>
+<area shape="rect" id="node3" href="$classapta__node.html" title="Node structure in the prefix tree. " alt="" coords="87,125,170,152"/>
+<area shape="rect" id="node5" href="$classapta.html" title="Data structure for the prefix tree. " alt="" coords="148,231,195,257"/>
+<area shape="rect" id="node4" href="$classevaluation__data.html" title="Extra data attached to each symbol, stored in each node. " alt="" coords="72,5,185,32"/>
 </map>
