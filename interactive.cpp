@@ -29,8 +29,10 @@ refinement_list* interactive(state_merger* merger, parameters* param){
 
     string command = string("");
     string arg;
-    int choice = 1;
-    int pos = 0;
+    int choice = 1; // what merge was picked
+    int pos = 0; // what merge we are looking at
+    int step = 1; // current step number
+    int countdown = 0; // where to get to
 
     // if there is only one choice, do we auto-execute
     // or read for confirmation & chance for parameter changes?
@@ -69,19 +71,37 @@ refinement_list* interactive(state_merger* merger, parameters* param){
                   cout << " , ";
               }
 
-              cout << endl << "Your choice : " << endl;
+              cout << endl << "Your choice at step " << step << ": " << endl;
               getline(std::cin, command);
 	      stringstream cline(command);
               cline >> arg;
 
 	      // parse (prefix-free) commands 
 	      if(arg  == "undo") {
+                // undo single merge
                 (*all_refs->begin())->undo(merger);
                 all_refs->pop_front();
                 cout << "undid last merge" << endl;
-	      } else if(arg == "set") {
-	        // set PARAM <value>
-	          // simple modify the param structure and call init_with_params, done
+	      } else if(arg == "restart") {
+                // undo all merges up to here
+                while(all_refs->begin() != all_refs->end()) {
+                  (*all_refs->begin())->undo(merger);
+                  all_refs->pop_front();
+                  step = 1;
+                }
+                cout << "Restarted" << endl;
+              } else if (arg == "leap") {
+                // automatically do the next n steps
+                // TODO: error handling for n = NaN 
+ 	 	cline >> arg;
+                countdown = stoi(arg);
+               
+                manual = true;
+                arg = string("1");
+                execute = true;
+                break;
+              } else if(arg == "set") {
+	        // set PARAM <value>, call init_with_param
 
 		cline >> arg;
 
@@ -134,9 +154,19 @@ refinement_list* interactive(state_merger* merger, parameters* param){
 	    } else {
               pos = 1;
               execute = true;
-             
 	    } // refs->size() 
           } //execute
+
+          // track number of ops on APTA
+          step++; 
+
+          // auto-execute/leap steps
+          if(countdown == 1) {
+            manual = false;
+          }
+          if(countdown > 0) {
+            countdown--;
+          }
 
 	  // find chosen refinement and execute
           for(refinement_set::iterator it = refs->begin(); it != refs->end(); ++it){

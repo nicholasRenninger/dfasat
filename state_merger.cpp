@@ -362,7 +362,7 @@ refinement_set* state_merger::get_possible_refinements(){
     refinement_set* result = new refinement_set();
 
     state_set blue_its = state_set();
-    bool found = false;
+    //bool found = false;
 
     for(blue_state_iterator it = blue_state_iterator(aut->root); *it != 0; ++it){
         blue_its.insert(*it);
@@ -371,7 +371,7 @@ refinement_set* state_merger::get_possible_refinements(){
 
     for(state_set::iterator it = blue_its.begin(); it != blue_its.end(); ++it){
         apta_node* blue = *it;
-        // bool found = false; // moved up as there might be a refinement with other blue state!
+        bool found = false; 
         if((sink_type(blue) != -1)) continue;
 
         for(red_state_iterator it2 = red_state_iterator(aut->root); *it2 != 0; ++it2){
