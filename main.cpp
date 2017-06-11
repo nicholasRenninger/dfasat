@@ -157,7 +157,7 @@ void run(parameters* param) {
              CLIQUE_BOUND = min(CLIQUE_BOUND, solution - OFFSET + EXTRA_STATES);
          }
 
-    } else if(param->mode == "stream") {
+    } else if(param->mode == "strea") {
        cout << "stream mode selected" << endl;
        stream_mode(&merger, param, input_stream);
     } else if(param->mode == "inter") {

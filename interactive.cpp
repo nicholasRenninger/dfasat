@@ -91,7 +91,24 @@ refinement_list* interactive(state_merger* merger, parameters* param){
 		  init_with_params(param);
 		  cout << "STATE_COUNT is now " << STATE_COUNT << endl;
                 }
-
+ 		if(arg == "symbol_count") {
+		  cline >> arg;
+                  param->symbol_count = stoi(arg);
+		  init_with_params(param);
+		  cout << "SYMBOL_COUNT is now " << SYMBOL_COUNT << endl;
+                }           
+		if(arg == "lower_bound") {
+		  cline >> arg;
+                  param->lower_bound = stoi(arg);
+		  init_with_params(param);
+		  cout << "LOWER_BOUND is now " << LOWER_BOUND << endl;
+                }
+		if(arg == "sinkson") {
+		  cline >> arg;
+                  param->sinkson = stoi(arg);
+		  init_with_params(param);
+		  cout << "USE_SINKS is now " << (USE_SINKS==true ? "true" : "false") << endl;
+                }
 	      } else if(arg == "next") {
 
 	      } else if(arg == "help") {
