@@ -1,13 +1,7 @@
 /// @file
 /// \brief Command line parameter processing and entry point.
 
-
-#define DEBUG(x) do { \
-  if (debugging_enabled) { std::cerr << x << std::endl; } \
-} while (0)
-
 #include <stdlib.h>
-//#include <malloc.h>
 #include <popt.h>
 #include "random_greedy.h"
 #include "state_merger.h"
@@ -21,6 +15,7 @@
 #include "stream.h"
 #include <vector>
 #include "interactive.h"
+#include "common.h"
 
 #include "parameters.h"
 
@@ -201,7 +196,7 @@ int main(int argc, const char *argv[]){
       param->command += string(argv[i]) + string(" ");
     }
 
-    cout << "welcome, running: " << param->command << endl;
+    cout << "welcome, running git commit " << gitversion <<  " with: "<< param->command << endl;
 
     /* temporary holder for string arguments */
     char* dot_file = NULL;

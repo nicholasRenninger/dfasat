@@ -16,6 +16,7 @@ exposed_decl.pypp.txt
 named_tuple.py
 indexing_suite/*
 generated.cpp
+gitversion.cpp
 # articfacs
 .DS_Store
 # data files

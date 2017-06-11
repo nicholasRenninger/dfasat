@@ -1,4 +1,3 @@
-
 #include "state_merger.h"
 #include "evaluate.h"
 #include <stdlib.h>
@@ -13,6 +12,7 @@
 #include <gsl/gsl_cdf.h>
 
 #include "parameters.h"
+#include "common.h"
 
 state_merger::state_merger()
 : context(){
@@ -340,7 +340,10 @@ score_pair state_merger::test_merge(apta_node* left, apta_node* right){
 
     if((merge_result && eval->compute_consistency(this, left, right) == false)) merge_result = false;
 
-    if(USE_LOWER_BOUND && score_result < LOWER_BOUND) merge_result = false;
+    if(USE_LOWER_BOUND && score_result < LOWER_BOUND) {
+      merge_result = false;
+      //cerr << ( merge_result ? "inconsistent " : "discarding score of ") << score_result << " ";
+    }
 
     if(MERGE_WHEN_TESTING) undo_merge(left,right);
 
@@ -359,14 +362,16 @@ refinement_set* state_merger::get_possible_refinements(){
     refinement_set* result = new refinement_set();
 
     state_set blue_its = state_set();
+    bool found = false;
+
     for(blue_state_iterator it = blue_state_iterator(aut->root); *it != 0; ++it){
         blue_its.insert(*it);
     }
+    // DEBUG("checking for " << blue_its.size() << " blue states" <<endl);
 
     for(state_set::iterator it = blue_its.begin(); it != blue_its.end(); ++it){
         apta_node* blue = *it;
-        bool found = false;
-
+        // bool found = false; // moved up as there might be a refinement with other blue state!
         if((sink_type(blue) != -1)) continue;
 
         for(red_state_iterator it2 = red_state_iterator(aut->root); *it2 != 0; ++it2){
@@ -375,8 +380,8 @@ refinement_set* state_merger::get_possible_refinements(){
             score_pair score = test_merge(red,blue);
 
             if(score.first == true){
-                result->insert(new merge_refinement(score.second, red, blue));
-                //mset->insert(pair<int, pair<apta_node*, apta_node*> >(score.second, pair<apta_node*, apta_node*>(red, blue)));
+                // cerr << "inserted score " << score.second <<endl;
+                result->insert(new merge_refinement(score.second, red, blue)); 
                 found = true;
             }
         }
@@ -398,14 +403,21 @@ refinement_set* state_merger::get_possible_refinements(){
             }
         }
 
+        // cerr << "found results: " << result->size() << endl;
+        // why not result->size() == 0? 
         if(found == false) {
+
+           // cerr << "came out empty for merges" <<endl;
+
             if(EXTEND_ANY_RED){
                 for(refinement_set::iterator it = result->begin(); it != result->end(); ++it) delete *it;
                 result->clear();
                 result->insert(new extend_refinement(blue));
                 return result;
             }
-            result->insert(new extend_refinement(blue));
+
+            if(result->size() == 0)
+              result->insert(new extend_refinement(blue));
         }
 
         if(MERGE_MOST_VISITED) break;
@@ -595,7 +607,7 @@ void state_merger::read_apta(vector<string> dfa_data){
 void state_merger::todot(){
     stringstream dot_output_buf;
     aut->print_dot(dot_output_buf);
-    dot_output = "// " + COMMAND+ '\n'+ dot_output_buf.str();
+    dot_output = "// produced with flexfringe from git commit"  + string(gitversion) + '\n' + "// " + COMMAND + '\n'+ dot_output_buf.str();
 }
 
 void state_merger::print_dot(FILE* output)
