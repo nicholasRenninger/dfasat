@@ -87,8 +87,8 @@ refinement_list* interactive(state_merger* merger, parameters* param){
                 while(all_refs->begin() != all_refs->end()) {
                   (*all_refs->begin())->undo(merger);
                   all_refs->pop_front();
-                  step = 1;
                 }
+                step = 1;
                 cout << "Restarted" << endl;
               } else if (arg == "leap") {
                 // automatically do the next n steps
@@ -163,6 +163,7 @@ refinement_list* interactive(state_merger* merger, parameters* param){
           // auto-execute/leap steps
           if(countdown == 1) {
             manual = false;
+            step = 1;
           }
           if(countdown > 0) {
             countdown--;
