@@ -81,6 +81,7 @@ refinement_list* interactive(state_merger* merger, parameters* param){
                 // undo single merge
                 (*all_refs->begin())->undo(merger);
                 all_refs->pop_front();
+                step--;
                 cout << "undid last merge" << endl;
 	      } else if(arg == "restart") {
                 // undo all merges up to here
@@ -142,7 +143,7 @@ refinement_list* interactive(state_merger* merger, parameters* param){
 	      } else {
 	 
 	        try {
-		  pos = stoi(arg);
+		  choice = stoi(arg);
 	          execute = true;
 		  break;
                 } catch(std::invalid_argument e) {
@@ -152,7 +153,7 @@ refinement_list* interactive(state_merger* merger, parameters* param){
 	      }
  
 	    } else {
-              pos = 1;
+              //pos = 1;
               execute = true;
 	    } // refs->size() 
           } //execute
