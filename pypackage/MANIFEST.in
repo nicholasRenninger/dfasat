@@ -1,0 +1,6 @@
+include requirements.txt
+include dependencies.txt
+include setup.txt
+recursive-include dfasat *
+prune dfasat/__pycache__
+prune dfasat/lib
