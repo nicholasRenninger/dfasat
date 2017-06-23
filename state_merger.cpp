@@ -34,6 +34,12 @@ void state_merger::reset(){
     update_red_blue();
 }
 
+score_pair state_merger::test_local_merge(apta_node* red, apta_node* blue) {
+    score_pair empty;
+    return empty;
+}
+
+
 
 /* BEGIN get special state sets, these are used by the SAT encoding
  * red and blue sets can be accessed directly
@@ -623,8 +629,8 @@ bool state_merger::sink_consistent(apta_node* node, int type){
     return node->data->sink_consistent(type);
 };
 
-/*int state_merger::num_sink_types(){
-    return eval->num_sink_types();
+int state_merger::num_sink_types(){
+    return 0; //eval->num_sink_types();
 }; // this got moved to eval data */
 
 int state_merger::compute_global_score(){

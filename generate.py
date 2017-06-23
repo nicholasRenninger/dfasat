@@ -14,7 +14,7 @@ import pyplusplus
 #pygccxml.utils.loggers.set_level(logging.DEBUG)
 
 # types that include apta_node in their definition
-apta_node_types = ["apta_node *", "state_set", "merge_map"]
+apta_node_types = ["pair<apta_node*, apta_node*> *", "apta_node *", "state_set", "refinement *", "merge_refinement", "extend_refinement", "refinement_list", "refinement_set *", "merge_pair", "merge_pair *", "merge_map *" ]
 
 import subprocess
 clibpath = subprocess.check_output(['find /usr/lib/gcc -name stddef.h | head -n 1'], shell=True)[:-17].decode('utf-8')
@@ -44,22 +44,34 @@ print("setting call policies")
 apta = mb.class_( 'apta' )
 apta.include()
 for i in apta.member_functions():
+  print (i.return_type.decl_string)
   for type_ in apta_node_types:
     if type_ in i.return_type.decl_string:
       i.call_policies = pyplusplus.module_builder.call_policies.return_internal_reference(1)
 
 apta_node = mb.class_( 'apta_node' )
 apta_node.include()
+
 a_n_ret = mb.member_functions( return_type='::apta_node *' )
 a_n_ret.call_policies = pyplusplus.module_builder.call_policies.return_internal_reference(1)
 
 state_merger = mb.class_( 'state_merger' )
 state_merger.include()
 for i in state_merger.member_functions():
+  print (i.return_type.decl_string)
   for type_ in apta_node_types:
     if type_ in i.return_type.decl_string:
       i.call_policies = pyplusplus.module_builder.call_policies.return_internal_reference(1)
 
+a_n_pair_ret = mb.member_functions( return_type='::refinement *' ) #'::std::pair<apta_node*, apta_node*> *' )
+a_n_pair_ret.call_policies = pyplusplus.module_builder.call_policies.return_internal_reference(1)
+
+a_n_map_ret = mb.member_functions( return_type='::refinement_set *') #'::std::multimap<double, std::pair<apta_node*, apta_node*> >*')
+a_n_map_ret.call_policies = pyplusplus.module_builder.call_policies.return_internal_reference(1)
+# 
+
+refinement = mb.class_( 'refinement')
+refinement.include()
 
 dfasat = mb.free_function( 'dfasat' )
 dfasat.include()
@@ -84,6 +96,10 @@ for c in find_derived(mb.class_(name="evaluation_function")):
 
 merge_map = mb.global_ns.typedefs("merge_map")
 merge_map.rename('merge_map')
+merge_map.include()
+
+merge_map = mb.global_ns.typedefs("refinement_set")
+merge_map.rename('refinement_set')
 merge_map.include()
 
 #import code
@@ -125,7 +141,7 @@ mb.print_declarations()
 mb.print_declarations( Color )
 """
 #Now it is the time to give a name to our module
-mb.build_code_creator( module_name='dfasat' )
+mb.build_code_creator( module_name='flexfringe' )
 
 #mb.add_registration_code("""boost::python::converter::registry::insert
 #    (convert_to_FILEptr,
