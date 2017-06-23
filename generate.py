@@ -77,6 +77,9 @@ param.include()
 dfasat = mb.free_function( 'dfasat' )
 dfasat.include()
 
+init = mb.free_function( 'init_with_params' )
+init.include()
+
 print('finding evaluation_functions')
 
 def find_derived(class_):
