@@ -62,7 +62,7 @@ refinement_list* random_greedy_bounded_run(state_merger* merger){
                 top_pair = (*randomized_merges.rbegin()).second;
             }*/
             best_ref->print_short();
-            cerr << " ";
+            cout << " ";
             best_ref->doref(merger);
             all_refs->push_front(best_ref);
             

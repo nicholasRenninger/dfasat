@@ -21,7 +21,7 @@ inline void refinement::print() const{
 };
 	
 inline void refinement::print_short() const{
-    cerr << score;
+    cout << score;
 };
 
 inline void refinement::doref(state_merger* m){
@@ -51,7 +51,7 @@ inline void extend_refinement::print() const{
 };
 	
 inline void extend_refinement::print_short() const{
-    cerr << "x" << right->size;
+    cout << "x" << right->size;
 };
 
 inline void extend_refinement::doref(state_merger* m){
