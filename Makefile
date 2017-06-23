@@ -1,7 +1,7 @@
 CC	=	g++
 CFLAGS	=	-O2 -g 
 SOURCES = 	*.cpp 
-SOURCESPYTHON =	apta.cpp dfasat.cpp  evaluation_factory.cpp random_greedy.cpp  state_merger.cpp parameters.cpp stream.cpp gitversion.cpp
+SOURCESPYTHON =	apta.cpp dfasat.cpp  refinement.cpp evaluation_factory.cpp random_greedy.cpp  state_merger.cpp parameters.cpp searcher.cpp stream.cpp interactive.cpp 
 LFLAGS 	= 	-std=c++11 -L/opt/local/lib -I/opt/local/include -I./lib -I. -lm -lpopt -lgsl -lgslcblas
 PYTHON_EVAL = evaluation/python.cpp
 
@@ -43,7 +43,8 @@ clean:
 gitversion.cpp: .git/HEAD .git/index
 	echo "const char *gitversion = \"$(shell git rev-parse HEAD)\";" > $@
 
-python: $(EVALOBJS)
+python: $(EVALOBJS) gitversion.cpp
+	export CPLUS_INCLUDE_PATH=/usr/include/python3.5
 	$(CC) -fPIC -shared $(CFLAGS)  -o flexfringe.lib.so $(SOURCESPYTHON) $^ -I./ $(LFLAGS) $(LIBS) $(PYTHON_LIBS) $(PYTHON_INC) 
 	python3 generate.py
 	g++ -W  -g -Wall -fPIC -shared generated.cpp flexfringe.lib.so -o flexfringe.so $(PYTHON_LIBS) $(PYTHON_INC) $(BOOST_LIBS) $(LFLAGS) -Wl,-rpath,'$$ORIGIN' -L. -l:flexfringe.lib.so
