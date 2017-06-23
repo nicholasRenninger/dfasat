@@ -4,9 +4,8 @@
 # based on Jonathan Hartley's snippet at https://superuser.com/questions/181517/how-to-execute-a-command-whenever-a-file-changes
 
 function execute() {
-    clear
-    echo "$@"
     eval "dot -Tpdf $@ > $@.pdf"
+    echo "fuck you "
 }
 
 
@@ -16,4 +15,4 @@ inotifywait --quiet --recursive --monitor --event close_write --format "%w%f" ./
     then
       execute "$change"
     fi
-done
+done 
