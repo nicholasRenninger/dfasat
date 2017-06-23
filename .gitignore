@@ -8,9 +8,9 @@
 *.so
 evaluation/*.o
 # ignore binaries
-dfasat
-flexfringe
-lingeling
+./dfasat
+./flexfringe
+./lingeling
 # py++ temporary files
 exposed_decl.pypp.txt
 named_tuple.py
