@@ -44,7 +44,6 @@ print("setting call policies")
 apta = mb.class_( 'apta' )
 apta.include()
 for i in apta.member_functions():
-  print (i.return_type.decl_string)
   for type_ in apta_node_types:
     if type_ in i.return_type.decl_string:
       i.call_policies = pyplusplus.module_builder.call_policies.return_internal_reference(1)
@@ -58,7 +57,6 @@ a_n_ret.call_policies = pyplusplus.module_builder.call_policies.return_internal_
 state_merger = mb.class_( 'state_merger' )
 state_merger.include()
 for i in state_merger.member_functions():
-  print (i.return_type.decl_string)
   for type_ in apta_node_types:
     if type_ in i.return_type.decl_string:
       i.call_policies = pyplusplus.module_builder.call_policies.return_internal_reference(1)
@@ -70,8 +68,11 @@ a_n_map_ret = mb.member_functions( return_type='::refinement_set *') #'::std::mu
 a_n_map_ret.call_policies = pyplusplus.module_builder.call_policies.return_internal_reference(1)
 # 
 
-refinement = mb.class_( 'refinement')
+refinement = mb.class_( 'refinement' )
 refinement.include()
+
+param = mb.class_( 'parameters' )
+param.include()
 
 dfasat = mb.free_function( 'dfasat' )
 dfasat.include()
