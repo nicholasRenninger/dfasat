@@ -130,6 +130,25 @@ refinement_list* interactive(state_merger* merger, parameters* param){
 		  init_with_params(param);
 		  cout << "USE_SINKS is now " << (USE_SINKS==true ? "true" : "false") << endl;
                 }
+		if(arg == "blueblue") {
+		  cline >> arg;
+                  param->blueblue = stoi(arg);
+		  init_with_params(param);
+		  cout << "MERGE_BLUE_BLUE is now " << (MERGE_BLUE_BLUE==true ? "true" : "false") << endl;
+                }
+		if(arg == "shallowfirst") {
+		  cline >> arg;
+                  param->shallowfirst = stoi(arg);
+		  init_with_params(param);
+		  // TODO: NOT RE-IMPLEMENTED YET 
+		  cout << "SHALLOW_FIRST is now " << (MERGE_BLUE_BLUE==true ? "true" : "false") << endl;
+                }
+		if(arg == "largestblue") {
+		  cline >> arg;
+                  param->largestblue = stoi(arg);
+		  init_with_params(param);
+		  cout << "MERGE_MOST_VISITED is now " << (MERGE_MOST_VISITED==true ? "true" : "false") << endl;
+                }
 	      } else if(arg == "next") {
 
 	      } else if(arg == "help") {
