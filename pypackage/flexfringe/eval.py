@@ -7,12 +7,13 @@ import numpy as np
 
 # we should define these somewhere that is associated with the
 # evaluation_functino. Maybe member variables that are initialized in
-# the print_dot function ... but that would make evaluation depend on
+# the print_dot function ... but 
+# that would make evaluation depend on
 # the output format, which is not very elegant.
 # technically we should use the apta after merging, and
 MEAN_REGEX = '(?P<state>\d+) \[shape=(doublecircle|circle|ellipse) label=\"\[(?P<mean>\d+)\].*\"\];'
-SYMLST_REGEX = "((?P<sym>-?\d+) \[(?P<occ>\d+):\d+\])+"
-TRAN_REGEX = "^(?P<sst>.+) -> (?P<dst>.+) \[label=\"(?P<slst>.+)\"[ style=dotted]*\];$"
+SYMLST_REGEX = "((?P<sym>\d+):(?P<occ>\d+))+"
+TRAN_REGEX = "(?P<sst>.+) -> (?P<dst>.+) \[label=\"(?P<slst>(.+))\"[ style=dotted]*  \];$"
 
 def load_means(content):
     means = []
@@ -41,9 +42,11 @@ def load_model(dot_string, normalize=False, with_means=False):
       means = "\n".join(load_means(dot_string))
       dot_string = means + dot_string
 
-    for line in dot_string.split("\n"):
+    for line in dot_string.split('\n'):
         matcher = re.match(TRAN_REGEX, line.strip())
+        print(line + " foudn" + '\n')
         if matcher is not None:
+            print("found match")
             sstate = matcher.group("sst")
             dstate = matcher.group("dst")
             symlist = matcher.group("slst")
@@ -179,7 +182,20 @@ if __name__ == "__main__":
 
     m = load_model_from_file(dot, normalize=True)
 
-    # print m
-    get_word_acceptance(m, tst, of)
+    print(m)
+
+    with open(tst) as fh:
+        test = fh.readlines()
+
+    with open("resultfile.txt", 'w') as fh:
+        res = []
+        for line in test[1:]:
+            sum = "" 
+            for elm in predict(line, m):
+                sum += str(elm[0]) + " "
+            res.append(sum + '\n')
+        fh.writelines(res)
+
+    
 
 

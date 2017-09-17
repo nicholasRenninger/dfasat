@@ -21,6 +21,15 @@ count_data::count_data(){
     rejecting_paths = 0;
 };
 
+void count_data::print_transition_label(iostream& output, int symbol){
+    output << "count data"; 
+};
+
+void count_data::print_state_label(iostream& output){
+    output << num_accepting;
+};
+
+
 void count_data::read_from(int type, int index, int length, int symbol, string data){
     if(type == 1){
         accepting_paths++;

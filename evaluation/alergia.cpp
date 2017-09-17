@@ -31,7 +31,7 @@ void alergia_data::read_from(int type, int index, int length, int symbol, string
     }
 };
 
-void alergia_data::print_transition_label(iostream& output, int symbol){
+void alergia_data::print_transition_label(iostream& output, int symbol, apta* apta_context){
     output << num_pos[symbol];
 };
 

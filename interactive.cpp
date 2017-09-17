@@ -149,7 +149,12 @@ refinement_list* interactive(state_merger* merger, parameters* param){
 		  init_with_params(param);
 		  cout << "MERGE_MOST_VISITED is now " << (MERGE_MOST_VISITED==true ? "true" : "false") << endl;
                 }
-	      } else if(arg == "next") {
+	      } else if(arg == "force") {
+                // implements are mandatory merge
+                cout << "State two sequences in abg format, ending in the same state: " << endl;
+                string seq1 = "";
+                string seq2 = "";
+
 
 	      } else if(arg == "help") {
 		cout << "Available commands: set <param> value, undo, help; insert <sample> in abd format; <int> merges the <int>th merge from the proposed list" << endl;
