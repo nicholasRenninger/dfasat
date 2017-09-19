@@ -204,6 +204,7 @@ apta_node::apta_node(apta *context) {
 
     try {
        data = (DerivedDataRegister<evaluation_data>::getMap())->at(eval_string)();
+       data->node = this;
     } catch(const std::out_of_range& oor ) {
        std::cerr << "No data type found..." << std::endl;
     }
