@@ -20,7 +20,6 @@ using namespace std;
 
 bool is_stream_sink(apta_node*);
 
-
 // for registering evaluation data objects
 #define REGISTER_DEC_DATATYPE(NAME) \
     static DerivedDataRegister<NAME> reg
@@ -69,6 +68,8 @@ protected:
 
 public:
 
+    apta_node* node;
+
     int node_type;
     evaluation_data* undo_pointer;
     
@@ -87,7 +88,6 @@ public:
     virtual void print_state_style(iostream& output, apta* aptacontext);
     virtual void print_transition_label(iostream& output, int symbol, apta* aptacontext);
     virtual void print_transition_style(iostream& output, set<int> symbols, apta* aptacontext);
-
 /* what to ignore, and why */    
     
     virtual bool sink_consistent(int type);

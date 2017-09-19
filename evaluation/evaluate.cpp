@@ -15,7 +15,7 @@
 evaluation_data::evaluation_data(){
     node_type = -1;
     undo_pointer = 0;
-};
+}
 
 void evaluation_data::read_from(int type, int index, int length, int symbol, string data){
 };

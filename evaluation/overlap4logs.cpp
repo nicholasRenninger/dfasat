@@ -19,15 +19,124 @@ REGISTER_DEF_TYPE(overlap4logs);
 long DELAY_COLOR_BOUND1 = 5000;
 long DELAY_COLOR_BOUND2 = 10000;
 
+const char* colors[] = { "gray", "green", "orange", "cyan", "red" };
+const char* colors_labels[] = { "black", "goldenrod", "crimson" };
+const char* colors_nodes[] = { "lightgray", "palegreen", "peachpuff", "lightskyblue1", "lightpink" };
+const char* names[] = { "?", "A", "D", "C", "E" };
+
 /*** Data operations ***/
-overlap4logs_data::overlap4logs_data(){
+overlap4logs_data::overlap4logs_data() {
     num_type = num_map();
     num_delays = num_long_map();
 };
 
 void overlap4logs_data::store_id(string id) {
    trace_ids.insert(id);
-}
+};
+
+void overlap4logs_data::print_state_label(iostream& output, apta* aptacontext){
+    if(sink_type(node)){
+        int sum_types = 0;
+        for(num_map::iterator it = num_type.begin(); it != num_type.end(); ++it)
+            sum_types += (*it).second;
+        output << "[" << sum_types <<"]\n[ ";
+        int largest_type = 0;
+        for (int i = 0; i < num_sink_types(); i++)
+            output << types(i) << " ";
+        output << "]";
+    } else {
+        int stype = sink_type(node);
+        output << "sink " << names[stype];
+    }
+};
+
+void overlap4logs_data::print_state_style(iostream& output, apta* aptacontext){
+    if(sink_type(node)){
+        int largest_type = 0;
+        int count = -1;
+        for(num_map::iterator it = num_type.begin(); it != num_type.end(); ++it){
+            if((*it).second > count){
+                largest_type = (*it).first;
+                count = (*it).second;
+            }
+        }
+        output << " style=filled fillcolor=" << colors_nodes[largest_type] << " ";
+    } else {
+        int stype = sink_type(node);
+        output << " shape=box style=filled fillcolor=" << colors[stype] << " tooltip=\"";
+        for(int i = 0; i < alphabet_size; ++i){
+            if(node->get_child(i) != 0 && sink_type(node->get_child(i)) == stype){
+                apta_node* c = node->get_child(i);
+                for(set<string>::iterator it3 = reinterpret_cast<overlap4logs_data*>(c->data)->trace_ids.begin(); it3 != reinterpret_cast<overlap4logs_data*>(c->data)->trace_ids.end(); ++it3){
+                    output <<  it3->c_str() << " ";
+                }
+            }
+        }
+    }
+};
+
+void overlap4logs_data::print_transition_label(iostream& output, int symbol, apta* aptacontext){
+    if(node->get_child(symbol) != 0){
+        int total = pos(symbol) + neg(symbol);
+        output << " " << aptacontext->alph_str(symbol).c_str() << " (" << total << "=" << (((double)total*100)/(double)aptacontext->root->find()->size) << "%)\n";
+
+        long minDelay = LONG_MAX;
+        long maxDelay = -1;
+        double meanDelay = delay_mean(symbol);
+        double stdDelay = delay_std(symbol);
+
+        for(long_map::iterator delay_it = num_delays[symbol].begin(); delay_it != num_delays[symbol].end(); delay_it++) {
+            if(delay_it->first < minDelay && delay_it->second > 0) {
+                minDelay = delay_it->first;
+            }
+            if(delay_it->first > maxDelay && delay_it->second > 0) {
+                maxDelay = delay_it->first;
+            }
+        }
+
+        output << std::setprecision(0) << "MIN:" << minDelay << " MAX:" << maxDelay;
+        output << std::setprecision(1) << " MEAN:" << meanDelay << " STD:" << stdDelay << "\n";
+        output << std::setprecision(2);
+    }
+};
+
+// this should have a pair, set<pair<int, eval_data*>>
+void overlap4logs_data::print_transition_style(iostream& output, set<int> symbols, apta* aptacontext){
+    int root_size = aptacontext->root->find()->size;
+    int edge_sum = 0;
+    for(set<int>::iterator it = symbols.begin(); it != symbols.end(); ++it){
+        edge_sum += pos(*it) + neg(*it);
+    }
+    float penwidth = 0.5 + max(0.1, ((double)edge_sum*10)/(double)root_size);
+
+    int color = 0;
+
+    long minDelay = LONG_MAX;
+    long maxDelay = -1;
+
+    for(set<int>::iterator sym_it = symbols.begin(); sym_it != symbols.end(); sym_it++){
+        int symbol = *sym_it;
+        double meanDelay = delay_mean(symbol);
+        double stdDelay = delay_std(symbol);
+        for(long_map::iterator delay_it = num_delays[symbol].begin(); delay_it != num_delays[symbol].end(); delay_it++) {
+            if(delay_it->first < minDelay && delay_it->second > 0) {
+                minDelay = delay_it->first;
+            }
+            if(delay_it->first > maxDelay && delay_it->second > 0) {
+                maxDelay = delay_it->first;
+            }
+        }
+        if (meanDelay >= DELAY_COLOR_BOUND2) {
+            color = 2;
+            break;
+        }
+        else if (meanDelay >= DELAY_COLOR_BOUND1) {
+            color = 1;
+        }
+    }
+
+    output << " penwidth=" << std::setprecision(1) << penwidth << std::setprecision(2) << " color=" << colors_labels[color] << " fontcolor=" << colors_labels[color] << " ";
+};
 
 void overlap4logs_data::read_from(int type, int index, int length, int symbol, string data){
     overlap_data::read_from(type, index, length, symbol, data);
@@ -133,7 +242,7 @@ bool overlap4logs::consistent(state_merger *merger, apta_node* left, apta_node* 
 };
 
 /*** Sink logic ***/
-int overlap4logs::find_end_type(apta_node* node) {
+int overlap4logs_data::find_end_type(apta_node* node) {
     int endtype = -1;
 
     // Check for all outgoing transitions if there is _one_ unique final type
@@ -156,28 +265,28 @@ int overlap4logs::find_end_type(apta_node* node) {
     return endtype;
 }
 
-int overlap4logs::sink_type(apta_node* node){
+int overlap4logs_data::sink_type(apta_node* node){
     if(!USE_SINKS) return -1;
 
     // For a final node, the type itself is the sink type
     if (node->type > 0 && node->type <= num_sink_types()) return node->type;
 
     // If we want to consider this as a sink node, make sure it's an unambiguous one
-    if (is_low_count_sink_alergia(node)) return find_end_type(node);
+    if (alergia_data::is_low_count_sink()) return find_end_type(node);
 
     return -1;
 };
 
-bool overlap4logs::sink_consistent(apta_node* node, int type){
+bool overlap4logs_data::sink_consistent(apta_node* node, int type){
     if(!USE_SINKS) return false;
 
     if(node->type > 0) return node->type == type;
     
-    if(type >= 0) return (is_low_count_sink_alergia(node) && find_end_type(node) == type);
+    if(type >= 0) return (alergia_data::is_low_count_sink() && find_end_type(node) == type);
     return true;
 };
 
-int overlap4logs::num_sink_types(){
+int overlap4logs_data::num_sink_types(){
     if(!USE_SINKS) return 0;
     return 5;
 };
@@ -216,6 +325,7 @@ int overlap4logs::print_labels(iostream& output, apta* aut, overlap4logs_data* d
     }
 }
 
+/*
 void overlap4logs::print_dot(iostream& output, state_merger* merger){
     apta* aut = merger->aut;
     state_set s  = merger->red_states;
@@ -321,3 +431,4 @@ void overlap4logs::print_dot(iostream& output, state_merger* merger){
 
     output << "}\n";
 };
+*/

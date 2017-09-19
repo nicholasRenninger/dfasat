@@ -138,7 +138,6 @@ void apta::print_dot(iostream& output){
             n->data->print_transition_style(output, labels, this);
             output << " ];\n";
         }
-        continue;
         for(map<int, set<int>>::iterator it2 = sinklabels.begin(); it2 != sinklabels.end(); ++it2){
             int stype = (*it2).first;
             set<int> labels  = (*it2).second;
@@ -220,6 +219,7 @@ apta_node::apta_node(){
 
     try {
        data = (DerivedDataRegister<evaluation_data>::getMap())->at(eval_string)();
+       data->node = this;
     } catch(const std::out_of_range& oor ) {
        std::cerr << "No data type found..." << std::endl;
     }

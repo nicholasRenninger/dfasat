@@ -168,7 +168,6 @@ bool alergia::consistent(state_merger *merger, apta_node* left, apta_node* right
     return data_consistent(l, r);
 };
 
-
 /* When is an APTA node a sink state?
  * sink states are not considered merge candidates
  *

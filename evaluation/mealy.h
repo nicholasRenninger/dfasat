@@ -34,8 +34,6 @@ public:
     virtual bool is_low_count_sink(apta_node* node);
     virtual int sink_type(apta_node* node);
     virtual bool sink_consistent(int type);
-
-
 };
 
 class mealy: public evaluation_function {

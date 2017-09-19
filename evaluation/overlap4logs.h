@@ -30,6 +30,17 @@ public:
     virtual void update(evaluation_data* right);
     virtual void undo(evaluation_data* right);
 
+    virtual int sink_type(apta_node* node);
+    virtual bool sink_consistent(apta_node* node, int type);
+    virtual int num_sink_types();
+
+    virtual void print_state_label(iostream& output, apta* aptacontext);
+    virtual void print_state_style(iostream& output, apta* aptacontext);
+    virtual void print_transition_label(iostream& output, int symbol, apta* aptacontext);
+    virtual void print_transition_style(iostream& output, set<int> symbols, apta* aptacontext);
+    virtual int find_end_type(apta_node* node);
+
+
 protected:
     REGISTER_DEC_DATATYPE(overlap4logs_data);
 };
@@ -41,12 +52,8 @@ protected:
 
 public:
     virtual bool consistent(state_merger *merger, apta_node* left, apta_node* right);
-    virtual int find_end_type(apta_node* node);
-    virtual int sink_type(apta_node* node);
-    virtual bool sink_consistent(apta_node* node, int type);
-    virtual int num_sink_types();
     virtual int print_labels(iostream& output, apta* aut, overlap4logs_data* data, int symbol);
-    virtual void print_dot(iostream& output, state_merger* merger);
+    //virtual void print_dot(iostream& output, state_merger* merger);
 };
 
 #endif
