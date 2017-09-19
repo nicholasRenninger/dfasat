@@ -261,7 +261,7 @@ int overlap4logs_data::find_end_type(apta_node* node) {
     for (int z = 0; z < alphabet_size; z++) {
         apta_node* n = node->get_child(z);
         if (n == 0) continue;
-
+cerr << "non-zero children " << endl;
         for (int i = 0; i < num_sink_types(); i++) {
             if (((overlap4logs_data*) n->data)->types(i) > 0) {
                 if (endtype == -1) {
@@ -284,7 +284,7 @@ int overlap4logs_data::sink_type(apta_node* node){
     if (node->type > 0 && node->type <= num_sink_types()) return node->type;
 
     // If we want to consider this as a sink node, make sure it's an unambiguous one
-    if (alergia_data::is_low_count_sink()) return find_end_type(node);
+    if (node->find()->size > STATE_COUNT) return find_end_type(node);
 
     return -1;
 };
@@ -294,7 +294,7 @@ bool overlap4logs_data::sink_consistent(apta_node* node, int type){
 
     if(node->type > 0) return node->type == type;
     
-    if(type >= 0) return (alergia_data::is_low_count_sink() && find_end_type(node) == type);
+    if(type >= 0) return (node->find()->size >STATE_COUNT && find_end_type(node) == type);
     return true;
 };
 
