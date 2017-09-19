@@ -136,7 +136,7 @@ void overlap4logs_data::print_transition_style(iostream& output, set<int> symbol
         }
     }
 
-    output << " penwidth=" << std::setprecision(1) << penwidth << std::setprecision(2) << " color=" << colors_labels[color] << " fontcolor=" << colors_labels[color] << " ";
+    output << " penwidth=\"" << std::setprecision(1) << penwidth << std::setprecision(2) << "\" color=" << colors_labels[color] << " fontcolor=" << colors_labels[color] << " ";
 };
 
 void overlap4logs_data::read_from(int type, int index, int length, int symbol, string data){
@@ -261,7 +261,7 @@ int overlap4logs_data::find_end_type(apta_node* node) {
     for (int z = 0; z < alphabet_size; z++) {
         apta_node* n = node->get_child(z);
         if (n == 0) continue;
-cerr << "non-zero children " << endl;
+
         for (int i = 0; i < num_sink_types(); i++) {
             if (((overlap4logs_data*) n->data)->types(i) > 0) {
                 if (endtype == -1) {

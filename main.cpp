@@ -140,7 +140,7 @@ void run(parameters* param) {
        std::ostringstream oss3;
        oss3 << param->dot_file  << "init_dfa"<< ".dot";
        FILE* output = fopen(oss3.str().c_str(), "w");
-       cout << "merger dot";
+
        merger.todot();
        merger.print_dot(output);
        fclose(output);
