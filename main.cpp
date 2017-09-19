@@ -86,6 +86,10 @@ void init_with_params(parameters* param) {
     try {
        (DerivedRegister<evaluation_function>::getMap())->at(param->hName);
        std::cout << "valid: " << param->hName << std::endl;
+       if(param->hName == "overlap4logs") {
+           EXCEPTION4OVERLAP = true;
+           cerr << "overlap4logs backcompatilibity" << endl;
+       }
 
     } catch(const std::out_of_range& oor ) {
        std::cout << "invalid: " << param->hName << std::endl;
@@ -136,6 +140,7 @@ void run(parameters* param) {
        std::ostringstream oss3;
        oss3 << param->dot_file  << "init_dfa"<< ".dot";
        FILE* output = fopen(oss3.str().c_str(), "w");
+       cout << "merger dot";
        merger.todot();
        merger.print_dot(output);
        fclose(output);
@@ -145,6 +150,8 @@ void run(parameters* param) {
           oss << param->dot_file << "dfa" << (i+1) << ".aut";
           std::ostringstream oss2;
           oss2 << param->dot_file << "dfa" << (i+1) << ".dot";
+
+         cout << "dfasat running";
 
           solution = dfasat(merger, param->sat_program, oss2.str().c_str(), oss.str().c_str());
           //bestfirst(&merger);

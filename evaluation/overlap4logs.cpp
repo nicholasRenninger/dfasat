@@ -28,6 +28,7 @@ const char* names[] = { "?", "A", "D", "C", "E" };
 overlap4logs_data::overlap4logs_data() {
     num_type = num_map();
     num_delays = num_long_map();
+    trace_ids = set<string>();
 };
 
 void overlap4logs_data::store_id(string id) {
@@ -184,6 +185,11 @@ double overlap4logs_data::delay_std(int symbol){
 };
 
 void overlap4logs_data::update(evaluation_data* right){
+    if(node_type == -1) {
+       node_type = right->node_type;
+       undo_pointer = right;
+       trace_ids.insert(reinterpret_cast<overlap4logs_data*>(right)->trace_ids.begin(), reinterpret_cast<overlap4logs_data*>(right)->trace_ids.end());
+    } 
     overlap_data::update(right);
     overlap4logs_data* other = (overlap4logs_data*)right;
     for(num_map::iterator it = other->num_type.begin();it != other->num_type.end(); ++it){
@@ -206,6 +212,12 @@ void overlap4logs_data::update(evaluation_data* right){
 };
 
 void overlap4logs_data::undo(evaluation_data* right){
+
+    if(right == undo_pointer) {
+        for (set<string>::iterator rit = reinterpret_cast<overlap4logs_data*>(right)->trace_ids.begin(); rit != reinterpret_cast<overlap4logs_data*>(right)->trace_ids.end(); ++rit) {
+            trace_ids.erase(rit->c_str());
+        }
+    }
     overlap_data::undo(right);
     overlap4logs_data* other = (overlap4logs_data*)right;
     for(num_map::iterator it = other->num_type.begin();it != other->num_type.end(); ++it){

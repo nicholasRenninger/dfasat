@@ -40,7 +40,15 @@ void apta::read_file(istream &input_stream){
     for(int line = 0; line < num_words; line++){
         int type;
         int length;
-        input_stream >> type >> length;
+        string id;
+
+        // I need to refactor this...
+        if(EXCEPTION4OVERLAP) {
+           input_stream >> id >> type >> length;
+        }
+        else {
+           input_stream >> type >> length;
+        }
 
         int depth = 0;
         apta_node* node = root;
@@ -73,6 +81,8 @@ void apta::read_file(istream &input_stream){
             }
             node->size = node->size + 1;
             node->data->read_from(type, index, length, c, data);
+            if(EXCEPTION4OVERLAP)
+                reinterpret_cast<overlap4logs_data*>(node->data)->store_id(id);
             node = node->child(c);
             node->data->read_to(type, index, length, c, data);
         }
