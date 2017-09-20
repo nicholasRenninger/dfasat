@@ -24,7 +24,7 @@ alergia_data::alergia_data(){
 
 void alergia_data::read_from(int type, int index, int length, int symbol, string data){
     count_data::read_from(type, index, length, symbol, data);
-    if(type == 1){
+    if(type >= 1){
         num_pos[symbol] = pos(symbol) + 1;
     } else {
         num_neg[symbol] = neg(symbol) + 1;
