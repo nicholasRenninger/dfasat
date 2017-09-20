@@ -213,11 +213,11 @@ void overlap4logs_data::update(evaluation_data* right){
 
 void overlap4logs_data::undo(evaluation_data* right){
 
-    if(right == undo_pointer) {
-        for (set<string>::iterator rit = reinterpret_cast<overlap4logs_data*>(right)->trace_ids.begin(); rit != reinterpret_cast<overlap4logs_data*>(right)->trace_ids.end(); ++rit) {
+/*    if(right == undo_pointer) {
+       for (set<string>::iterator rit = reinterpret_cast<overlap4logs_data*>(right)->trace_ids.begin(); rit != reinterpret_cast<overlap4logs_data*>(right)->trace_ids.end(); ++rit) {
             trace_ids.erase(rit->c_str());
         }
-    }
+    }*/
     overlap_data::undo(right);
     overlap4logs_data* other = (overlap4logs_data*)right;
     for(num_map::iterator it = other->num_type.begin();it != other->num_type.end(); ++it){
@@ -284,7 +284,7 @@ int overlap4logs_data::sink_type(apta_node* node){
     if (node->type > 0 && node->type <= num_sink_types()) return node->type;
 
     // If we want to consider this as a sink node, make sure it's an unambiguous one
-    if (node->find()->size > STATE_COUNT) return find_end_type(node);
+    if (node->find()->size < STATE_COUNT) return find_end_type(node);
 
     return -1;
 };
@@ -294,7 +294,7 @@ bool overlap4logs_data::sink_consistent(apta_node* node, int type){
 
     if(node->type > 0) return node->type == type;
     
-    if(type >= 0) return (node->find()->size >STATE_COUNT && find_end_type(node) == type);
+    if(type >= 0) return (node->find()->size < STATE_COUNT && find_end_type(node) == type);
     return true;
 };
 
