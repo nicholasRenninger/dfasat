@@ -13,4 +13,6 @@
 #include "evaluation/mse-error.h"
 #include "evaluation/num_count.h"
 #include "evaluation/overlap-driven.h"
+#include "evaluation/overlap4logs.h"
+#include "evaluation/process-mining.h"
 #endif
