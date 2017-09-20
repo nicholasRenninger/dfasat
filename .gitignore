@@ -7,6 +7,8 @@
 *.o
 *.so
 evaluation/*.o
+#ignore temp files
+lib/evaluators.h
 # ignore binaries
 ./dfasat
 ./flexfringe
