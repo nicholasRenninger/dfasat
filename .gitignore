@@ -1,4 +1,5 @@
 # ignore all output
+*.log
 *.dot
 *.aut
 *.pdf
