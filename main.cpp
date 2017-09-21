@@ -159,7 +159,7 @@ void run(parameters* param) {
              CLIQUE_BOUND = min(CLIQUE_BOUND, solution - OFFSET + EXTRA_STATES);
          }
 
-    } else if(param->mode == "strea") {
+    } else if(param->mode == "stream") {
        cout << "stream mode selected" << endl;
        stream_mode(&merger, param, input_stream);
     } else if(param->mode == "inter") {
@@ -173,7 +173,7 @@ void run(parameters* param) {
        // run interactive loop
        interactive(&merger, param); 
     } else {
-       cerr << "unknown mode of operation selected, valid options are \"batch\", \"stream\", and \"interactive\", while the parameter provided was " << param->mode << endl;
+       cerr << "unknown mode of operation selected, valid options are \"batch\", \"stream\", and \"inter\", while the parameter provided was " << param->mode << endl;
        exit(1);
     }
 
@@ -208,8 +208,9 @@ int main(int argc, const char *argv[]){
     /* temporary holder for string arguments */
     char* dot_file = NULL;
     char* sat_program = NULL;
-    char* hName;
-    char* hData;
+    char* hName = NULL;
+    char* hData = NULL;
+    char* mode = NULL;
 
     /* below parses command-line options, see 'man popt' */
     poptContext optCon;
@@ -219,7 +220,7 @@ int main(int argc, const char *argv[]){
         { "output-dir", 'o', POPT_ARG_STRING, &(dot_file), 'o', "Relative path for output files with trailing /, default: \"./\".", "string" },
         { "heuristic-name", 'h', POPT_ARG_STRING, &(hName), 'h', "Name of the merge heurstic to use; default count_driven. Use any heuristic in the evaluation directory. It is often beneficial to write your own, as heuristics are very application specific.", "string" },
         { "data-name", 'd', POPT_ARG_STRING, &(hData), 'd', "Name of the merge data class to use; default count_data. Use any heuristic in the evaluation directory.", "string" },
-        { "mode", 'M', POPT_ARG_STRING, &(param->mode), 'M', "batch or stream depending on the mode of operation", "string" },
+        { "mode", 'M', POPT_ARG_STRING, &(mode), 'M', "batch or stream depending on the mode of operation", "string" },
         { "method", 'm', POPT_ARG_INT, &(param->method), 'm', "Method to use when merging states, default value 1 is random greedy (used in Stamina winner), 2 is one standard (non-random) greedy.", "integer" },
         { "seed", 's', POPT_ARG_INT, &(param->seed), 's', "Seed for random merge heuristic; default=12345678", "integer" },
         { "runs", 'n', POPT_ARG_INT, &(param->runs), 'n', "Number of random greedy runs/iterations; default=1. Advice: when using random greedy, a higher value is recommended (100 was used in Stamina winner).\n\nSettings that modify the red-blue state-merging framework:", "integer" },
@@ -293,6 +294,11 @@ int main(int argc, const char *argv[]){
 
     param->hName = hName;
     param->hData = hData;
+ 
+    if(mode != NULL)
+        param->mode = mode;
+    else
+        param->mode = "batch";
 
     run(param);
 
