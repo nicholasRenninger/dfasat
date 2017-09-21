@@ -21,6 +21,8 @@ cp tests/template.pdf tests/pre_1.dot.pdf
 evince tests/pre_0.dot.pdf &>/dev/null &
 evince tests/pre_1.dot.pdf &>/dev/null &
 
+sleep 5
+
 ./interactive.sh &>/dev/null &
 
 echo "Starting interactive mode"
