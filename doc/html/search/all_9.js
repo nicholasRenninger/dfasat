@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['score_5fcompare',['score_compare',['../structscore__compare.html',1,'']]],
-  ['size',['size',['../classapta__node.html#a24c9dae152b759bb6a2ebcae6bbc36d5',1,'apta_node']]],
-  ['source',['source',['../classapta__node.html#a3988cbceb4424c44507237241a430aa4',1,'apta_node']]]
+  ['named_5ftuple',['named_tuple',['../classnamed__tuple_1_1named__tuple.html',1,'named_tuple']]],
+  ['number',['number',['../classapta__node.html#aa4d8ad2056671f1e14ddb4123ac6f87e',1,'apta_node']]]
 ];

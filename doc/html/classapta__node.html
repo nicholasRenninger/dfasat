@@ -49,6 +49,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -119,14 +120,16 @@ $(document).ready(function(){initNavTree('classapta__node.html','');});
 <p>Node structure in the prefix tree.  
  <a href="classapta__node.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="apta_8h_source.html">apta.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="lib_2apta_8h_source.html">apta.h</a>&gt;</code></p>
+
+<p>Inherited by apta_node_wrapper.</p>
 <div class="dynheader">
 Collaboration diagram for apta_node:</div>
 <div class="dyncontent">
 <div class="center"><img src="classapta__node__coll__graph.png" border="0" usemap="#apta__node_coll__map" alt="Collaboration graph"/></div>
 <map name="apta__node_coll__map" id="apta__node_coll__map">
-<area shape="rect" id="node3" href="classapta.html" title="Data structure for the prefix tree. " alt="" coords="39,231,85,257"/>
-<area shape="rect" id="node2" href="classevaluation__data.html" title="Extra data attached to each symbol, stored in each node. " alt="" coords="5,5,119,32"/>
+<area shape="rect" id="node2" href="classevaluation__data.html" title="Extra data attached to each symbol, stored in each node. " alt="" coords="5,141,119,168"/>
+<area shape="rect" id="node3" href="classapta.html" title="Data structure for the prefix tree. " alt="" coords="245,141,292,168"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -148,7 +151,7 @@ guard_list *&#160;</td><td class="memItemRight" valign="bottom"><b>child</b> (in
 guard_list *&#160;</td><td class="memItemRight" valign="bottom"><b>undo</b> (int i)</td></tr>
 <tr class="separator:a26f2a8165511c6ef322c342c9cc89e79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae27f86d054b6bfb50a908509969c1b09"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae27f86d054b6bfb50a908509969c1b09"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>apta_node</b> (<a class="el" href="classapta.html">apta</a> *<a class="el" href="classapta__node.html#ae216b528459a269d45957a919a6180e8">context</a>)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><b>apta_node</b> (<a class="el" href="classapta.html">apta</a> *<a class="el" href="classapta__node.html#a95d170076f0c3f9d98f2d1701dafd2cb">context</a>)</td></tr>
 <tr class="separator:ae27f86d054b6bfb50a908509969c1b09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d339a47f63e54193f2d384244c8d61d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d339a47f63e54193f2d384244c8d61d"></a>
 <a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>find</b> ()</td></tr>
@@ -165,15 +168,48 @@ guard_list *&#160;</td><td class="memItemRight" valign="bottom"><b>undo</b> (int
 <tr class="memitem:af8a4f8ae7e447dddbd4ba74870921c21"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af8a4f8ae7e447dddbd4ba74870921c21"></a>
 <a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>undo</b> (int i)</td></tr>
 <tr class="separator:af8a4f8ae7e447dddbd4ba74870921c21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26b9c96df8920fdfe3db05e1c1897760"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26b9c96df8920fdfe3db05e1c1897760"></a>
+guard_list *&#160;</td><td class="memItemRight" valign="bottom"><b>get_targets</b> (int)</td></tr>
+<tr class="separator:a26b9c96df8920fdfe3db05e1c1897760"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d339a47f63e54193f2d384244c8d61d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d339a47f63e54193f2d384244c8d61d"></a>
+<a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>find</b> ()</td></tr>
+<tr class="separator:a5d339a47f63e54193f2d384244c8d61d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a841d68d207517e998d12da726efd9498"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a841d68d207517e998d12da726efd9498"></a>
+<a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>find_until</b> (<a class="el" href="classapta__node.html">apta_node</a> *, int)</td></tr>
+<tr class="separator:a841d68d207517e998d12da726efd9498"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f35cb3729fb653fd4d42723c5adac83"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8f35cb3729fb653fd4d42723c5adac83"></a>
+guard_list *&#160;</td><td class="memItemRight" valign="bottom"><b>child</b> (int i)</td></tr>
+<tr class="separator:a8f35cb3729fb653fd4d42723c5adac83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26f2a8165511c6ef322c342c9cc89e79"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26f2a8165511c6ef322c342c9cc89e79"></a>
+guard_list *&#160;</td><td class="memItemRight" valign="bottom"><b>undo</b> (int i)</td></tr>
+<tr class="separator:a26f2a8165511c6ef322c342c9cc89e79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae27f86d054b6bfb50a908509969c1b09"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae27f86d054b6bfb50a908509969c1b09"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>apta_node</b> (<a class="el" href="classapta.html">apta</a> *<a class="el" href="classapta__node.html#a95d170076f0c3f9d98f2d1701dafd2cb">context</a>)</td></tr>
+<tr class="separator:ae27f86d054b6bfb50a908509969c1b09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d339a47f63e54193f2d384244c8d61d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d339a47f63e54193f2d384244c8d61d"></a>
+<a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>find</b> ()</td></tr>
+<tr class="separator:a5d339a47f63e54193f2d384244c8d61d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a841d68d207517e998d12da726efd9498"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a841d68d207517e998d12da726efd9498"></a>
+<a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>find_until</b> (<a class="el" href="classapta__node.html">apta_node</a> *, int)</td></tr>
+<tr class="separator:a841d68d207517e998d12da726efd9498"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e95a02a68b82ffe6115b49ab871ff4d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1e95a02a68b82ffe6115b49ab871ff4d"></a>
+<a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>get_child</b> (int)</td></tr>
+<tr class="separator:a1e95a02a68b82ffe6115b49ab871ff4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39a38233da37cadf39634e2f205e333d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a39a38233da37cadf39634e2f205e333d"></a>
+<a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>child</b> (int i)</td></tr>
+<tr class="separator:a39a38233da37cadf39634e2f205e333d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8a4f8ae7e447dddbd4ba74870921c21"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af8a4f8ae7e447dddbd4ba74870921c21"></a>
+<a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>undo</b> (int i)</td></tr>
+<tr class="separator:af8a4f8ae7e447dddbd4ba74870921c21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ac24a6098ad48833757b2e8efea99cbaf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac24a6098ad48833757b2e8efea99cbaf"></a>
+<tr class="memitem:a9376765aa0bd23aef5601fc7d87fefd6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9376765aa0bd23aef5601fc7d87fefd6"></a>
 <a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>prev_node</b></td></tr>
-<tr class="separator:ac24a6098ad48833757b2e8efea99cbaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a260898870fa4025100f4176d81264a77"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a260898870fa4025100f4176d81264a77"></a>
+<tr class="separator:a9376765aa0bd23aef5601fc7d87fefd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36b2c6768be3b9943404f0bf49740fd8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a36b2c6768be3b9943404f0bf49740fd8"></a>
 <a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>next_node</b></td></tr>
-<tr class="separator:a260898870fa4025100f4176d81264a77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a36b2c6768be3b9943404f0bf49740fd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2947d27209a9befd6458060419b2f43"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classapta__node.html#aa2947d27209a9befd6458060419b2f43">representative</a></td></tr>
 <tr class="separator:aa2947d27209a9befd6458060419b2f43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04c0ef7f20669b97f2c5c65edc4c044c"><td class="memItemLeft" align="right" valign="top">child_map&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classapta__node.html#a04c0ef7f20669b97f2c5c65edc4c044c">children</a></td></tr>
@@ -182,9 +218,9 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a73996ef299e0ed3fdef53b68f6dc2204"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaba8e9487f1161584177a708aa700bea"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classapta__node.html#aaba8e9487f1161584177a708aa700bea">label</a></td></tr>
 <tr class="separator:aaba8e9487f1161584177a708aa700bea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a887f8daa1626cd4ffbc5effacf8395f3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a887f8daa1626cd4ffbc5effacf8395f3"></a>
+<tr class="memitem:a4e046e51b80d77ab7c22e01069e2998d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e046e51b80d77ab7c22e01069e2998d"></a>
 vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>attributes</b></td></tr>
-<tr class="separator:a887f8daa1626cd4ffbc5effacf8395f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a4e046e51b80d77ab7c22e01069e2998d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4d8ad2056671f1e14ddb4123ac6f87e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classapta__node.html#aa4d8ad2056671f1e14ddb4123ac6f87e">number</a></td></tr>
 <tr class="separator:aa4d8ad2056671f1e14ddb4123ac6f87e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb2ae7e0890e5421c29ab7f67628f699"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb2ae7e0890e5421c29ab7f67628f699"></a>
@@ -204,10 +240,10 @@ node_list&#160;</td><td class="memItemRight" valign="bottom"><b>merged_nodes</b>
 <tr class="memitem:a37ddeb80d7dd791ce7809faa219eb148"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a37ddeb80d7dd791ce7809faa219eb148"></a>
 node_list::iterator&#160;</td><td class="memItemRight" valign="bottom"><b>merge_point</b></td></tr>
 <tr class="separator:a37ddeb80d7dd791ce7809faa219eb148"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae216b528459a269d45957a919a6180e8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classapta.html">apta</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classapta__node.html#ae216b528459a269d45957a919a6180e8">context</a></td></tr>
-<tr class="separator:ae216b528459a269d45957a919a6180e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3988cbceb4424c44507237241a430aa4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classapta__node.html#a3988cbceb4424c44507237241a430aa4">source</a></td></tr>
-<tr class="separator:a3988cbceb4424c44507237241a430aa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95d170076f0c3f9d98f2d1701dafd2cb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classapta.html">apta</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classapta__node.html#a95d170076f0c3f9d98f2d1701dafd2cb">context</a></td></tr>
+<tr class="separator:a95d170076f0c3f9d98f2d1701dafd2cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a04123201ce6998a773656fa40cc60e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classapta__node.html#a7a04123201ce6998a773656fa40cc60e">source</a></td></tr>
+<tr class="separator:a7a04123201ce6998a773656fa40cc60e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c1cf7c316ab485ff4435f90dda2766e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classapta__node.html#a9c1cf7c316ab485ff4435f90dda2766e">type</a></td></tr>
 <tr class="separator:a9c1cf7c316ab485ff4435f90dda2766e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af55f64e7181c083d997bdf8b85cbe4d8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classapta__node.html#af55f64e7181c083d997bdf8b85cbe4d8">depth</a></td></tr>
@@ -221,8 +257,8 @@ node_list::iterator&#160;</td><td class="memItemRight" valign="bottom"><b>merge_
 <tr class="memitem:a0bd52815004e691c4fa942b262477c0a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0bd52815004e691c4fa942b262477c0a"></a>
 size_list&#160;</td><td class="memItemRight" valign="bottom"><b>size_store</b></td></tr>
 <tr class="separator:a0bd52815004e691c4fa942b262477c0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b2762e845a7776004e7edab7dae8718"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classevaluation__data.html">evaluation_data</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classapta__node.html#a9b2762e845a7776004e7edab7dae8718">data</a></td></tr>
-<tr class="separator:a9b2762e845a7776004e7edab7dae8718"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaabfb6ff0a493a59541045927bc8b060"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classevaluation__data.html">evaluation_data</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classapta__node.html#aaabfb6ff0a493a59541045927bc8b060">data</a></td></tr>
+<tr class="separator:aaabfb6ff0a493a59541045927bc8b060"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Node structure in the prefix tree. </p>
@@ -254,12 +290,12 @@ size_list&#160;</td><td class="memItemRight" valign="bottom"><b>size_store</b></
 
 </div>
 </div>
-<a class="anchor" id="ae216b528459a269d45957a919a6180e8"></a>
+<a class="anchor" id="a95d170076f0c3f9d98f2d1701dafd2cb"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classapta.html">apta</a>* apta_node::context</td>
+          <td class="memname"><a class="el" href="classapta.html">apta</a> * apta_node::context</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -267,12 +303,12 @@ size_list&#160;</td><td class="memItemRight" valign="bottom"><b>size_store</b></
 
 </div>
 </div>
-<a class="anchor" id="a9b2762e845a7776004e7edab7dae8718"></a>
+<a class="anchor" id="aaabfb6ff0a493a59541045927bc8b060"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classevaluation__data.html">evaluation_data</a>* apta_node::data</td>
+          <td class="memname"><a class="el" href="classevaluation__data.html">evaluation_data</a> * apta_node::data</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -384,12 +420,12 @@ size_list&#160;</td><td class="memItemRight" valign="bottom"><b>size_store</b></
 
 </div>
 </div>
-<a class="anchor" id="a3988cbceb4424c44507237241a430aa4"></a>
+<a class="anchor" id="a7a04123201ce6998a773656fa40cc60e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classapta__node.html">apta_node</a>* apta_node::source</td>
+          <td class="memname"><a class="el" href="classapta__node.html">apta_node</a> * apta_node::source</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -412,7 +448,7 @@ size_list&#160;</td><td class="memItemRight" valign="bottom"><b>size_store</b></
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>devel/<a class="el" href="devel_2state__merger_8h_source.html">state_merger.h</a></li>
-<li>lib/<a class="el" href="apta_8h_source.html">apta.h</a></li>
+<li>lib/<a class="el" href="lib_2apta_8h_source.html">apta.h</a></li>
 <li>apta.cpp</li>
 <li>devel/state_merger.cpp</li>
 </ul>

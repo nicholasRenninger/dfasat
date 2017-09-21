@@ -12,6 +12,7 @@ lib/evaluators.h
 # ignore binaries
 ./dfasat
 ./flexfringe
+flexfringe
 ./lingeling
 # py++ temporary files
 exposed_decl.pypp.txt
@@ -21,6 +22,7 @@ generated.cpp
 gitversion.cpp
 # articfacs
 .DS_Store
+flexfringe.dSYM/*
 # data files
 PAutomaC-competition_sets/*
 

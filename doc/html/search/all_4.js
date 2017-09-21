@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['init_5fwith_5fparams',['init_with_params',['../main_8cpp.html#aea146edad7ddb04f66a176c90b4b15a5',1,'main.cpp']]],
-  ['interactive',['interactive',['../interactive_8cpp.html#a62b0ab67b021c0adc94e44c44fdd179c',1,'interactive.cpp']]],
-  ['interactive_2ecpp',['interactive.cpp',['../interactive_8cpp.html',1,'']]]
+  ['eval_5fstore',['eval_store',['../classapta__node.html#a61b271696a3f73cb1b5c74a303542522',1,'apta_node']]],
+  ['evaluation_5fdata',['evaluation_data',['../classevaluation__data.html',1,'']]],
+  ['evaluation_5ffunction',['evaluation_function',['../classevaluation__function.html',1,'']]],
+  ['extend_5frefinement',['extend_refinement',['../classextend__refinement.html',1,'']]]
 ];

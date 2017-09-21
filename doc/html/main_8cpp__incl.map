@@ -1,27 +1,2 @@
 <map id="main.cpp" name="main.cpp">
-<area shape="rect" id="node10" href="$evaluation__factory_8h_source.html" title="evaluation_factory.h" alt="" coords="1755,80,1893,107"/>
-<area shape="rect" id="node20" href="$parameters_8h_source.html" title="parameters.h" alt="" coords="1965,497,2064,524"/>
-<area shape="rect" id="node24" href="$searcher_8h_source.html" title="searcher.h" alt="" coords="2689,162,2772,189"/>
-<area shape="rect" id="node25" href="$stream_8h_source.html" title="stream.h" alt="" coords="1403,162,1477,189"/>
-<area shape="rect" id="node26" href="$interactive_8h_source.html" title="interactive.h" alt="" coords="2028,162,2121,189"/>
-<area shape="rect" id="node27" href="$evaluators_8h_source.html" title="evaluators.h" alt="" coords="731,80,824,107"/>
-<area shape="rect" id="node11" href="$lib_2evaluate_8h_source.html" title="evaluate.h" alt="" coords="1783,162,1865,189"/>
-<area shape="rect" id="node16" href="$apta_8h_source.html" title="apta.h" alt="" coords="2211,423,2269,449"/>
-<area shape="rect" id="node21" href="$lib_2state__merger_8h_source.html" title="state_merger.h" alt="" coords="2176,251,2285,278"/>
-<area shape="rect" id="node22" href="$refinement_8h_source.html" title="refinement.h" alt="" coords="2446,341,2541,367"/>
-<area shape="rect" id="node28" href="$aike_8h_source.html" title="evaluation/aike.h" alt="" coords="517,162,637,189"/>
-<area shape="rect" id="node29" href="$likelihood_8h_source.html" title="likelihood.h" alt="" coords="581,251,667,278"/>
-<area shape="rect" id="node30" href="$alergia_8h_source.html" title="alergia.h" alt="" coords="787,341,858,367"/>
-<area shape="rect" id="node31" href="$num__count_8h_source.html" title="num_count.h" alt="" coords="463,423,561,449"/>
-<area shape="rect" id="node32" href="$conflict-driven_8h_source.html" title="evaluation/conflict\l&#45;driven.h" alt="" coords="551,333,678,375"/>
-<area shape="rect" id="node33" href="$depth-driven_8h_source.html" title="evaluation/depth&#45;driven.h" alt="" coords="95,341,262,367"/>
-<area shape="rect" id="node34" href="$evidence-driven_8h_source.html" title="evaluation/evidence\l&#45;driven.h" alt="" coords="338,333,475,375"/>
-<area shape="rect" id="node35" href="$fixed__depth__regression_8h_source.html" title="evaluation/fixed_depth\l_regression.h" alt="" coords="1125,155,1277,196"/>
-<area shape="rect" id="node36" href="$mse-error_8h_source.html" title="mse&#45;error.h" alt="" coords="1296,251,1384,278"/>
-<area shape="rect" id="node37" href="$full-overlap-driven_8h_source.html" title="evaluation/full&#45;overlap\l&#45;driven.h" alt="" coords="894,244,1042,285"/>
-<area shape="rect" id="node38" href="$kldistance_8h_source.html" title="evaluation/kldistance.h" alt="" coords="1067,251,1221,278"/>
-<area shape="rect" id="node39" href="$evaluation_2mealy_8h_source.html" title="evaluation/mealy.h" alt="" coords="47,423,177,449"/>
-<area shape="rect" id="node40" href="$overlap-driven_8h_source.html" title="evaluation/overlap\l&#45;driven.h" alt="" coords="691,244,818,285"/>
-<area shape="rect" id="node41" href="$process-mining_8h_source.html" title="evaluation/process\l&#45;mining.h" alt="" coords="712,155,843,196"/>
-<area shape="rect" id="node42" href="$sketch__eval_8h_source.html" title="evaluation/sketch_eval.h" alt="" coords="270,423,437,449"/>
 </map>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['score_5fcompare',['score_compare',['../structscore__compare.html',1,'']]]
+  ['named_5ftuple',['named_tuple',['../classnamed__tuple_1_1named__tuple.html',1,'named_tuple']]]
 ];

@@ -49,6 +49,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -122,11 +123,15 @@ $(document).ready(function(){initNavTree('classevaluation__data.html','');});
 
 <p><code>#include &lt;<a class="el" href="lib_2evaluate_8h_source.html">evaluate.h</a>&gt;</code></p>
 
-<p>Inherited by conflict_data, count_data, depth_data, mealy_data, mse_data, mse_data, and sketch_data.</p>
+<p>Inherited by conflict_data, conflict_data, count_data, count_data, depth_data, depth_data, mealy_data, mealy_data, mse_data, mse_data, mse_data, and mse_data.</p>
 <div class="dynheader">
 Collaboration diagram for evaluation_data:</div>
 <div class="dyncontent">
 <div class="center"><img src="classevaluation__data__coll__graph.png" border="0" usemap="#evaluation__data_coll__map" alt="Collaboration graph"/></div>
+<map name="evaluation__data_coll__map" id="evaluation__data_coll__map">
+<area shape="rect" id="node2" href="classapta__node.html" title="Node structure in the prefix tree. " alt="" coords="21,125,103,152"/>
+<area shape="rect" id="node3" href="classapta.html" title="Data structure for the prefix tree. " alt="" coords="39,231,85,257"/>
+</map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -167,21 +172,60 @@ virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>sink_consiste
 <tr class="memitem:ac863fd6a529ba41a87bdeac91cb981fb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac863fd6a529ba41a87bdeac91cb981fb"></a>
 virtual int&#160;</td><td class="memItemRight" valign="bottom"><b>num_sink_types</b> ()</td></tr>
 <tr class="separator:ac863fd6a529ba41a87bdeac91cb981fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a8c104ebb8a162aebc5c995e218bfab"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a8c104ebb8a162aebc5c995e218bfab"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>read_from</b> (int type, int index, int length, int symbol, string data)</td></tr>
+<tr class="separator:a0a8c104ebb8a162aebc5c995e218bfab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a417c3f0bae4461bfc909f4cac06c4999"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a417c3f0bae4461bfc909f4cac06c4999"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>read_to</b> (int type, int index, int length, int symbol, string data)</td></tr>
+<tr class="separator:a417c3f0bae4461bfc909f4cac06c4999"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fbcb1e436bb6eec367ac06074dae326"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0fbcb1e436bb6eec367ac06074dae326"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>update</b> (<a class="el" href="classevaluation__data.html">evaluation_data</a> *other)</td></tr>
+<tr class="separator:a0fbcb1e436bb6eec367ac06074dae326"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8e9fd6aa419f7c878df97ec447d61dd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa8e9fd6aa419f7c878df97ec447d61dd"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>undo</b> (<a class="el" href="classevaluation__data.html">evaluation_data</a> *other)</td></tr>
+<tr class="separator:aa8e9fd6aa419f7c878df97ec447d61dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a549cdf431c5b5114f24ea1be560a3945"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a549cdf431c5b5114f24ea1be560a3945"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print_state_label</b> (iostream &amp;output, <a class="el" href="classapta.html">apta</a> *aptacontext)</td></tr>
+<tr class="separator:a549cdf431c5b5114f24ea1be560a3945"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9bacc9cd9c44c18be1c3870e11b1d91e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9bacc9cd9c44c18be1c3870e11b1d91e"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print_state_style</b> (iostream &amp;output, <a class="el" href="classapta.html">apta</a> *aptacontext)</td></tr>
+<tr class="separator:a9bacc9cd9c44c18be1c3870e11b1d91e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a019554b17459698f07e6b1a2f7c37f17"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a019554b17459698f07e6b1a2f7c37f17"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print_transition_label</b> (iostream &amp;output, int symbol, <a class="el" href="classapta.html">apta</a> *aptacontext)</td></tr>
+<tr class="separator:a019554b17459698f07e6b1a2f7c37f17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27bbcfd2623cdb09009a8fe5b4e19879"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a27bbcfd2623cdb09009a8fe5b4e19879"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print_transition_style</b> (iostream &amp;output, set&lt; int &gt; symbols, <a class="el" href="classapta.html">apta</a> *aptacontext)</td></tr>
+<tr class="separator:a27bbcfd2623cdb09009a8fe5b4e19879"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57e587e16e0f829d6430918bd4c07d98"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a57e587e16e0f829d6430918bd4c07d98"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>sink_consistent</b> (int type)</td></tr>
+<tr class="separator:a57e587e16e0f829d6430918bd4c07d98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea0d291c08cac12e3098967f431dc4af"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aea0d291c08cac12e3098967f431dc4af"></a>
+virtual int&#160;</td><td class="memItemRight" valign="bottom"><b>sink_type</b> (<a class="el" href="classapta__node.html">apta_node</a> *node)</td></tr>
+<tr class="separator:aea0d291c08cac12e3098967f431dc4af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fb401f936f3c62bb52a40eae75120a9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3fb401f936f3c62bb52a40eae75120a9"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>sink_consistent</b> (<a class="el" href="classapta__node.html">apta_node</a> *node, int type)</td></tr>
+<tr class="separator:a3fb401f936f3c62bb52a40eae75120a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87192e88df30e8bf1f9625b6699a98ce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a87192e88df30e8bf1f9625b6699a98ce"></a>
+virtual int&#160;</td><td class="memItemRight" valign="bottom"><b>num_sink_types</b> ()</td></tr>
+<tr class="separator:a87192e88df30e8bf1f9625b6699a98ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
+<tr class="memitem:ac0bbf719fd344e835e98ba25e5b29e1a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0bbf719fd344e835e98ba25e5b29e1a"></a>
+<a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>node</b></td></tr>
+<tr class="separator:ac0bbf719fd344e835e98ba25e5b29e1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0838506c61ba0400cde7cb71bbcf449"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa0838506c61ba0400cde7cb71bbcf449"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>node_type</b></td></tr>
 <tr class="separator:aa0838506c61ba0400cde7cb71bbcf449"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c72d32aa4dbab4b03838bff5daa7b01"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7c72d32aa4dbab4b03838bff5daa7b01"></a>
+<tr class="memitem:a57cf2269f5aff06e706eebd8445f90c5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a57cf2269f5aff06e706eebd8445f90c5"></a>
 <a class="el" href="classevaluation__data.html">evaluation_data</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>undo_pointer</b></td></tr>
-<tr class="separator:a7c72d32aa4dbab4b03838bff5daa7b01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a57cf2269f5aff06e706eebd8445f90c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
 Static Protected Attributes</h2></td></tr>
-<tr class="memitem:aab122a205d97fd47be8f59e49804e6de"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aab122a205d97fd47be8f59e49804e6de"></a>
+<tr class="memitem:a52cafd1bbf5be3383eddb5be5c9cc327"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a52cafd1bbf5be3383eddb5be5c9cc327"></a>
 static DerivedDataRegister&lt; <a class="el" href="classevaluation__data.html">evaluation_data</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>reg</b></td></tr>
-<tr class="separator:aab122a205d97fd47be8f59e49804e6de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a52cafd1bbf5be3383eddb5be5c9cc327"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Extra data attached to each symbol, stored in each node. </p>

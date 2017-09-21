@@ -49,6 +49,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -122,7 +123,7 @@ $(document).ready(function(){initNavTree('classevaluation__function.html','');})
 
 <p><code>#include &lt;<a class="el" href="lib_2evaluate_8h_source.html">evaluate.h</a>&gt;</code></p>
 
-<p>Inherited by conflict_driven, count_driven, depth_driven, depth_driven, depth_driven, evidence_driven, evidence_driven, likelihoodratio, mealy, metric_driven, metric_driven, metric_driven, mse_error, mse_error, mse_error, overlap_driven, and sketch_driven.</p>
+<p>Inherited by conflict_driven, conflict_driven, count_driven, count_driven, depth_driven, depth_driven, depth_driven, depth_driven, depth_driven, depth_driven, evaluation_function_wrapper, evidence_driven, evidence_driven, evidence_driven, evidence_driven, likelihoodratio, likelihoodratio, mealy, mealy, metric_driven, metric_driven, metric_driven, metric_driven, metric_driven, metric_driven, mse_error, mse_error, mse_error, mse_error, mse_error, mse_error, overlap_driven, and overlap_driven.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -162,6 +163,42 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>init</b> (str
 <tr class="memitem:a5b63865df7d337aa0c258b7c795dd6c6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5b63865df7d337aa0c258b7c795dd6c6"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>add_sample</b> (string data, state_merger *merger)</td></tr>
 <tr class="separator:a5b63865df7d337aa0c258b7c795dd6c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66ed8b822b6cf90b37716edf50314886"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a66ed8b822b6cf90b37716edf50314886"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>already_merged</b> (<a class="el" href="classapta__node.html">apta_node</a> *left)</td></tr>
+<tr class="separator:a66ed8b822b6cf90b37716edf50314886"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa612bc5d069d73d95ba3b9dc1c617fed"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa612bc5d069d73d95ba3b9dc1c617fed"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>consistency_check</b> (<a class="el" href="classevaluation__data.html">evaluation_data</a> *l, <a class="el" href="classevaluation__data.html">evaluation_data</a> *r)</td></tr>
+<tr class="separator:aa612bc5d069d73d95ba3b9dc1c617fed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9e2ec749349aef7b1aa48c4727d9af0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac9e2ec749349aef7b1aa48c4727d9af0"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>consistent</b> (state_merger *, <a class="el" href="classapta__node.html">apta_node</a> *left, <a class="el" href="classapta__node.html">apta_node</a> *right)</td></tr>
+<tr class="separator:ac9e2ec749349aef7b1aa48c4727d9af0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac648f41aeeb3ca018f3d625943ff646a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac648f41aeeb3ca018f3d625943ff646a"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>update_score</b> (state_merger *, <a class="el" href="classapta__node.html">apta_node</a> *left, <a class="el" href="classapta__node.html">apta_node</a> *right)</td></tr>
+<tr class="separator:ac648f41aeeb3ca018f3d625943ff646a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2ee16851119d2e3267f06d34ca9725b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae2ee16851119d2e3267f06d34ca9725b"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>undo_update</b> (state_merger *, <a class="el" href="classapta__node.html">apta_node</a> *left, <a class="el" href="classapta__node.html">apta_node</a> *right)</td></tr>
+<tr class="separator:ae2ee16851119d2e3267f06d34ca9725b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a752f38b55dec96d370bd0295f3e860ff"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a752f38b55dec96d370bd0295f3e860ff"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>compute_consistency</b> (state_merger *, <a class="el" href="classapta__node.html">apta_node</a> *left, <a class="el" href="classapta__node.html">apta_node</a> *right)</td></tr>
+<tr class="separator:a752f38b55dec96d370bd0295f3e860ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38fa304a626917a55a8c10671713c222"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a38fa304a626917a55a8c10671713c222"></a>
+virtual int&#160;</td><td class="memItemRight" valign="bottom"><b>compute_score</b> (state_merger *, <a class="el" href="classapta__node.html">apta_node</a> *left, <a class="el" href="classapta__node.html">apta_node</a> *right)</td></tr>
+<tr class="separator:a38fa304a626917a55a8c10671713c222"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86f7463b8c56143b1a73b0d75f22d890"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a86f7463b8c56143b1a73b0d75f22d890"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> (state_merger *)</td></tr>
+<tr class="separator:a86f7463b8c56143b1a73b0d75f22d890"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c68d6950ebdb9ea37e251525ad3b32f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2c68d6950ebdb9ea37e251525ad3b32f"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>update</b> (state_merger *)</td></tr>
+<tr class="separator:a2c68d6950ebdb9ea37e251525ad3b32f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93e73f2c3fcfeb7634c4f71b50938a83"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a93e73f2c3fcfeb7634c4f71b50938a83"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>initialize</b> (state_merger *)</td></tr>
+<tr class="separator:a93e73f2c3fcfeb7634c4f71b50938a83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09bd845a35f36363874c558bbbda8458"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a09bd845a35f36363874c558bbbda8458"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>init</b> (string data, state_merger *merger)</td></tr>
+<tr class="separator:a09bd845a35f36363874c558bbbda8458"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa59695ebd759b964495f54bdc1303c22"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa59695ebd759b964495f54bdc1303c22"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>add_sample</b> (string data, state_merger *merger)</td></tr>
+<tr class="separator:aa59695ebd759b964495f54bdc1303c22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -180,9 +217,9 @@ state_set&#160;</td><td class="memItemRight" valign="bottom"><b>merged_left_stat
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
 Static Protected Attributes</h2></td></tr>
-<tr class="memitem:a254a3ccfbe2bdd5c9b84ad4e52599e50"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a254a3ccfbe2bdd5c9b84ad4e52599e50"></a>
+<tr class="memitem:acb0655b008e5c52093692a4389f89a42"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb0655b008e5c52093692a4389f89a42"></a>
 static DerivedRegister&lt; <a class="el" href="classevaluation__function.html">evaluation_function</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>reg</b></td></tr>
-<tr class="separator:a254a3ccfbe2bdd5c9b84ad4e52599e50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:acb0655b008e5c52093692a4389f89a42"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>User-defined merge heuristic function. </p>

@@ -19,20 +19,17 @@ Command line parameter processing and entry point.
 {\ttfamily \#include \char`\"{}stream.\+h\char`\"{}}\\*
 {\ttfamily \#include $<$vector$>$}\\*
 {\ttfamily \#include \char`\"{}interactive.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}common.\+h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}parameters.\+h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}evaluators.\+h\char`\"{}}\\*
-Include dependency graph for main.\+cpp\+:\nopagebreak
+Include dependency graph for main.\+cpp\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[width=350pt]{main_8cpp__incl}
 \end{center}
 \end{figure}
-\subsection*{Macros}
-\begin{DoxyCompactItemize}
-\item 
-\#define {\bfseries D\+E\+B\+UG}(x)
-\end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -58,22 +55,6 @@ bool {\bfseries debugging\+\_\+enabled} = false\hypertarget{main_8cpp_abef6625b9
 \subsection{Detailed Description}
 Command line parameter processing and entry point. 
 
-
-
-\subsection{Macro Definition Documentation}
-\index{main.\+cpp@{main.\+cpp}!D\+E\+B\+UG@{D\+E\+B\+UG}}
-\index{D\+E\+B\+UG@{D\+E\+B\+UG}!main.\+cpp@{main.\+cpp}}
-\subsubsection[{\texorpdfstring{D\+E\+B\+UG}{DEBUG}}]{\setlength{\rightskip}{0pt plus 5cm}\#define D\+E\+B\+UG(
-\begin{DoxyParamCaption}
-\item[{}]{x}
-\end{DoxyParamCaption}
-)}\hypertarget{main_8cpp_a3dfa58b1c5c2943dd49d8aa1981d377d}{}\label{main_8cpp_a3dfa58b1c5c2943dd49d8aa1981d377d}
-{\bfseries Value\+:}
-\begin{DoxyCode}
-\textcolor{keywordflow}{do} \{ \(\backslash\)
-  if (debugging\_enabled) \{ std::cerr << x << std::endl; \} \(\backslash\)
-\} \textcolor{keywordflow}{while} (0)
-\end{DoxyCode}
 
 
 \subsection{Function Documentation}

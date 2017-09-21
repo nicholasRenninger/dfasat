@@ -49,6 +49,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -118,7 +119,7 @@ $(document).ready(function(){initNavTree('classextend__refinement.html','');});
 <p>A extend-refinement makes a blue state red. The score is the size (frequency) of the state in the APTA.  
  <a href="classextend__refinement.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="refinement_8h_source.html">refinement.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="lib_2refinement_8h_source.html">refinement.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for extend_refinement:</div>
 <div class="dyncontent">
@@ -132,10 +133,10 @@ Collaboration diagram for extend_refinement:</div>
 <div class="dyncontent">
 <div class="center"><img src="classextend__refinement__coll__graph.png" border="0" usemap="#extend__refinement_coll__map" alt="Collaboration graph"/></div>
 <map name="extend__refinement_coll__map" id="extend__refinement_coll__map">
-<area shape="rect" id="node2" href="classrefinement.html" title="Base class for refinements. Specialized to either a point (merge), split, or color (adding of a new s..." alt="" coords="29,231,111,257"/>
-<area shape="rect" id="node3" href="classapta__node.html" title="Node structure in the prefix tree. " alt="" coords="89,125,171,152"/>
-<area shape="rect" id="node5" href="classapta.html" title="Data structure for the prefix tree. " alt="" coords="149,231,196,257"/>
-<area shape="rect" id="node4" href="classevaluation__data.html" title="Extra data attached to each symbol, stored in each node. " alt="" coords="73,5,187,32"/>
+<area shape="rect" id="node2" href="classrefinement.html" title="Base class for refinements. Specialized to either a point (merge), split, or color (adding of a new s..." alt="" coords="29,141,111,168"/>
+<area shape="rect" id="node3" href="classapta__node.html" title="Node structure in the prefix tree. " alt="" coords="215,21,298,48"/>
+<area shape="rect" id="node4" href="classevaluation__data.html" title="Extra data attached to each symbol, stored in each node. " alt="" coords="136,141,249,168"/>
+<area shape="rect" id="node5" href="classapta.html" title="Data structure for the prefix tree. " alt="" coords="376,141,423,168"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -156,6 +157,21 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>doref</b> (st
 <tr class="memitem:a5421f88fc0063f78c8ec6887985f7e5e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5421f88fc0063f78c8ec6887985f7e5e"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>undo</b> (state_merger *m)</td></tr>
 <tr class="separator:a5421f88fc0063f78c8ec6887985f7e5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa00190c7c6717a29a97f35d36e4d3ae7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa00190c7c6717a29a97f35d36e4d3ae7"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>extend_refinement</b> (<a class="el" href="classapta__node.html">apta_node</a> *r)</td></tr>
+<tr class="separator:aa00190c7c6717a29a97f35d36e4d3ae7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c11c0e4110614ef6b0366257abd9d6d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5c11c0e4110614ef6b0366257abd9d6d"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const </td></tr>
+<tr class="separator:a5c11c0e4110614ef6b0366257abd9d6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e331a6e52fbc9c65effa8825ac73f02"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e331a6e52fbc9c65effa8825ac73f02"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print_short</b> () const </td></tr>
+<tr class="separator:a4e331a6e52fbc9c65effa8825ac73f02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad650a724613bf21e37ca82140722f20e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad650a724613bf21e37ca82140722f20e"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>doref</b> (state_merger *m)</td></tr>
+<tr class="separator:ad650a724613bf21e37ca82140722f20e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a343c824964799b67b60d83594c221529"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a343c824964799b67b60d83594c221529"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>undo</b> (state_merger *m)</td></tr>
+<tr class="separator:a343c824964799b67b60d83594c221529"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -163,15 +179,15 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:a024cfbac56c02c168736c38f17f0a197 inherit pub_attribs_classrefinement"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a024cfbac56c02c168736c38f17f0a197"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>score</b></td></tr>
 <tr class="separator:a024cfbac56c02c168736c38f17f0a197 inherit pub_attribs_classrefinement"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60169bd9df35b3a61404395da1e09b05 inherit pub_attribs_classrefinement"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a60169bd9df35b3a61404395da1e09b05"></a>
+<tr class="memitem:a704aab10cc3cad2704aa3fe054f66e2e inherit pub_attribs_classrefinement"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a704aab10cc3cad2704aa3fe054f66e2e"></a>
 <a class="el" href="classapta__node.html">apta_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>right</b></td></tr>
-<tr class="separator:a60169bd9df35b3a61404395da1e09b05 inherit pub_attribs_classrefinement"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a704aab10cc3cad2704aa3fe054f66e2e inherit pub_attribs_classrefinement"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A extend-refinement makes a blue state red. The score is the size (frequency) of the state in the APTA. </p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
-<li>lib/<a class="el" href="refinement_8h_source.html">refinement.h</a></li>
-<li>refinement.cpp</li>
+<li>lib/<a class="el" href="lib_2refinement_8h_source.html">refinement.h</a></li>
+<li>pypackage/src/refinement.cpp</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
