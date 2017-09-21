@@ -63,6 +63,7 @@ refinement_list* random_greedy_bounded_run(state_merger* merger){
             }*/
             best_ref->print_short();
             cout << " ";
+            std::cout.flush();
             best_ref->doref(merger);
             all_refs->push_front(best_ref);
             
