@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['readme',['README',['../md_README.html',1,'']]],
-  ['readme',['README',['../md_space-saving_build_README.html',1,'']]]
+  ['readme',['README',['../md__home_winter_dfasat_README.html',1,'']]]
 ];
