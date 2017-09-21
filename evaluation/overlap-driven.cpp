@@ -66,6 +66,8 @@ bool overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node
             }
         }*/
     }
+    return true;
+    
     if(l->num_accepting >= SYMBOL_COUNT && r->num_accepting == 0){
         inconsistency_found = true;
         return false;
@@ -99,9 +101,9 @@ void overlap_driven::update_score(state_merger *merger, apta_node* left, apta_no
         if(l->pos(i) != 0 && r->pos(i) != 0){
             overlap += 1;
         }
-        if(l->neg(i) != 0 && r->neg(i) != 0){
+        /*if(l->neg(i) != 0 && r->neg(i) != 0){
             overlap += 1;
-        }
+        }*/
     }
     return;
     
