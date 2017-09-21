@@ -1,0 +1,132 @@
+\hypertarget{classevaluation__data}{}\section{evaluation\+\_\+data Class Reference}
+\label{classevaluation__data}\index{evaluation\+\_\+data@{evaluation\+\_\+data}}
+
+
+Extra data attached to each symbol, stored in each node.  
+
+
+
+
+{\ttfamily \#include $<$evaluate.\+h$>$}
+
+
+
+Inherited by conflict\+\_\+data, conflict\+\_\+data, count\+\_\+data, count\+\_\+data, depth\+\_\+data, depth\+\_\+data, mealy\+\_\+data, mealy\+\_\+data, mse\+\_\+data, mse\+\_\+data, mse\+\_\+data, and mse\+\_\+data.
+
+
+
+Collaboration diagram for evaluation\+\_\+data\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=242pt]{classevaluation__data__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void {\bfseries read\+\_\+from} (int type, int index, int length, int symbol, string data)\hypertarget{classevaluation__data_ad4774370fe02a3daadfe4b2aed447ac5}{}\label{classevaluation__data_ad4774370fe02a3daadfe4b2aed447ac5}
+
+\item 
+virtual void {\bfseries read\+\_\+to} (int type, int index, int length, int symbol, string data)\hypertarget{classevaluation__data_aff5dc3181ecf1391840b9193715dc229}{}\label{classevaluation__data_aff5dc3181ecf1391840b9193715dc229}
+
+\item 
+virtual void {\bfseries update} (\hyperlink{classevaluation__data}{evaluation\+\_\+data} $\ast$other)\hypertarget{classevaluation__data_a863d6fd9eb36651639f0879af3262d5c}{}\label{classevaluation__data_a863d6fd9eb36651639f0879af3262d5c}
+
+\item 
+virtual void {\bfseries undo} (\hyperlink{classevaluation__data}{evaluation\+\_\+data} $\ast$other)\hypertarget{classevaluation__data_a14974d8526bdfbf7a05a4d2f53378b0e}{}\label{classevaluation__data_a14974d8526bdfbf7a05a4d2f53378b0e}
+
+\item 
+virtual void {\bfseries print\+\_\+state\+\_\+label} (iostream \&output, \hyperlink{classapta}{apta} $\ast$aptacontext)\hypertarget{classevaluation__data_a42ec54d6111c2dc9979b679c714e03f3}{}\label{classevaluation__data_a42ec54d6111c2dc9979b679c714e03f3}
+
+\item 
+virtual void {\bfseries print\+\_\+state\+\_\+style} (iostream \&output, \hyperlink{classapta}{apta} $\ast$aptacontext)\hypertarget{classevaluation__data_a6cb73abd19dc438a0060fc675486703f}{}\label{classevaluation__data_a6cb73abd19dc438a0060fc675486703f}
+
+\item 
+virtual void {\bfseries print\+\_\+transition\+\_\+label} (iostream \&output, int symbol, \hyperlink{classapta}{apta} $\ast$aptacontext)\hypertarget{classevaluation__data_a42616b2b65dcce18c38db0198c0c6357}{}\label{classevaluation__data_a42616b2b65dcce18c38db0198c0c6357}
+
+\item 
+virtual void {\bfseries print\+\_\+transition\+\_\+style} (iostream \&output, set$<$ int $>$ symbols, \hyperlink{classapta}{apta} $\ast$aptacontext)\hypertarget{classevaluation__data_addc2c82524a7056090084c65560e13ab}{}\label{classevaluation__data_addc2c82524a7056090084c65560e13ab}
+
+\item 
+virtual bool {\bfseries sink\+\_\+consistent} (int type)\hypertarget{classevaluation__data_ad3045eb73b3d82d657e808aa33848722}{}\label{classevaluation__data_ad3045eb73b3d82d657e808aa33848722}
+
+\item 
+virtual int {\bfseries sink\+\_\+type} (\hyperlink{classapta__node}{apta\+\_\+node} $\ast$node)\hypertarget{classevaluation__data_a185bc8febf0cf0a8bd0a967e911c523c}{}\label{classevaluation__data_a185bc8febf0cf0a8bd0a967e911c523c}
+
+\item 
+virtual bool {\bfseries sink\+\_\+consistent} (\hyperlink{classapta__node}{apta\+\_\+node} $\ast$node, int type)\hypertarget{classevaluation__data_abb8607435f006cb15269f252cd18b9da}{}\label{classevaluation__data_abb8607435f006cb15269f252cd18b9da}
+
+\item 
+virtual int {\bfseries num\+\_\+sink\+\_\+types} ()\hypertarget{classevaluation__data_ac863fd6a529ba41a87bdeac91cb981fb}{}\label{classevaluation__data_ac863fd6a529ba41a87bdeac91cb981fb}
+
+\item 
+virtual void {\bfseries read\+\_\+from} (int type, int index, int length, int symbol, string data)\hypertarget{classevaluation__data_a0a8c104ebb8a162aebc5c995e218bfab}{}\label{classevaluation__data_a0a8c104ebb8a162aebc5c995e218bfab}
+
+\item 
+virtual void {\bfseries read\+\_\+to} (int type, int index, int length, int symbol, string data)\hypertarget{classevaluation__data_a417c3f0bae4461bfc909f4cac06c4999}{}\label{classevaluation__data_a417c3f0bae4461bfc909f4cac06c4999}
+
+\item 
+virtual void {\bfseries update} (\hyperlink{classevaluation__data}{evaluation\+\_\+data} $\ast$other)\hypertarget{classevaluation__data_a0fbcb1e436bb6eec367ac06074dae326}{}\label{classevaluation__data_a0fbcb1e436bb6eec367ac06074dae326}
+
+\item 
+virtual void {\bfseries undo} (\hyperlink{classevaluation__data}{evaluation\+\_\+data} $\ast$other)\hypertarget{classevaluation__data_aa8e9fd6aa419f7c878df97ec447d61dd}{}\label{classevaluation__data_aa8e9fd6aa419f7c878df97ec447d61dd}
+
+\item 
+virtual void {\bfseries print\+\_\+state\+\_\+label} (iostream \&output, \hyperlink{classapta}{apta} $\ast$aptacontext)\hypertarget{classevaluation__data_a549cdf431c5b5114f24ea1be560a3945}{}\label{classevaluation__data_a549cdf431c5b5114f24ea1be560a3945}
+
+\item 
+virtual void {\bfseries print\+\_\+state\+\_\+style} (iostream \&output, \hyperlink{classapta}{apta} $\ast$aptacontext)\hypertarget{classevaluation__data_a9bacc9cd9c44c18be1c3870e11b1d91e}{}\label{classevaluation__data_a9bacc9cd9c44c18be1c3870e11b1d91e}
+
+\item 
+virtual void {\bfseries print\+\_\+transition\+\_\+label} (iostream \&output, int symbol, \hyperlink{classapta}{apta} $\ast$aptacontext)\hypertarget{classevaluation__data_a019554b17459698f07e6b1a2f7c37f17}{}\label{classevaluation__data_a019554b17459698f07e6b1a2f7c37f17}
+
+\item 
+virtual void {\bfseries print\+\_\+transition\+\_\+style} (iostream \&output, set$<$ int $>$ symbols, \hyperlink{classapta}{apta} $\ast$aptacontext)\hypertarget{classevaluation__data_a27bbcfd2623cdb09009a8fe5b4e19879}{}\label{classevaluation__data_a27bbcfd2623cdb09009a8fe5b4e19879}
+
+\item 
+virtual bool {\bfseries sink\+\_\+consistent} (int type)\hypertarget{classevaluation__data_a57e587e16e0f829d6430918bd4c07d98}{}\label{classevaluation__data_a57e587e16e0f829d6430918bd4c07d98}
+
+\item 
+virtual int {\bfseries sink\+\_\+type} (\hyperlink{classapta__node}{apta\+\_\+node} $\ast$node)\hypertarget{classevaluation__data_aea0d291c08cac12e3098967f431dc4af}{}\label{classevaluation__data_aea0d291c08cac12e3098967f431dc4af}
+
+\item 
+virtual bool {\bfseries sink\+\_\+consistent} (\hyperlink{classapta__node}{apta\+\_\+node} $\ast$node, int type)\hypertarget{classevaluation__data_a3fb401f936f3c62bb52a40eae75120a9}{}\label{classevaluation__data_a3fb401f936f3c62bb52a40eae75120a9}
+
+\item 
+virtual int {\bfseries num\+\_\+sink\+\_\+types} ()\hypertarget{classevaluation__data_a87192e88df30e8bf1f9625b6699a98ce}{}\label{classevaluation__data_a87192e88df30e8bf1f9625b6699a98ce}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classapta__node}{apta\+\_\+node} $\ast$ {\bfseries node}\hypertarget{classevaluation__data_ac0bbf719fd344e835e98ba25e5b29e1a}{}\label{classevaluation__data_ac0bbf719fd344e835e98ba25e5b29e1a}
+
+\item 
+int {\bfseries node\+\_\+type}\hypertarget{classevaluation__data_aa0838506c61ba0400cde7cb71bbcf449}{}\label{classevaluation__data_aa0838506c61ba0400cde7cb71bbcf449}
+
+\item 
+\hyperlink{classevaluation__data}{evaluation\+\_\+data} $\ast$ {\bfseries undo\+\_\+pointer}\hypertarget{classevaluation__data_a57cf2269f5aff06e706eebd8445f90c5}{}\label{classevaluation__data_a57cf2269f5aff06e706eebd8445f90c5}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static Derived\+Data\+Register$<$ \hyperlink{classevaluation__data}{evaluation\+\_\+data} $>$ {\bfseries reg}\hypertarget{classevaluation__data_a52cafd1bbf5be3383eddb5be5c9cc327}{}\label{classevaluation__data_a52cafd1bbf5be3383eddb5be5c9cc327}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Extra data attached to each symbol, stored in each node. 
+
+Stores all the extra data attached to symbols in a node. The class is used by the \hyperlink{classevaluation__function}{evaluation\+\_\+function} class. It also provides the sink functions determining when to ignore a node due to user-\/defined criteria, i.\+e. low frquency counts. Important\+: Each \hyperlink{classevaluation__data}{evaluation\+\_\+data} type has to be registered by calling R\+E\+G\+I\+S\+T\+E\+R\+\_\+\+D\+E\+F\+\_\+\+D\+A\+T\+A\+T\+Y\+P\+E($<$unique name$>$). \begin{DoxySeeAlso}{See also}
+\hyperlink{classevaluation__function}{evaluation\+\_\+function} 
+\end{DoxySeeAlso}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+devel/evaluate.\+h\item 
+evaluation/evaluate.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,6 @@
+<map id="extend_refinement" name="extend_refinement">
+<area shape="rect" id="node2" href="$classrefinement.html" title="Base class for refinements. Specialized to either a point (merge), split, or color (adding of a new s..." alt="" coords="29,141,111,168"/>
+<area shape="rect" id="node3" href="$classapta__node.html" title="Node structure in the prefix tree. " alt="" coords="215,21,298,48"/>
+<area shape="rect" id="node4" href="$classevaluation__data.html" title="Extra data attached to each symbol, stored in each node. " alt="" coords="136,141,249,168"/>
+<area shape="rect" id="node5" href="$classapta.html" title="Data structure for the prefix tree. " alt="" coords="376,141,423,168"/>
+</map>

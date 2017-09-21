@@ -1,0 +1,126 @@
+\hypertarget{classevaluation__function}{}\section{evaluation\+\_\+function Class Reference}
+\label{classevaluation__function}\index{evaluation\+\_\+function@{evaluation\+\_\+function}}
+
+
+User-\/defined merge heuristic function.  
+
+
+
+
+{\ttfamily \#include $<$evaluate.\+h$>$}
+
+
+
+Inherited by conflict\+\_\+driven, conflict\+\_\+driven, count\+\_\+driven, count\+\_\+driven, depth\+\_\+driven, depth\+\_\+driven, depth\+\_\+driven, depth\+\_\+driven, depth\+\_\+driven, depth\+\_\+driven, evaluation\+\_\+function\+\_\+wrapper, evidence\+\_\+driven, evidence\+\_\+driven, evidence\+\_\+driven, evidence\+\_\+driven, likelihoodratio, likelihoodratio, mealy, mealy, metric\+\_\+driven, metric\+\_\+driven, metric\+\_\+driven, metric\+\_\+driven, metric\+\_\+driven, metric\+\_\+driven, mse\+\_\+error, mse\+\_\+error, mse\+\_\+error, mse\+\_\+error, mse\+\_\+error, mse\+\_\+error, overlap\+\_\+driven, and overlap\+\_\+driven.
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool {\bfseries already\+\_\+merged} (\hyperlink{classapta__node}{apta\+\_\+node} $\ast$left)\hypertarget{classevaluation__function_a66ed8b822b6cf90b37716edf50314886}{}\label{classevaluation__function_a66ed8b822b6cf90b37716edf50314886}
+
+\item 
+virtual bool {\bfseries consistency\+\_\+check} (\hyperlink{classevaluation__data}{evaluation\+\_\+data} $\ast$l, \hyperlink{classevaluation__data}{evaluation\+\_\+data} $\ast$r)\hypertarget{classevaluation__function_ac6a91c189027249847e00eab2b8bf52f}{}\label{classevaluation__function_ac6a91c189027249847e00eab2b8bf52f}
+
+\item 
+virtual bool {\bfseries consistent} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_ac226c4fd2b73272b4ef7fa94f9a45744}{}\label{classevaluation__function_ac226c4fd2b73272b4ef7fa94f9a45744}
+
+\item 
+virtual void {\bfseries update\+\_\+score} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_afabbf2a4ce4af020707fba03d171f75e}{}\label{classevaluation__function_afabbf2a4ce4af020707fba03d171f75e}
+
+\item 
+virtual void {\bfseries undo\+\_\+update} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_ad0668d572e56e12c0ed267000391432a}{}\label{classevaluation__function_ad0668d572e56e12c0ed267000391432a}
+
+\item 
+virtual bool {\bfseries compute\+\_\+consistency} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_a423a489d49a8156f60e2fce98d0fe525}{}\label{classevaluation__function_a423a489d49a8156f60e2fce98d0fe525}
+
+\item 
+virtual int {\bfseries compute\+\_\+score} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_a36e533923cde5358ecb74ad40e46f1f9}{}\label{classevaluation__function_a36e533923cde5358ecb74ad40e46f1f9}
+
+\item 
+virtual void {\bfseries reset} (state\+\_\+merger $\ast$)\hypertarget{classevaluation__function_acc457754e1aff5d9e20cf51ea8976f37}{}\label{classevaluation__function_acc457754e1aff5d9e20cf51ea8976f37}
+
+\item 
+virtual void {\bfseries update} (state\+\_\+merger $\ast$)\hypertarget{classevaluation__function_af2c5134a769ccfd8703608b16a4ede06}{}\label{classevaluation__function_af2c5134a769ccfd8703608b16a4ede06}
+
+\item 
+virtual void {\bfseries initialize} (state\+\_\+merger $\ast$)\hypertarget{classevaluation__function_af15dfb9e27651870fbabf8b8355faefc}{}\label{classevaluation__function_af15dfb9e27651870fbabf8b8355faefc}
+
+\item 
+virtual void {\bfseries init} (string data, state\+\_\+merger $\ast$merger)\hypertarget{classevaluation__function_aea7c6d5884be03430212d55b3dd546ea}{}\label{classevaluation__function_aea7c6d5884be03430212d55b3dd546ea}
+
+\item 
+virtual void {\bfseries add\+\_\+sample} (string data, state\+\_\+merger $\ast$merger)\hypertarget{classevaluation__function_a5b63865df7d337aa0c258b7c795dd6c6}{}\label{classevaluation__function_a5b63865df7d337aa0c258b7c795dd6c6}
+
+\item 
+bool {\bfseries already\+\_\+merged} (\hyperlink{classapta__node}{apta\+\_\+node} $\ast$left)\hypertarget{classevaluation__function_a66ed8b822b6cf90b37716edf50314886}{}\label{classevaluation__function_a66ed8b822b6cf90b37716edf50314886}
+
+\item 
+virtual bool {\bfseries consistency\+\_\+check} (\hyperlink{classevaluation__data}{evaluation\+\_\+data} $\ast$l, \hyperlink{classevaluation__data}{evaluation\+\_\+data} $\ast$r)\hypertarget{classevaluation__function_aa612bc5d069d73d95ba3b9dc1c617fed}{}\label{classevaluation__function_aa612bc5d069d73d95ba3b9dc1c617fed}
+
+\item 
+virtual bool {\bfseries consistent} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_ac9e2ec749349aef7b1aa48c4727d9af0}{}\label{classevaluation__function_ac9e2ec749349aef7b1aa48c4727d9af0}
+
+\item 
+virtual void {\bfseries update\+\_\+score} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_ac648f41aeeb3ca018f3d625943ff646a}{}\label{classevaluation__function_ac648f41aeeb3ca018f3d625943ff646a}
+
+\item 
+virtual void {\bfseries undo\+\_\+update} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_ae2ee16851119d2e3267f06d34ca9725b}{}\label{classevaluation__function_ae2ee16851119d2e3267f06d34ca9725b}
+
+\item 
+virtual bool {\bfseries compute\+\_\+consistency} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_a752f38b55dec96d370bd0295f3e860ff}{}\label{classevaluation__function_a752f38b55dec96d370bd0295f3e860ff}
+
+\item 
+virtual int {\bfseries compute\+\_\+score} (state\+\_\+merger $\ast$, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$left, \hyperlink{classapta__node}{apta\+\_\+node} $\ast$right)\hypertarget{classevaluation__function_a38fa304a626917a55a8c10671713c222}{}\label{classevaluation__function_a38fa304a626917a55a8c10671713c222}
+
+\item 
+virtual void {\bfseries reset} (state\+\_\+merger $\ast$)\hypertarget{classevaluation__function_a86f7463b8c56143b1a73b0d75f22d890}{}\label{classevaluation__function_a86f7463b8c56143b1a73b0d75f22d890}
+
+\item 
+virtual void {\bfseries update} (state\+\_\+merger $\ast$)\hypertarget{classevaluation__function_a2c68d6950ebdb9ea37e251525ad3b32f}{}\label{classevaluation__function_a2c68d6950ebdb9ea37e251525ad3b32f}
+
+\item 
+virtual void {\bfseries initialize} (state\+\_\+merger $\ast$)\hypertarget{classevaluation__function_a93e73f2c3fcfeb7634c4f71b50938a83}{}\label{classevaluation__function_a93e73f2c3fcfeb7634c4f71b50938a83}
+
+\item 
+virtual void {\bfseries init} (string data, state\+\_\+merger $\ast$merger)\hypertarget{classevaluation__function_a09bd845a35f36363874c558bbbda8458}{}\label{classevaluation__function_a09bd845a35f36363874c558bbbda8458}
+
+\item 
+virtual void {\bfseries add\+\_\+sample} (string data, state\+\_\+merger $\ast$merger)\hypertarget{classevaluation__function_aa59695ebd759b964495f54bdc1303c22}{}\label{classevaluation__function_aa59695ebd759b964495f54bdc1303c22}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool {\bfseries inconsistency\+\_\+found}\hypertarget{classevaluation__function_a6631f0e603404c6c08c1a1fdd298932b}{}\label{classevaluation__function_a6631f0e603404c6c08c1a1fdd298932b}
+
+\item 
+int {\bfseries num\+\_\+merges}\hypertarget{classevaluation__function_a23fbdcc2f7a07e1d1428e61d5c5c267f}{}\label{classevaluation__function_a23fbdcc2f7a07e1d1428e61d5c5c267f}
+
+\item 
+bool {\bfseries compute\+\_\+before\+\_\+merge}\hypertarget{classevaluation__function_a1954a2b161d4da6148e288cb38ac8b59}{}\label{classevaluation__function_a1954a2b161d4da6148e288cb38ac8b59}
+
+\item 
+state\+\_\+set {\bfseries merged\+\_\+left\+\_\+states}\hypertarget{classevaluation__function_aff00baf1529b16519900b0f68afe8dad}{}\label{classevaluation__function_aff00baf1529b16519900b0f68afe8dad}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static Derived\+Register$<$ \hyperlink{classevaluation__function}{evaluation\+\_\+function} $>$ {\bfseries reg}\hypertarget{classevaluation__function_acb0655b008e5c52093692a4389f89a42}{}\label{classevaluation__function_acb0655b008e5c52093692a4389f89a42}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+User-\/defined merge heuristic function. 
+
+Important\+: Each \hyperlink{classevaluation__data}{evaluation\+\_\+data} type has to be registered by calling R\+E\+G\+I\+S\+T\+E\+R\+\_\+\+D\+E\+F\+\_\+\+T\+Y\+P\+E($<$unique name$>$). \begin{DoxySeeAlso}{See also}
+\hyperlink{classevaluation__data}{evaluation\+\_\+data} 
+\end{DoxySeeAlso}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+lib/evaluate.\+h\item 
+devel/evaluate.\+cpp\item 
+evaluation/2refactor/conflict\+\_\+driven.\+cpp\end{DoxyCompactItemize}

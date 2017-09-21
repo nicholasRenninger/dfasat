@@ -1,0 +1,34 @@
+For the moment, please check the Jupyter notebook or read the doxygen documentation of the C++ package.
+
+Disclaimer on building the package\+: The install script will download some dependencies like cast\+X\+ML and clone the development branch of flexfringe into src to run the python target.
+
+\section*{Compiling the library for the package }
+
+\$ make clean python W\+I\+T\+H\+\_\+\+P\+Y\+T\+H\+ON=1
+
+will build the shared library.
+
+\section*{Build instructions for the package }
+
+\$ (sudo) python3 setup.\+py build
+
+\section*{Install instructions }
+
+\$ (sudo) python3 setup.\+py install
+
+\section*{Publish instructions }
+
+\section*{Add files }
+
+Add files to M\+A\+N\+I\+F\+E\+S\+T.\+in
+
+\section*{Upload }
+
+Set version number in {\ttfamily setup.\+py} as in \begin{DoxyVerb}setup(name='dfasat',
+      version='0.0.1.40',  # increment this version number
+      description='flexfringe',
+\end{DoxyVerb}
+
+
+and upload \begin{DoxyVerb}python3 setup.py sdist upload [-r https://testpypi.python.org/pypi]\end{DoxyVerb}
+ 
