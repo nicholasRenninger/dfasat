@@ -1,5 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classrefinement.html" title="Base class for refinements. Specialized to either a point (merge), split, or color (adding of a new s..." alt="" coords="5,31,88,57"/>
-<area shape="rect" id="node2" href="$classextend__refinement.html" title="A extend&#45;refinement makes a blue state red. The score is the size (frequency) of the state in the APT..." alt="" coords="136,5,265,32"/>
-<area shape="rect" id="node3" href="$classmerge__refinement.html" title="A merge&#45;refinement assigns a score to the merge of a left and right state. " alt="" coords="137,56,264,83"/>
-</map>

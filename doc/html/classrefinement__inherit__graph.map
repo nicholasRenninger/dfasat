@@ -1,4 +1,0 @@
-<map id="refinement" name="refinement">
-<area shape="rect" id="node2" href="$classextend__refinement.html" title="A extend&#45;refinement makes a blue state red. The score is the size (frequency) of the state in the APT..." alt="" coords="5,80,135,107"/>
-<area shape="rect" id="node3" href="$classmerge__refinement.html" title="A merge&#45;refinement assigns a score to the merge of a left and right state. " alt="" coords="159,80,285,107"/>
-</map>
