@@ -85,7 +85,7 @@ void overlap_driven::update_score(state_merger *merger, apta_node* left, apta_no
     if (consistent(merger, left, right) == false) return;
 
     for(int i = 0; i < alphabet_size; ++i){
-        if(l->pos(i) != 0 && r->pos(i) != 0){
+        /*if(l->pos(i) != 0 && r->pos(i) != 0){
             if(l->pos(i) > r->pos(i)) overlap += r->pos(i);
             if(r->pos(i) > l->pos(i)) overlap += l->pos(i);
         } else {
@@ -95,14 +95,16 @@ void overlap_driven::update_score(state_merger *merger, apta_node* left, apta_no
             if(r->pos(i) != 0){
                 overlap -= r->pos(i);
             }
+        }*/
+        if(l->pos(i) != 0 && r->pos(i) != 0){
+            overlap += 1;
         }
-        /*if(l->pos(i) != 0 && r->pos(i) != 0){
+        if(l->neg(i) != 0 && r->neg(i) != 0){
             overlap += 1;
-        }*/
-        /*if(l->neg(i) != 0 && r->neg(i) != 0){
-            overlap += 1;
-        }*/
+        }
     }
+    return;
+    
     if(l->num_accepting != 0 && r->num_accepting != 0){
         if(l->num_accepting > r->num_accepting) overlap += r->num_accepting;
         if(r->num_accepting > l->num_accepting) overlap += l->num_accepting;
