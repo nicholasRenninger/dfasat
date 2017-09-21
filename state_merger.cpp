@@ -411,7 +411,7 @@ refinement_set* state_merger::get_possible_refinements(){
 
         // cerr << "found results: " << result->size() << endl;
         // why not result->size() == 0? 
-        if(found == false) {
+        if(found == false && sink_type(blue) == -1) {
 
            // cerr << "came out empty for merges" <<endl;
 
@@ -517,7 +517,7 @@ refinement* state_merger::get_best_refinement(){
             }
         }
 
-        if(found == false) {
+        if(found == false && sink_type(blue) == -1) {
             if(EXTEND_ANY_RED){
                 delete best;
                 return new extend_refinement(blue);
