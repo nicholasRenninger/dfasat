@@ -120,6 +120,9 @@ void run(parameters* param) {
     }
 
     apta* the_apta = new apta();
+
+    eval->set_params(param->evalpar);
+
     merger = state_merger(eval,the_apta);
     the_apta->context = &merger;
 

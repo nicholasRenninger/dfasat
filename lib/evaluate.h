@@ -119,12 +119,18 @@ class evaluation_function  {
 
 protected:
   static DerivedRegister<evaluation_function> reg;
+  string evalpar;
 
 public:
+
+/* Constructors */
+  evaluation_function();
 
 /* Global data */
   bool inconsistency_found;
   int num_merges;
+
+  void set_params(string params);
     
 /* Boolean indicating the evaluation function type;
    are are two kinds: computed before or after/during a merge.

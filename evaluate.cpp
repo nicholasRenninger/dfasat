@@ -82,6 +82,17 @@ bool evaluation_data::sink_consistent(int type){
     return true;
 };
 
+/* defa */ 
+evaluation_function::evaluation_function() {   
+
+};
+
+
+void evaluation_function::set_params(string params) {   
+  this->evalpar = params;
+};
+
+
 /* default evaluation, count number of performed merges */
 bool evaluation_function::consistency_check(evaluation_data* l, evaluation_data* r){
   if(l->node_type != -1 && r->node_type != -1 && l->node_type != r->node_type) return false;
