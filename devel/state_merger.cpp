@@ -101,8 +101,9 @@ apta_node::apta_node(){
     source = 0;
     representative = 0;
 
-    children = child_map();
-    det_undo = child_map();
+    guards = guard_map();
+    //children = child_map();
+    //det_undo = child_map();
     num_pos = num_map();
     num_neg = num_map();
 
@@ -120,7 +121,8 @@ apta_node::apta_node(){
 }
 
 apta_node::~apta_node(){
-    for(child_map::iterator it = children.begin();it != children.end(); ++it){
+    for(guard_map::iterator it = guards.begin();it != guards.end(); ++it){
+        delete (*it).second->target;
         delete (*it).second;
     }
 }
@@ -146,8 +148,8 @@ void state_merger::reset(){
 void add_states(apta_node* state, state_set& states){
     if(states.find(state) != states.end()) return;
     states.insert(state);
-    for(child_map::iterator it = state->children.begin();it != state->children.end(); ++it){
-        apta_node* child = (*it).second;
+    for(guard_map::iterator it = state->guards.begin();it != state->guards.end(); ++it){
+        apta_node* child = (*it).second->target;
         if(child != 0) add_states(child, states);
     }
 }
@@ -155,8 +157,8 @@ void add_states(apta_node* state, state_set& states){
 void add_merged_states(apta_node* state, state_set& states){
     if(states.find(state) != states.end()) return;
     states.insert(state);
-    for(child_map::iterator it = state->children.begin();it != state->children.end(); ++it){
-        apta_node* child = (*it).second;
+    for(guard_map::iterator it = state->guards.begin();it != state->guards.end(); ++it){
+        apta_node* child = (*it).second->target;
         if(child != 0) add_states(child->find(), states);
     }
 }
@@ -287,19 +289,19 @@ void state_merger::merge(apta_node* left, apta_node* right){
             }
         }
     }*/
-    for(child_map::iterator it = right->children.begin();it != right->children.end(); ++it){
+    for(guard_map::iterator it = right->guards.begin();it != right->guards.end(); ++it){
         int i = (*it).first;
-        apta_node* right_child = (*it).second;
+        apta_node* right_child = (*it).second->target;
         if(left->child(i) == 0){
-            left->children[i] = right_child;
+            left->set_child(i, right_child);
             //right_child->old_depth = right_child->depth;
             //right_child->depth = left->depth + 1;
         } else {
-            apta_node* child = left->children[i]->find();
+            apta_node* child = (*(left->guards.lower_bound(i)))->target->find();
             apta_node* other_child = right_child->find();
             
             if(child != other_child){
-                other_child->det_undo[i] = right;
+                other_child->set_undo(i, right);
                 merge(child, other_child);
             }
         }
@@ -322,11 +324,11 @@ void state_merger::undo_merge(apta_node* left, apta_node* right){
             other_child->det_undo[i] = 0;
         }
     }*/
-    for(child_map::reverse_iterator it = right->children.rbegin();it != right->children.rend(); ++it){
+    for(guard_map::reverse_iterator it = right->guards.rbegin();it != right->guards.rend(); ++it){
         int i = (*it).first;
-        apta_node* right_child = (*it).second;
+        apta_node* right_child = (*it).second->target;
         if(left->child(i) == right_child){
-            left->children.erase(i);
+            left->set_child(i, 0);
             //right_child->depth = right_child->old_depth;
         }
         else if(left->child(i) != 0){
@@ -334,7 +336,7 @@ void state_merger::undo_merge(apta_node* left, apta_node* right){
             apta_node* child = other_child->representative;
             if(child != other_child)
                 undo_merge(child, other_child);
-            other_child->det_undo.erase(i);
+            other_child->set_undo(i,0);
         }
     }
     

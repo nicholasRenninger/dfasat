@@ -90,6 +90,20 @@ public:
 	virtual inline void undo(state_merger* m);
 };
 
+class split_refinement : public refinement {
+    tail* split_point;
+    int attribute;
+	
+public:
+	split_refinement(double s, apta_node* l, tail* t, int a);
+
+	virtual inline void print() const;
+	virtual inline void print_short() const;
+	virtual inline void doref(state_merger* m);
+	virtual inline void undo(state_merger* m);
+};
+
+
  /**
  * @brief Compare function for refinements, based on scores.
  *

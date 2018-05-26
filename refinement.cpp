@@ -11,6 +11,13 @@ merge_refinement::merge_refinement(double s, apta_node* l, apta_node* r){
     score = s;
 }
 
+split_refinement::split_refinement(double s, apta_node* r, tail* t, int a){
+    split_point = t;
+    right = r;
+    score = s;
+    attribute = a;
+}
+
 extend_refinement::extend_refinement(apta_node* r){
     right = r;
     score = LOWER_BOUND;
@@ -44,6 +51,22 @@ inline void merge_refinement::doref(state_merger* m){
 	
 inline void merge_refinement::undo(state_merger* m){
     m->undo_perform_merge(left, right);
+};
+
+inline void split_refinement::print() const{
+    cerr << "split( " << right->number << " " << inputdata::get_symbol(split_point) << " " <<attribute << " " << inputdata::get_value(split_point, attribute) << " )" << endl;
+};
+	
+inline void split_refinement::print_short() const{
+    cout << "s" << score;
+};
+
+inline void split_refinement::doref(state_merger* m){
+    m->perform_split(right, split_point, attribute);
+};
+	
+inline void split_refinement::undo(state_merger* m){
+    m->undo_perform_split(right, split_point, attribute);
 };
 
 inline void extend_refinement::print() const{

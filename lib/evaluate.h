@@ -6,6 +6,7 @@
 #include <list>
 #include <map>
 #include <sstream>
+#include <json.hpp>
 
 class evaluation_data;
 class evaluation_function;
@@ -15,7 +16,9 @@ class apta_node;
 #include "evaluation_factory.h"
 #include "apta.h"
 #include "state_merger.h"
+#include "inputdata.h"
 
+using json = nlohmann::json;
 using namespace std;
 
 bool is_stream_sink(apta_node*);
@@ -76,6 +79,9 @@ public:
     evaluation_data();
     
 /* Set values from input string */
+    virtual void read_from(int seq_nr, int index);
+    virtual void read_to(int seq_nr, int index);
+
     virtual void read_from(int type, int index, int length, int symbol, string data);
     virtual void read_to(int type, int index, int length, int symbol, string data);
 /* Update values when merging */

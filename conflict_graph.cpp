@@ -11,9 +11,9 @@ void apta_graph::add_conflicts(state_merger &merger){
 				++it2){
 			graph_node* right = *it2;
 			
-			score_pair sp = merger.test_merge(left->anode, right->anode);
+			refinement* ref = merger.test_merge(left->anode, right->anode);
 
-			if(sp.first == true){
+			if(ref != 0){
 				left->neighbors.insert(right);
 				right->neighbors.insert(left);
 			}

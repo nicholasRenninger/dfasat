@@ -96,8 +96,8 @@ void fixed_depth_mse_error::score_right(apta_node* right, int depth){
     //cerr << "adding " << l->occs.size() << " to right." << endl;
     r_dist[depth].insert(right);
     if(depth < r_dist.size()){
-        for(child_map::iterator it = right->children.begin(); it != right->children.end(); ++it){
-            score_right((*it).second->find(), depth + 1);
+        for(guard_map::iterator it = right->guards.begin(); it != right->guards.end(); ++it){
+            score_right((*it).second->target->find(), depth + 1);
         }
     }
 };
@@ -119,8 +119,8 @@ void fixed_depth_mse_error::score_left(apta_node* left, int depth){
     //cerr << "adding " << l->occs.size() << " to left." << endl;
     l_dist[depth].insert(left);
     if(depth < l_dist.size()){
-        for(child_map::iterator it = left->children.begin(); it != left->children.end(); ++it){
-            score_left((*it).second->find(), depth + 1);
+        for(guard_map::iterator it = left->guards.begin(); it != left->guards.end(); ++it){
+            score_left((*it).second->target->find(), depth + 1);
         }
     }
 };
@@ -137,9 +137,9 @@ void fixed_depth_mse_error::score_left(apta_node* left, int depth){
 };*/
 bool is_all_same_sink(apta_node* node, int type){
     node = node->find();
-    for(child_map::iterator it = node->children.begin();it != node->children.end(); ++it){
+    for(guard_map::iterator it = node->guards.begin();it != node->guards.end(); ++it){
         int i = (*it).first;
-        apta_node* child = (*it).second;
+        apta_node* child = (*it).second->target;
         if(type == -1){
             if (child != 0) type = i;
         } else {
@@ -147,9 +147,9 @@ bool is_all_same_sink(apta_node* node, int type){
             if (child != 0) return false;
         }
     }
-    for(child_map::iterator it = node->children.begin();it != node->children.end(); ++it){
+    for(guard_map::iterator it = node->guards.begin();it != node->guards.end(); ++it){
         int i = (*it).first;
-        apta_node* child = (*it).second;
+        apta_node* child = (*it).second->target;
         if (i != type) continue;
         if (child != 0 && is_all_same_sink(child, type) == false) return false;
     }

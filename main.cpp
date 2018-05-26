@@ -16,6 +16,7 @@
 #include <vector>
 #include "interactive.h"
 #include "common.h"
+#include "inputdata.h"
 
 #include "parameters.h"
 
@@ -125,13 +126,20 @@ void run(parameters* param) {
     cout << "Creating apta " <<  "using evaluation class " << eval_string << endl;
 
     ifstream input_stream(param->dfa_file);
+    
+    inputdata id;
+    id.read_abbadingo_file(input_stream);
+    input_stream.close();
 
+    cerr << "done parsing" << endl;
+    
+    cerr << id.to_json_str();
+    
     if(param->mode == "batch") {
        cout << "batch mode selected" << endl;
 
-       merger.read_apta(input_stream);
-
-       input_stream.close();
+       //merger.read_apta(input_stream);
+       id.add_data_to_apta(the_apta);
 
        cout << "reading data finished, processing:" << endl;
        // run the state merger

@@ -86,6 +86,11 @@ public:
     bool merge_test(apta_node* red, apta_node* blue);
     void undo_merge(apta_node* red, apta_node* blue);
 
+    /* recursive state splitting routines */
+    bool split_single(apta_node* red, apta_node* blue, tail* t);
+    bool split(apta_node* red, apta_node* blue);
+    void undo_split(apta_node* red, apta_node* blue);
+
     /* for building the apta  */
     map<string, int> seen;
     int node_number = 1;
@@ -108,6 +113,8 @@ public:
     /* performing red-blue merges */
     void perform_merge(apta_node*, apta_node*);
     void undo_perform_merge(apta_node*, apta_node*);
+    void perform_split(apta_node*, tail*, int);
+    void undo_perform_split(apta_node*, tail*, int);
 
     /* creating new red states */
     void extend(apta_node* blue);
@@ -125,8 +132,9 @@ public:
     /* update the blue and red states */
     void update_red_blue();
 
-    score_pair test_merge(apta_node*,apta_node*);
-    score_pair test_local_merge(apta_node* red, apta_node* blue);
+    refinement* test_splits(apta_node* blue);
+    refinement* test_merge(apta_node*,apta_node*);
+    refinement* test_local_merge(apta_node* red, apta_node* blue);
 
     state_set& get_candidate_states();
     state_set& get_sink_states();

@@ -113,8 +113,8 @@ void series_driven::score_right(apta_node* right, int depth){
     if(right_dist[depth].find(right) != right_dist[depth].end()) return;
     right_dist[depth].insert(right);
     if(depth < right_dist.size() - 1){
-        for(child_map::iterator it = right->children.begin(); it != right->children.end(); ++it){
-            score_right((*it).second->find(), depth + 1);
+        for(guard_map::iterator it = right->guards.begin(); it != right->guards.end(); ++it){
+            score_right((*it).second->target->find(), depth + 1);
         }
     }
 };
@@ -123,8 +123,8 @@ void series_driven::score_left(apta_node* left, int depth){
     if(left_dist[depth].find(left) != left_dist[depth].end()) return;
     left_dist[depth].insert(left);
     if(depth < left_dist.size() - 1){
-        for(child_map::iterator it = left->children.begin(); it != left->children.end(); ++it){
-            score_left((*it).second->find(), depth + 1);
+        for(guard_map::iterator it = left->guards.begin(); it != left->guards.end(); ++it){
+            score_left((*it).second->target->find(), depth + 1);
         }
     }
 };

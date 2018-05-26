@@ -17,6 +17,7 @@ using namespace std;
 
 class apta;
 class apta_node;
+class guard;
 
 struct size_compare;
 
