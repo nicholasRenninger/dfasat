@@ -44,6 +44,7 @@ parameters::parameters(){
     epsilon=0.3;
     delta=0.95;
     mode = "batch";
+    evalpar = "";
     dot_file = "dfa";
     sat_program = "";
     hName = "default";

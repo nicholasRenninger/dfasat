@@ -42,6 +42,7 @@ extern double STORE_MERGES_RATIO_THRESHOLD;
 extern string COMMAND;
 extern int STREAM_COUNT;
 extern bool EXCEPTION4OVERLAP;
+extern string EVALPAR;
 
 class parameters{
 public:
@@ -79,6 +80,7 @@ public:
     int testmerge;
     int shallowfirst;
     string mode;
+    string evalpar;
     int batchsize;
     float delta;
     float epsilon;

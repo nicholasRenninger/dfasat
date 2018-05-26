@@ -219,6 +219,8 @@ int main(int argc, const char *argv[]){
     char* hName = NULL;
     char* hData = NULL;
     char* mode = NULL;
+    char* evalpar = NULL; 
+
 
     /* below parses command-line options, see 'man popt' */
     poptContext optCon;
@@ -229,7 +231,8 @@ int main(int argc, const char *argv[]){
         { "heuristic-name", 'h', POPT_ARG_STRING, &(hName), 'h', "Name of the merge heurstic to use; default count_driven. Use any heuristic in the evaluation directory. It is often beneficial to write your own, as heuristics are very application specific.", "string" },
         { "data-name", 'd', POPT_ARG_STRING, &(hData), 'd', "Name of the merge data class to use; default count_data. Use any heuristic in the evaluation directory.", "string" },
         { "mode", 'M', POPT_ARG_STRING, &(mode), 'M', "batch or stream depending on the mode of operation", "string" },
-        { "method", 'm', POPT_ARG_INT, &(param->method), 'm', "Method to use when merging states, default value 1 is random greedy (used in Stamina winner), 2 is one standard (non-random) greedy.", "integer" },
+        { "evalpar", 'X', POPT_ARG_STRING, &(evalpar), 'X', "string of key-value pairs", "string" },
+       { "method", 'm', POPT_ARG_INT, &(param->method), 'm', "Method to use when merging states, default value 1 is random greedy (used in Stamina winner), 2 is one standard (non-random) greedy.", "integer" },
         { "seed", 's', POPT_ARG_INT, &(param->seed), 's', "Seed for random merge heuristic; default=12345678", "integer" },
         { "runs", 'n', POPT_ARG_INT, &(param->runs), 'n', "Number of random greedy runs/iterations; default=1. Advice: when using random greedy, a higher value is recommended (100 was used in Stamina winner).\n\nSettings that modify the red-blue state-merging framework:", "integer" },
         { "extend", 'x', POPT_ARG_INT, &(param->extend), 'x', "When set to 1, any merge candidate (blue) that cannot be merged with any target (red) is immediately changed into a (red) target; default=1. If set to 0, a merge candidate is only changed into a target when no more merges are possible. Advice: unclear which strategy is best, when using statistical (or count-based) consistency checks, keep in mind that merge consistency between states may change due to other performed merges. This will especially influence low frequency states. When there are a lot of those, we therefore recommend setting x=0.", "integer" },
@@ -307,6 +310,8 @@ int main(int argc, const char *argv[]){
         param->mode = mode;
     else
         param->mode = "batch";
+
+    param->evalpar = evalpar;
 
     run(param);
 
