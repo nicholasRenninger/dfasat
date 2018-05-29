@@ -314,7 +314,10 @@ int main(int argc, const char *argv[]){
     else
         param->mode = "batch";
 
-    param->evalpar = evalpar;
+    if(evalpar != NULL)
+        param->evalpar = evalpar;
+    else
+        param->evalpar = "mode=default";
 
     run(param);
 

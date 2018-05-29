@@ -75,4 +75,5 @@ parameters::parameters(){
     testmerge = 0;
     shallowfirst =0;
     debugging = 0;
+    evalpar = "";
 };

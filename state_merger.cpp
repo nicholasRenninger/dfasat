@@ -808,6 +808,19 @@ void state_merger::todot(){
     dot_output = "// produced with flexfringe from git commit"  + string(gitversion) + '\n' + "// " + COMMAND + '\n'+ dot_output_buf.str();
 }
 
+void state_merger::tojson(){
+    stringstream output_buf;
+    aut->print_json(output_buf);
+    json_output = output_buf.str(); // json does not support comments, maybe we need to introduce a meta section
+}
+
+
+void state_merger::print_json(FILE* output)
+{
+    fprintf(output, "%s", json_output.c_str());
+}
+
+
 void state_merger::print_dot(FILE* output)
 {
     fprintf(output, "%s", dot_output.c_str());

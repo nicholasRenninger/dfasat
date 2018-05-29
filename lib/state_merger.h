@@ -142,7 +142,9 @@ public:
     int get_final_apta_size();
 
     void todot();
+    void tojson();
     void print_dot(FILE*);
+    void print_json(FILE*);
     void read_apta(istream &input_stream);
     void read_apta(string dfa_file);
 //    void read_apta(FILE* dfa_file);
@@ -159,6 +161,7 @@ public:
     int compute_global_score();
 
     string dot_output;
+    string json_output;
 };
 
 

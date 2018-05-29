@@ -192,19 +192,35 @@ void apta::print_dot(iostream& output){
 
 
 void apta::print_json(iostream& output){
-    output << "digraph DFA {\n";
-    output << "\t" << root->find()->number << "{\n";
-    output << "\t\tI -> " << root->find()->number << ";\n";
+    output << "{\n";
+    output << "\t\"nodes\" : [\n";
+
+    // output states
     for(merged_APTA_iterator_func Ait = merged_APTA_iterator_func(root, is_sink); *Ait != 0; ++Ait){
-    //for(merged_APTA_iterator Ait = merged_APTA_iterator(root); *Ait != 0; ++Ait){
+
         apta_node* n = *Ait;
-        output << "\t" << n->number << " [ label=\"";
+
+        output << "\t\t{\n";
+
+        output << "\t\t\t\"id\" : " << n->number << ",\n";
+        output << "\t\t\t\"label\" : \"";
         n->data->print_state_label(output, this);
-        output << "#" << n->size;
+        output  << "\",\n"; 
+        output << "\t\t\t\"size\" : " << n->size << ",\n";
+
         output << "\" ";
         n->data->print_state_style(output, this);
         if(n->red == false) output << " style=dotted";
-        output << " ];\n";
+
+        output << "\t\t},\n";
+    }
+
+    output << "\t],\n";
+
+    // output transitions
+    for(merged_APTA_iterator_func Ait = merged_APTA_iterator_func(root, is_sink); *Ait != 0; ++Ait){
+
+        apta_node* n = *Ait;
 
         // transition labels for item
         map<apta_node*, set<int>> childlabels;

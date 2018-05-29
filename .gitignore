@@ -4,6 +4,7 @@
 *.aut
 *.pdf
 *.png
+*.json
 # ignore all object files
 *.o
 *.so
