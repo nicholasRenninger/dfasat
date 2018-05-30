@@ -54,6 +54,7 @@ public:
     static map<string, int> r_alphabet;
     
     static int num_attributes;
+    int node_number;
 
     void read_json_file(istream &input_stream);
     void read_abbadingo_file(istream &input_stream);
@@ -100,6 +101,9 @@ public:
 
     const string to_json_str() const;
 	//const string to_abbadingo_str() const;
+
+    // to init counters etc
+    inputdata();
 };
 
 #endif /* _INPUTDATA_H_*/

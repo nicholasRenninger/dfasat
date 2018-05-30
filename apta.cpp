@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <string>
 #include <sstream>
+#include <iterator>
 
 #include "evaluators.h"
 #include "parameters.h"
@@ -195,10 +196,14 @@ void apta::print_json(iostream& output){
     output << "{\n";
     output << "\t\"nodes\" : [\n";
 
+    int count = 0; 
     // output states
     for(merged_APTA_iterator_func Ait = merged_APTA_iterator_func(root, is_sink); *Ait != 0; ++Ait){
 
         apta_node* n = *Ait;
+
+        if(count > 0)
+            output << ",\n";
 
         output << "\t\t{\n";
 
@@ -208,16 +213,26 @@ void apta::print_json(iostream& output){
         output  << "\",\n"; 
         output << "\t\t\t\"size\" : " << n->size << ",\n";
 
-        output << "\" ";
-        n->data->print_state_style(output, this);
-        if(n->red == false) output << " style=dotted";
+        // n->data->print_state_style(output, this);
 
-        output << "\t\t},\n";
+        output << "\t\t\t\"isred\" :  ";
+
+        if(n->red == false) 
+            output << "\"false\"";
+        else
+            output << "\"true\"";
+
+        output << "\n\t\t}";
+ 
+       count++;
     }
 
-    output << "\t],\n";
+    output << "\n\t],\n";
+    output << "\t\"edges\" : [\n";
 
     // output transitions
+    count = 0;
+
     for(merged_APTA_iterator_func Ait = merged_APTA_iterator_func(root, is_sink); *Ait != 0; ++Ait){
 
         apta_node* n = *Ait;
@@ -239,22 +254,37 @@ void apta::print_json(iostream& output){
                 childlabels[child].insert( it->first );
             }
         }
+
         for(map<apta_node*, set<int>>::iterator it2 = childlabels.begin(); it2 != childlabels.end(); ++it2){
             apta_node* child = (*it2).first;
             set<int> labels  = (*it2).second;
             
-            output << "\t\t" << n->number << " -> " << child->number << " [label=\"";
+            if(count > 0)
+                output << ",\n";
+            else
+                output << "\n";
+
+            output << "\t\t{\n";
+            output << "\t\t\t\"id\" : \"" << n->number << "_" << child->number << "\",\n";
+             output << "\t\t\t\"source\" : \"" << n->number << "\",\n";
+             output << "\t\t\t\"target\" : \"" << child->number << "\",\n";
             
+            output << "\t\t\t\"label\" :\""; 
+	    // transition label information
             for(set<int>::iterator it3 = labels.begin(); it3 != labels.end(); ++it3){
                 output << alph_str(*it3) << ":";
                 n->data->print_transition_label(output, *it3, this);
                 if(std::next(it3) != labels.end()) output << ",";
             }
+            output << "\"\n";
 
-            output << "\" ";
-            n->data->print_transition_style(output, labels, this);
-            output << " ];\n";
+           
+            // n->data->print_transition_style(output, labels, this);
+            output << "\t\t}";
+
+           count++;
         }
+
         for(map<int, set<int>>::iterator it2 = sinklabels.begin(); it2 != sinklabels.end(); ++it2){
             int stype = (*it2).first;
             set<int> labels  = (*it2).second;
@@ -281,8 +311,10 @@ void apta::print_json(iostream& output){
             n->data->print_transition_style(output, labels, this);
             output << " ];\n";
         }
+ 
+        count++;
     }
-    output << "}\n";
+    output << "\t]\n}\n";
 };
 
 

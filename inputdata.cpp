@@ -43,6 +43,10 @@ tail::tail(int seq, int i, tail* pt){
     split_from = 0;
 };
 
+inputdata::inputdata() {
+    node_number = 0;
+}
+
 void inputdata::read_json_file(istream &input_stream){
     input_stream >> all_data;
 };
@@ -167,6 +171,7 @@ void inputdata::add_sequence_to_apta(apta* the_apta, int seq_nr){
             next_node->source = node;
             next_node->label  = symbol;
             next_node->depth  = depth;
+            next_node->number = ++(this->node_number);
         }
         node->size = node->size + 1;
         node->add_tail(nt);
