@@ -509,18 +509,21 @@ refinement* state_merger::test_merge(apta_node* left, apta_node* right){
 }
 
 refinement* state_merger::test_splits(apta_node* blue){
-    multimap<float, tail*> sorted_tails;
     double score = 0;
     for(int attr = 0; attr < inputdata::num_attributes; ++attr){
+        multimap<float, tail*> sorted_tails;
+        cerr << "here" << endl;
         for(tail_iterator it = tail_iterator(blue); *it != 0; ++it){
             tail* t = *it;
             sorted_tails.insert(pair<float, tail*>(inputdata::get_value(t->past_tail, attr),t));
+            cerr << "adding tail " << inputdata::get_value(t->past_tail, attr) << " " << t << endl;
         }
         
         apta_node* new_node = new apta_node(aut);
         
         float prev_val = (*(sorted_tails.begin())).first;
         for(multimap<float, tail*>::iterator it = sorted_tails.begin(); it != sorted_tails.end(); ++it){
+            cerr << "testing split " << (*it).first << endl;
             if((*it).first > prev_val){
                 //score = eval->compute_score();
                 //result->insert(new split_refinement(score, blue, (*it).second, attr));
@@ -559,6 +562,12 @@ refinement_set* state_merger::get_possible_refinements(){
         apta_node* blue = *it;
         bool found = false; 
         if((sink_type(blue) != -1)) continue;
+
+        cerr << inputdata::num_attributes << endl;
+        if(inputdata::num_attributes > 0){
+            cerr << "testing splits" << endl;
+            test_splits(blue);
+        }
 
         for(red_state_iterator it2 = red_state_iterator(aut->root); *it2 != 0; ++it2){
             apta_node* red = *it2;
@@ -673,7 +682,9 @@ refinement* state_merger::get_best_refinement(){
 
         if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
 
+        cerr << inputdata::num_attributes << endl;
         if(inputdata::num_attributes > 0){
+            cerr << "testing splits" << endl;
             test_splits(blue);
         }
 

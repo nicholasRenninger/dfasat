@@ -68,9 +68,11 @@ void inputdata::read_abbadingo_file(istream &input_stream){
 
     alph_size = stoi(alph);
     if(!attr.empty())
-        num_attributes = stoi(attr);
+        inputdata::num_attributes = stoi(attr);
     else
-        num_attributes = 0;
+        inputdata::num_attributes = 0;
+    
+    cerr << "ATTR: " << attr << " " << inputdata::num_attributes << endl;
 	
 	for(int line = 0; line < num_sequences; ++line){
 		read_abbadingo_sequence(input_stream, num_attributes);
@@ -116,7 +118,7 @@ void inputdata::read_abbadingo_sequence(istream &input_stream, int num_attribute
         string vals;
         std::getline(l2,vals);
         
-        cerr << symbol << " " << vals << endl;
+        //cerr << symbol << " " << vals << endl;
         
         if(r_alphabet.find(symbol) == r_alphabet.end()){
             r_alphabet[symbol] = alphabet.size();
