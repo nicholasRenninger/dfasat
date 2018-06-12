@@ -54,7 +54,8 @@ void conflict_data::undo(evaluation_data* right){
 
 void conflict_driven::update_score(state_merger *merger, apta_node* left, apta_node* right){
     conflict_data* r = (conflict_data*)right->data;
-    int val = r->conflicts.size() - r->undo_info.size();
+    int val = r->conflicts.size() - 2*r->undo_info.size();
+    if(val < 0) val = 0;
     score = score + val;
 };
 

@@ -12,8 +12,8 @@
 
 #include "parameters.h"
 
-// whether the model includes final probabilities
-int EVAL_TYPE = 1;
+int alergia94::EVAL_TYPE = 1;
+
 
 REGISTER_DEF_DATATYPE(alergia94_data);
 REGISTER_DEF_TYPE(alergia94);
@@ -35,8 +35,8 @@ bool alergia94::alergia_consistency(double right_count, double left_count, doubl
     return true;
 };
 
-bool alergia94::data_consistent(alergia_data* l, alergia_data* r){
-    if(EVAL_TYPE == 1){ if(l->accepting_paths + l->num_accepting < STATE_COUNT || r->accepting_paths + l->num_accepting < STATE_COUNT) return true; }
+bool alergia94::data_consistent(alergia94_data* l, alergia94_data* r){
+    if(alergia94::EVAL_TYPE == 1){ if(l->accepting_paths + l->num_accepting < STATE_COUNT || r->accepting_paths + l->num_accepting < STATE_COUNT) return true; }
     else if(l->accepting_paths < STATE_COUNT || r->accepting_paths < STATE_COUNT) return true;
     
     double left_count  = 0.0;
@@ -45,7 +45,7 @@ bool alergia94::data_consistent(alergia_data* l, alergia_data* r){
     double left_total  = (double)l->accepting_paths;
     double right_total = (double)r->accepting_paths;
     
-    if(EVAL_TYPE == 1){
+    if(alergia94::EVAL_TYPE == 1){
         left_total  += (double)l->num_accepting;
         right_total += (double)r->num_accepting;
     }
@@ -60,7 +60,7 @@ bool alergia94::data_consistent(alergia_data* l, alergia_data* r){
             }
         }
     }
-    if(EVAL_TYPE == 1){
+    if(alergia94::EVAL_TYPE == 1){
         left_count = l->num_accepting;
         right_count = r->num_accepting;
         
@@ -77,8 +77,8 @@ bool alergia94::data_consistent(alergia_data* l, alergia_data* r){
 /* ALERGIA, consistency based on Hoeffding bound, only uses positive (type=1) data */
 bool alergia94::consistent(state_merger *merger, apta_node* left, apta_node* right){
     if(count_driven::consistent(merger, left, right) == false){ inconsistency_found = true; return false; }
-    alergia_data* l = (alergia_data*) left->data;
-    alergia_data* r = (alergia_data*) right->data;
+    alergia94_data* l = (alergia94_data*) left->data;
+    alergia94_data* r = (alergia94_data*) right->data;
     
     return data_consistent(l, r);
 };

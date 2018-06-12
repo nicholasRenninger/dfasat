@@ -52,7 +52,7 @@ void inputdata::read_json_file(istream &input_stream){
 };
 
 void inputdata::read_abbadingo_file(istream &input_stream){
-    int num_sequences, num_attributes, alph_size;
+    int num_sequences, alph_size;
     input_stream >> num_sequences;
     
     string tuple;
@@ -72,10 +72,10 @@ void inputdata::read_abbadingo_file(istream &input_stream){
     else
         inputdata::num_attributes = 0;
     
-    cerr << "ATTR: " << attr << " " << inputdata::num_attributes << endl;
+    //cerr << "ATTR: " << attr << " " << inputdata::num_attributes << endl;
 	
 	for(int line = 0; line < num_sequences; ++line){
-		read_abbadingo_sequence(input_stream, num_attributes);
+        read_abbadingo_sequence(input_stream, inputdata::num_attributes);
 	}
 };
 

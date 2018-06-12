@@ -1,12 +1,12 @@
-#ifndef __CONFLICTDRIVEN__
-#define __CONFLICTDRIVEN__
+#ifndef __CONFLICTDRIVENEDSM__
+#define __CONFLICTDRIVENEDSM__
 
-#include "alergia.h"
+#include "evidence-driven.h"
 
 /* The data contained in every node of the prefix tree or DFA */
-class conflict_data: public alergia_data {
+class conflict_edsm_data: public edsm_data {
 
-  REGISTER_DEC_DATATYPE(conflict_data);
+  REGISTER_DEC_DATATYPE(conflict_edsm_data);
 
   public:
 	set<apta_node*> conflicts;
@@ -17,9 +17,9 @@ class conflict_data: public alergia_data {
 };
 
 
-class conflict_driven: public alergia {
+class conflict_edsm_driven: public evidence_driven {
 protected:
-  REGISTER_DEC_TYPE(conflict_driven);
+  REGISTER_DEC_TYPE(conflict_edsm_driven);
 
   int score;
 

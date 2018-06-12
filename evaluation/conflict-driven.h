@@ -1,13 +1,12 @@
 #ifndef __CONFLICTDRIVEN__
 #define __CONFLICTDRIVEN__
 
-#include "num_count.h"
+#include "alergia.h"
 
 /* The data contained in every node of the prefix tree or DFA */
-class conflict_data: public count_data {
+class conflict_data: public alergia_data {
 
   REGISTER_DEC_DATATYPE(conflict_data);
-
 
   public:
 	set<apta_node*> conflicts;
@@ -18,7 +17,7 @@ class conflict_data: public count_data {
 };
 
 
-class conflict_driven: public count_driven{
+class conflict_driven: public alergia {
 protected:
   REGISTER_DEC_TYPE(conflict_driven);
 

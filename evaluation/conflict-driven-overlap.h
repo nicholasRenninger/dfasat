@@ -1,12 +1,12 @@
-#ifndef __CONFLICTDRIVENEDSM__
-#define __CONFLICTDRIVENEDSM__
+#ifndef __CONFLICTDRIVENOVERLAP__
+#define __CONFLICTDRIVENOVERLAP__
 
-#include "evidence-driven.h"
+#include "overlap-driven.h"
 
 /* The data contained in every node of the prefix tree or DFA */
-class conflict_data: public edsm_data {
+class conflict_overlap_data: public overlap_data {
 
-  REGISTER_DEC_DATATYPE(conflict-edsm_data);
+  REGISTER_DEC_DATATYPE(conflict_overlap_data);
 
   public:
 	set<apta_node*> conflicts;
@@ -17,9 +17,9 @@ class conflict_data: public edsm_data {
 };
 
 
-class conflict_driven: public evidence_driven {
+class conflict_overlap_driven: public overlap_driven {
 protected:
-  REGISTER_DEC_TYPE(conflict-edsm_driven);
+  REGISTER_DEC_TYPE(conflict_overlap_driven);
 
   int score;
 

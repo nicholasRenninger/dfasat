@@ -29,8 +29,6 @@ public:
     virtual int sink_type(apta_node* node);
     virtual bool sink_consistent(apta_node* node, int type);
     virtual int num_sink_types();
-
-
 };
 
 class count_driven: public evaluation_function {
