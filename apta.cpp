@@ -206,6 +206,8 @@ void apta::print_json(iostream& output){
             output << ",\n";
 
         output << "\t\t{\n";
+        output << "\t\t\t\"x\" : " << "0" << ",\n";
+        output << "\t\t\t\"y\" : " << "0" << ",\n";
 
         output << "\t\t\t\"id\" : " << n->number << ",\n";
         output << "\t\t\t\"label\" : \"";

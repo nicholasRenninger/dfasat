@@ -134,6 +134,7 @@ void inputdata::read_abbadingo_sequence(istream &input_stream, int num_attribute
             l3.str(vals);
             for(int i = 0; i < num_attributes-1; ++i){
                 std::getline(l3,val,',');
+cerr << val;
                 values[i][index] = stof(val);
             }
             std::getline(l3,val);
