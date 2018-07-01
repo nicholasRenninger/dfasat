@@ -57,6 +57,7 @@ void evaluation_data::undo(evaluation_data* right){
     }
 };
 
+// DOT output functions
 void evaluation_data::print_state_label(iostream& output, apta* aptacontext){
 
 };
@@ -66,6 +67,15 @@ void evaluation_data::print_state_style(iostream& output, apta* aptacontext){
 };
 
 void evaluation_data::print_transition_label(iostream& output, int symbol, apta* aptacontext){
+
+};
+
+// JSON output functions
+void evaluation_data::print_state_properties(iostream& output, apta* aptacontext) {
+
+};
+
+void evaluation_data::print_transition_properties(iostream& output, int symbol, apta* aptacontext) {
 
 };
 

@@ -215,7 +215,7 @@ void apta::print_json(iostream& output){
         output  << "\",\n"; 
         output << "\t\t\t\"size\" : " << n->size << ",\n";
 
-        // n->data->print_state_style(output, this);
+        //n->data->print_state_style(output, this);
 
         output << "\t\t\t\"isred\" :  ";
 
@@ -268,16 +268,27 @@ void apta::print_json(iostream& output){
 
             output << "\t\t{\n";
             output << "\t\t\t\"id\" : \"" << n->number << "_" << child->number << "\",\n";
-             output << "\t\t\t\"source\" : \"" << n->number << "\",\n";
-             output << "\t\t\t\"target\" : \"" << child->number << "\",\n";
+            output << "\t\t\t\"source\" : \"" << n->number << "\",\n";
+            output << "\t\t\t\"target\" : \"" << child->number << "\",\n";
             
-            output << "\t\t\t\"label\" :\""; 
+            output << "\t\t\t\"label\" : \""; 
 	    // transition label information
             for(set<int>::iterator it3 = labels.begin(); it3 != labels.end(); ++it3){
-                output << alph_str(*it3) << ":";
-                n->data->print_transition_label(output, *it3, this);
+                output << alph_str(*it3);
+                //n->data->print_transition_label(output, *it3, this);
                 if(std::next(it3) != labels.end()) output << ",";
             }
+            output << "\",\n";
+
+            output << "\t\t\t\"labelinfo\" : [\n"; 
+	    // transition label information
+            for(set<int>::iterator it3 = labels.begin(); it3 != labels.end(); ++it3){
+                output << "\t\t\t\t { " << "\"symbol\" : \"" << alph_str(*it3) << "\",\n";
+                n->data->print_transition_properties(output, *it3, this); 
+            }
+	    output << "\t\t\t]\n";
+
+
             output << "\"\n";
 
            
@@ -316,12 +327,12 @@ void apta::print_json(iostream& output){
  
         count++;
     }
-    output << "\t]\n}\n";
+    output << "\n\t]\n}\n";
 };
 
 
 string apta::alph_str(int i){
-    return alphabet[i];
+    return alp[i];
 }
 
 apta_guard::apta_guard(){

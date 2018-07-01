@@ -2,6 +2,9 @@
 #define __ALL_HEADERS__
 #include "evaluation/aike.h"
 #include "evaluation/alergia.h"
+#include "evaluation/alergia94.h"
+#include "evaluation/conflict-driven-edsm.h"
+#include "evaluation/conflict-driven-overlap.h"
 #include "evaluation/conflict-driven.h"
 #include "evaluation/depth-driven.h"
 #include "evaluation/evidence-driven.h"
