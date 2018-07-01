@@ -351,6 +351,8 @@ public:
     state_merger *context;
     apta_node* root; /**< root of the tree */
     map<int, string> alphabet; /**< mapping between internal representation and alphabet symbol */
+    vector<string> alp; // taken from inputdata
+
     int merge_count;
     int max_depth;
     

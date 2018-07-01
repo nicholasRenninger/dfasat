@@ -143,6 +143,7 @@ void run(parameters* param) {
 
        //merger.read_apta(input_stream);
        id.add_data_to_apta(the_apta);
+       the_apta-> alp = id.alphabet;
 
        cout << "reading data finished, processing:" << endl;
        // run the state merger

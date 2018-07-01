@@ -154,7 +154,7 @@ cerr << val;
 void inputdata::add_data_to_apta(apta* the_apta){
     for(int i = 0; i < all_data.size(); ++i){
         add_sequence_to_apta(the_apta, i);
-    }
+    } 
 };
 
 void inputdata::add_sequence_to_apta(apta* the_apta, int seq_nr){

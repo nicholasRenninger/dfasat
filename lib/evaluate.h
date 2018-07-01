@@ -94,6 +94,11 @@ public:
     virtual void print_state_style(iostream& output, apta* aptacontext);
     virtual void print_transition_label(iostream& output, int symbol, apta* aptacontext);
     virtual void print_transition_style(iostream& output, set<int> symbols, apta* aptacontext);
+
+/* Print state/transition properties  */
+    virtual void print_state_properties(iostream& output, apta* aptacontext);
+    virtual void print_transition_properties(iostream&, int symbol, apta* aptacontext);
+
 /* what to ignore, and why */    
     
     virtual bool sink_consistent(int type);
