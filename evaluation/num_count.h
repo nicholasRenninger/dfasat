@@ -16,7 +16,7 @@ public:
     int rejecting_paths;
 
     count_data();
-    
+
     virtual void read_from(int type, int index, int length, int symbol, string data);
     virtual void read_to(int type, int index, int length, int symbol, string data);
 

@@ -14,6 +14,11 @@ REGISTER_DEF_DATATYPE(overlap_data);
 REGISTER_DEF_TYPE(overlap_driven);
 //DerivedRegister<overlap_driven> overlap_driven::reg("overlap_driven");
 
+void overlap_data::print_state_style(iostream& output, apta* aptacontext){
+    if(num_accepting > 0) output << " shape=doublecircle ";
+    else if(num_rejecting > 0) output << " shape=Mcircle ";
+};
+
 /* Overlap driven, count overlap in positive transitions, used in Stamina winner */
 bool overlap_driven::consistent(state_merger *merger, apta_node* left, apta_node* right){
     if(count_driven::consistent(merger, left, right) == false){
