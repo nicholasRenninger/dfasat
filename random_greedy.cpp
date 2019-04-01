@@ -18,7 +18,8 @@ refinement_list* random_greedy_bounded_run(state_merger* merger){
         while( true ){
             cout << " ";
             
-            // output: dot legacy format
+            /* Remove intermediate output for now
+	     * output: dot legacy format
             merger->todot();
             std::ostringstream oss2;
             oss2 << "pre_" << num << ".dot";
@@ -32,7 +33,7 @@ refinement_list* random_greedy_bounded_run(state_merger* merger){
             oss3 << "pre_" << num << ".json";
             ofstream output2(oss3.str().c_str());
             output2 << merger->json_output;
-            output2.close();
+            output2.close(); */
 
             // if(EXTEND_ANY_RED) while(merger->extend_red() != 0) cerr << "+ ";
             // leak here, too
