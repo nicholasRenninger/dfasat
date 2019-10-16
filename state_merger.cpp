@@ -222,10 +222,10 @@ bool state_merger::split_single(apta_node* new_node, apta_node* old_node, tail* 
         new_child->add_tail(new_tail);
         new_child->size++;
         old_child->size--;
-    
+
         split_single(new_child, old_child, new_tail);
     }
-    
+
     return true;
 };
 
@@ -253,15 +253,15 @@ bool state_merger::split(apta_node* new_node, apta_node* old_node){
             new_child->size++;
             old_child->size--;
         }
-    
+
         for(guard_map::iterator it = old_node->guards.begin(); it != old_node->guards.end(); ++it){
             apta_node* old_child = (*it).second->target->find();
             apta_node* new_child = new_node->child((*it).first);
- 
+
             split(new_child, old_child);
         }
     }
-    
+
     return true;
 };
 
@@ -270,11 +270,11 @@ void state_merger::undo_split(apta_node* old_node, apta_node* new_node){
     for(guard_map::reverse_iterator it = old_node->guards.rbegin(); it != old_node->guards.rend(); ++it){
         apta_node* old_child = (*it).second->target->find();
         apta_node* new_child = new_node->child((*it).first);
-        
+
         undo_split(new_child, old_child);
 
         old_child->size = old_child->size + new_child->size;
-        
+
         for(tail* t = new_child->tails_head; t != 0; t = t->next()){
             t->split_from->undo_split();
         }
@@ -285,16 +285,16 @@ void state_merger::undo_split(apta_node* old_node, apta_node* new_node){
 void state_merger::perform_split(apta_node* blue, tail* t, int attr){
     int symbol = inputdata::get_symbol(t);
     float val  = inputdata::get_value(t, attr);
-    
+
     apta_node* red = blue->source->find();
     apta_guard* old_guard = red->guard(t);
-    
+
     if(old_guard != 0){
         apta_guard* new_guard = new apta_guard(old_guard);
-        
+
         old_guard->max_attribute_values[attr] = val;
         new_guard->min_attribute_values[attr] = val;
-        
+
         red->guards.insert(pair<int, apta_guard*>(symbol, new_guard));
 
         apta_node* new_child = new apta_node(aut);
@@ -315,14 +315,14 @@ void state_merger::perform_split(apta_node* blue, tail* t, int attr){
 void state_merger::undo_perform_split(apta_node* blue, tail* t, int attr){
     int symbol = inputdata::get_symbol(t);
     float val  = inputdata::get_value(t, attr);
-    
+
     apta_node* red = blue->source->find();
     apta_guard* old_guard = red->guard(t);
 
     guard_map::iterator new_it = red->guards.upper_bound(symbol);
     new_it--;
     apta_guard* new_guard = (*new_it).second;
-    
+
     if(old_guard != new_guard){
         apta_node* new_child = new_guard->target;
 
@@ -332,7 +332,7 @@ void state_merger::undo_perform_split(apta_node* blue, tail* t, int attr){
             old_guard->max_attribute_values[attr] = new_guard->max_attribute_values[attr];
         else
             old_guard->max_attribute_values.erase(attr);
-        
+
         delete new_child;
         delete new_guard;
     }
@@ -518,9 +518,9 @@ refinement* state_merger::test_splits(apta_node* blue){
             sorted_tails.insert(pair<float, tail*>(inputdata::get_value(t->past_tail, attr),t));
             cerr << "adding tail " << inputdata::get_value(t->past_tail, attr) << " " << t << endl;
         }
-        
+
         apta_node* new_node = new apta_node(aut);
-        
+
         float prev_val = (*(sorted_tails.begin())).first;
         for(multimap<float, tail*>::iterator it = sorted_tails.begin(); it != sorted_tails.end(); ++it){
             cerr << "testing split " << (*it).first << endl;
@@ -560,10 +560,10 @@ refinement_set* state_merger::get_possible_refinements(){
 
     for(state_set::iterator it = blue_its.begin(); it != blue_its.end(); ++it){
         apta_node* blue = *it;
-        bool found = false; 
+        bool found = false;
         if((sink_type(blue) != -1)) continue;
 
-        cerr << inputdata::num_attributes << endl;
+        //cerr << inputdata::num_attributes << endl;
         if(inputdata::num_attributes > 0){
             cerr << "testing splits" << endl;
             test_splits(blue);
@@ -599,7 +599,7 @@ refinement_set* state_merger::get_possible_refinements(){
         }
 
         // cerr << "found results: " << result->size() << endl;
-        // why not result->size() == 0? 
+        // why not result->size() == 0?
         if(found == false && sink_type(blue) == -1) {
 
            // cerr << "came out empty for merges" <<endl;
@@ -740,7 +740,7 @@ merge_pair* state_merger::get_best_merge(int count){
     //for(state_set::iterator it = blue_states.begin(); it != blue_states.end(); ++it){
         apta_node* blue = *(it);
         if(!MERGE_SINKS_DSOLVE && (sink_type(blue) != -1)) continue;
-        
+
         for(red_state_iterator it2 = red_state_iterator(aut->root); *it2 != 0; ++it2){
         //for(state_set::iterator it2 = red_states.begin(); it2 != red_states.end(); ++it2){
             apta_node* red = *it2;
