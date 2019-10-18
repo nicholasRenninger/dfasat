@@ -25,8 +25,13 @@ gitversion.cpp
 # articfacs
 .DS_Store
 flexfringe.dSYM/*
+dfasat.dSYM/*
 # data files
 PAutomaC-competition_sets/*
 
 # other files
 processidentification/
+
+# ide config files
+cmake-build-debug/
+dfasat.cbp
