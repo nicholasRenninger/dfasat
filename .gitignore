@@ -35,3 +35,7 @@ processidentification/
 # ide config files
 cmake-build-debug/
 dfasat.cbp
+
+# my stupid mac / GDrive files
+Icon?
+.DS_Store
