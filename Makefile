@@ -40,7 +40,7 @@ evaluation/%.o: evaluation/%.cpp
 clean:
 	rm -f flexfringe ./evaluation/*.o generated.cpp named_tuple.py *.dot exposed_decl.pypp.txt flexfringe*.so gitversion.cpp
 	
-gitversion.cpp: .git/HEAD .git/index
+gitversion.cpp: ../.git/modules/dfasat/HEAD ../.git/modules/dfasat/index
 	echo "const char *gitversion = \"$(shell git rev-parse HEAD)\";" > $@
 
 python: $(EVALOBJS) gitversion.cpp
