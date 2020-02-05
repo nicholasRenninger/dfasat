@@ -1073,14 +1073,19 @@ int dfasat(state_merger &merger, string sat_program, const char* dot_output_file
                 merger.context.print_dot_output(dot_output_file);
                 merger.context.print_aut_output(aut_output);
             }
-
-            while(!refs->empty()){
-                refinement* ref = refs->front();
-                refs->pop_front();
-                ref->undo(&merger);
-                delete ref;
+            
+            // not sure how this doesn't SEG fault every time...
+            // probably global state of refs
+            if(refs != NULL){
+                cout << "refinement list isn't null" << endl;
+                while(!refs->empty()){
+                    refinement* ref = refs->front();
+                    refs->pop_front();
+                    ref->undo(&merger);
+                    delete ref;
+                }
+                delete refs;
             }
-            delete refs;
         }
         merger.context.delete_literals();
     }
