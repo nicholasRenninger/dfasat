@@ -38,10 +38,10 @@ flexfringe: $(SOURCESOBJS) $(EVALOBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LFLAGS) $(LIBS)
 
 obj/%.o: %.cpp
-	$(CC) -fPIC -c -o $@ $^ $(LFLAGS) $(LIBS)
+	$(CC) -fPIC -g -c -o $@ $^ $(LFLAGS) $(LIBS)
 
 evaluation/obj/%.o: evaluation/%.cpp
-	$(CC) -fPIC -c -o $@ $^ -I./evaluation/lib $(LFLAGS) $(LIBS) $(PYTHON_INC) $(PYTHON_LIBS) $(BOOST_LIBS)
+	$(CC) -fPIC -g -c -o $@ $^ -I./evaluation/lib $(LFLAGS) $(LIBS) $(PYTHON_INC) $(PYTHON_LIBS) $(BOOST_LIBS)
 
 clean:
 	rm -f flexfringe ./obj/*.o ./evaluation/obj/*.o generated.cpp named_tuple.py *.dot exposed_decl.pypp.txt flexfringe*.so gitversion.cpp
