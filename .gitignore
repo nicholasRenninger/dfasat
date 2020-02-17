@@ -39,3 +39,7 @@ dfasat.cbp
 # my stupid mac / GDrive files
 Icon?
 .DS_Store
+
+# xcode shit
+DFASAT-*/
+ModuleCache.noindex/
