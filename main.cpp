@@ -2,6 +2,7 @@
 /// \brief Command line parameter processing and entry point.
 
 /*
+ * Copyright 2020 Nicholas Renninger
  * Copyright 2019 Sicco E. Verwer & Christian A. Hammerschmidt
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
