@@ -1,6 +1,6 @@
 # README #
 
-flexfringe (formerly DFASAT), a flexible state-merging framework written in C++.
+[flexfringe](https://bitbucket.org/chrshmmmr/dfasat/src/master/) (formerly DFASAT), a flexible state-merging framework written in C++.
 
 ### What is this repository for? ###
 
