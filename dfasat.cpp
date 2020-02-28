@@ -1093,8 +1093,8 @@ int dfasat(state_merger &merger, string sat_program, const char* dot_output_file
             // not sure how this doesn't SEG fault every time...
             // probably global state of refs
             if(refs != NULL){
-                cout << "refinement list isn't null" << endl;
                 while(!refs->empty()){
+                    cout << "refinement list isn't null or empty" << endl;
                     refinement* ref = refs->front();
                     refs->pop_front();
                     ref->undo(&merger);
